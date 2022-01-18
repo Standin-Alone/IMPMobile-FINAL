@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View,Text, StyleSheet,FlatList,Image} from 'react-native';
+import {View,Text, StyleSheet,FlatList,Image,Modal} from 'react-native';
 import Colors from '../../constants/Colors';
 import Images from '../../constants/Images';
 import Layout from '../../constants/Layout';
@@ -10,10 +10,8 @@ import axios from 'axios';
 import * as ipConfig from '../../ipconfig';
 import * as Yup from 'yup';
 import { Formik } from 'formik';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Card } from 'react-native-paper';
-import * as Location from "expo-location";
+import Geolocation from '@react-native-community/geolocation';
 import {launchCamera} from 'react-native-image-picker';
 import ImageViewer from "react-native-image-zoom-viewer";
 import Button from 'apsl-react-native-button';
@@ -39,7 +37,9 @@ export default class AttachmentScreen extends Component {
               file: null,
             },
           ],
-          showProgress:false
+          showProgress:false,
+          showImage:false,
+          imageURI:''
     };
   }
 
@@ -47,47 +47,19 @@ export default class AttachmentScreen extends Component {
  async componentDidMount() {
 
 
-    try{
-        const status_foreground =
-          await Location.requestForegroundPermissionsAsync();
-       
+
      
-  
-        if (status_foreground.status !== "granted") {
-          
-          this.setState({showProgress:false});
-        }
-  
-       
-          // if (navigation.isFocused()) {
-          //   const backAction = () => {        
-          //     let data = {
-          //       reference_num : params.data[0].reference_no
-          //     }
-          //     axios.post(ip_config.ip_address + "evoucher/api/discard_transaction", data).then(()=>{
-          //         AlertComponent.discard_transaction_alert(navigation);
-          //     }).catch(()=>{
-          //         alert('Error! Please try again.');
-          //     })    
-              
-          //     return true
-          //   };
-          //   const backHandler = BackHandler.addEventListener(
-          //     "hardwareBackPress",
-          //     backAction(this)
-          //   );
-  
-          //   return () => {backHandler.remove()
-            
-          //     BackHandler.removeEventListener("hardwareBackPress", backAction);
-            
-          //   };
-          // }
-     
-    }catch(error){
-        console.warn(error)
-    }
+    
   }
+
+
+
+  // show image
+   showImage = (uri: any) => {
+    this.setState({showImage:true,imageURI:uri});
+    
+  };
+
 
 
 
@@ -95,25 +67,19 @@ export default class AttachmentScreen extends Component {
  openCamera = async (document_type) => {
     
     let checkLocation = false;
-
-    let openLocation = await Location.hasServicesEnabledAsync();
+     
+    
+    Geolocation.getCurrentPosition(async (openLocation)=>{
+            
+    
+      
+ 
 
     this.setState({showProgress:true})
 
     if(openLocation){
-      let location ;
-      setTimeout(async()=>{ 
-        location = await Location.getCurrentPositionAsync({accuracy:Location.Accuracy.Lowest}).then((response)=>{      
-          console.warn(response)
-          checkLocation = true;
-          return response;
-        }).catch((err)=>{
-          console.warn(err)    
-          this.setState({showProgress:false})
-          checkLocation = false;          
-        }); 
-
-      }, 3000);
+   
+        
       
        let getImagePicker = await launchCamera({
         mediaType: 'photo',
@@ -126,7 +92,7 @@ export default class AttachmentScreen extends Component {
 
         getImagePicker.assets.map(async response => {
              // get geo tag
-        let base64_uri_exif = this.geotagging(response,location);
+        let base64_uri_exif = this.geotagging(response,openLocation);
     
         if (response.cancelled != true) {
           this.state.attachments.map((item, index) => {
@@ -163,8 +129,8 @@ export default class AttachmentScreen extends Component {
 
     
     }else{
-      setShowProgrSubmit(false);
-      AlertComponent.spiel_message_alert("Message","Please turn on your location first.", "Ok")
+      
+      
 
       Popup.show({
         type: 'success',              
@@ -175,11 +141,12 @@ export default class AttachmentScreen extends Component {
         okButtonTextStyle: styles.confirmButtonText,
         callback: () => {                  
           Popup.hide()                                    
-          this.props.route.params.my_cart({cart:data});
-          this.props.navigation.goBack();
+          
         },              
       })
     }
+  })
+
 
 
   };
@@ -190,15 +157,16 @@ export default class AttachmentScreen extends Component {
       <View>
         <Text style={styles.title}> <FontAwesomeIcon name="info-circle" color={Colors.blue_green} size={25}/> {item.name}</Text>
         <Button
-          color={Colors.base}
+          
           style={styles.card_none}
           onPress={() => this.openCamera(item.name)}
         >
           <Image
             source={Images.add_photo}
-            style={{ height: 50, resizeMode: "contain" }}
+            style={styles.card_add_icon}
           />
-          <Text>Click to add picture</Text>
+          
+          <Text style={styles.card_text}>Press to add picture</Text>
         </Button>
       </View>
     ) : // valid id condition if both front and back is null
@@ -208,27 +176,33 @@ export default class AttachmentScreen extends Component {
       <View>
         <Text style={styles.title}> <FontAwesomeIcon name="info-circle" color={Colors.blue_green} size={25}/> {item.name}</Text>
         <Button
-          color={Colors.base}
+          
           style={styles.card_none}
           onPress={() => this.openCamera(item.name + "(front)")}
-        >
+        >       
           <Image
             source={Images.add_photo}
-            style={{ height: 50, resizeMode: "contain" }}
+            style={styles.card_add_icon}
           />
-          <Text>Click to add front page of id</Text>
+          
+          <Text style={styles.card_text}>Press to add front side of ID</Text>
+
+
         </Button>
 
         <Button
-          color={Colors.base}
+          
           style={styles.card_none}
           onPress={() => this.openCamera(item.name + "(back)")}
         >
+         
           <Image
             source={Images.add_photo}
-            style={{ height: 50, resizeMode: "contain" }}
+            style={styles.card_add_icon}
           />
-          <Text>Click to add back page of id</Text>
+          
+          <Text style={styles.card_text}>Press to add back side of ID</Text>
+
         </Button>
       </View>
     ) : // valid id condition
@@ -238,7 +212,7 @@ export default class AttachmentScreen extends Component {
         {/* valid id front component */}
         {item.file[0].front == null ? (
           <Button
-            color={Colors.base}
+            
             style={styles.card_none}
             onPress={() => this.openCamera(item.name + "(front)")}
           >
@@ -246,13 +220,13 @@ export default class AttachmentScreen extends Component {
               source={Images.add_photo}
               style={{ height: 50, resizeMode: "contain" }}
             />
-            <Text>Click to add front page of id.</Text>
+            <Text>Press to add front side of ID.</Text>
           </Button>
         ) : (
           <Card
             elevation={10}
             style={styles.card}
-            onPress={() => showImage(item.file[0].front)}
+            onPress={() => this.showImage(item.file[0].front)}
           >
             <Card.Cover
               resizeMode="contain"
@@ -263,7 +237,7 @@ export default class AttachmentScreen extends Component {
                 style={styles.retake}
                 onPress={() => this.openCamera(item.name + "(front)")}
               >
-                Click here to retake photo...
+                Press here to retake photo...
               </Text>
             </Card.Actions>
           </Card>
@@ -271,21 +245,21 @@ export default class AttachmentScreen extends Component {
         {/* valid id back component */}
         {item.file[0].back == null ? (
           <Button
-            color={Colors.base}
+            
             style={styles.card_none}
             onPress={() => this.openCamera(item.name + "(back)")}
           >
             <Image
               source={Images.add_photo}
-              style={{ height: 50, resizeMode: "contain" }}
+              style={{ height: 50, resizeMode: "center" }}
             />
-            <Text>Click to add back page of id.</Text>
+            <Text style={{fontSize:100}}>Press to add back side of ID.</Text>
           </Button>
         ) : (
           <Card
             elevation={10}
             style={styles.card}
-            onPress={() => showImage(item.file[0].back)}
+            onPress={() => this.showImage(item.file[0].back)}
           >
             <Card.Cover
               resizeMode="contain"
@@ -296,7 +270,7 @@ export default class AttachmentScreen extends Component {
                 style={styles.retake}
                 onPress={() => this.openCamera(item.name + "(back)")}
               >
-                Click here to retake photo...
+                Press here to retake photo...
               </Text>
             </Card.Actions>
           </Card>
@@ -304,11 +278,11 @@ export default class AttachmentScreen extends Component {
       </View>
     ) : (
       <View>
-        <Text style={styles.title}>{item.name}</Text>
+        <Text style={styles.title}><FontAwesomeIcon name="info-circle" color={Colors.blue_green} size={25}/>{item.name}</Text>
         <Card
           elevation={10}
           style={styles.card}
-          onPress={() => showImage(item.file)}
+          onPress={() => this.showImage(item.file)}
         >
           <Card.Cover
             resizeMode="contain"
@@ -316,7 +290,7 @@ export default class AttachmentScreen extends Component {
           />
           <Card.Actions>
             <Text style={styles.retake} onPress={() => this.openCamera(item.name)}>
-              Click here to retake photo...
+              Press here to retake photo...
             </Text>
           </Card.Actions>
         </Card>
@@ -389,6 +363,18 @@ export default class AttachmentScreen extends Component {
             keyExtractor={(item) => item.name}
           />
 
+      
+          <Modal
+            visible={this.state.showImage}
+            transparent={true}
+            onRequestClose={() => this.setState({showImage:false})}
+            animationType="fade"
+          >
+            <ImageViewer
+              imageUrls={[{ url: "data:image/jpeg;base64," + this.state.imageURI }]}
+              index={0}
+            />
+          </Modal>
 
       </View>
     );
@@ -411,7 +397,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 2,
     marginBottom: 20,
     borderRadius: 15,
-
     width: (Layout.width / 100) * 92,
   },
   card_none: {
@@ -426,6 +411,16 @@ const styles = StyleSheet.create({
     borderWidth:1,
     width: (Layout.width / 100) * 92,
   },
+  card_text:{
+    alignContent:'center',
+    top:(Layout.height / 100) * 8
+  },
+  card_add_icon:{
+     height: 50, 
+     resizeMode: "contain" ,
+     position:'absolute',
+     alignSelf:'center'
+  },
   title: {
     color: Colors.blue_green,
     justifyContent: "flex-start",
@@ -433,7 +428,7 @@ const styles = StyleSheet.create({
     fontSize: 26,
   },
   retake: {
-    color: Colors.base,
+    color: Colors.green,
     fontFamily: "calibri-light",
     fontSize: 16,
     fontWeight: "100",
