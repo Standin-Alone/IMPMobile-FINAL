@@ -171,10 +171,10 @@ export default class HomeScreen extends Component {
     return (
       <View style={styles.container}>        
         
-        <Animatable.Text style={styles.greetings} animation="fadeInDownBig" >Hello John Edcel</Animatable.Text>        
+        <Animatable.Text style={styles.greetings} animation="fadeInDownBig" >Hello, John Edcel</Animatable.Text>        
         <Animatable.Text style={styles.question} animation="fadeInDownBig" >What voucher transaction do you want to search?</Animatable.Text>        
         <Fumi
-            label={'Search it by reference number'}
+            label={'Search by reference number'}
             iconClass={FontAwesomeIcon}
             iconName={'search'}
             iconColor={Colors.green}
@@ -195,12 +195,12 @@ export default class HomeScreen extends Component {
             onChangeText={value => this.setState({search: value})}
             keyboardType="email-address"
           />
+        
 
-
-        <Animatable.Text style={styles.recent_title}><FontAwesomeIcon name="info-circle" color={Colors.blue_green} size={16}/>  Recent Transaction Today</Animatable.Text>
+        <Animatable.Text style={styles.recent_title}><FontAwesomeIcon name="info-circle" color={Colors.blue_green} size={16}/>  List of Transactions</Animatable.Text>
         <FlatList       
           showsHorizontalScrollIndicator={false}
-          horizontal={true}
+          
           onRefresh={this.getScannedVouchers}
           refreshing={this.state.refreshing}                                  
           data={this.state.today_vouchers_list ? filteredVouchers : null}
@@ -213,7 +213,7 @@ export default class HomeScreen extends Component {
         />
 
 
-        <Animatable.Text style={styles.other_transactions}><FontAwesomeIcon name="info-circle" color={Colors.blue_green} size={16}/>  Other Transactions</Animatable.Text>
+        
       </View>
     );
   }

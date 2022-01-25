@@ -327,7 +327,56 @@ export default class AttachmentScreen extends Component {
       }
 
 
-  
+  // go to next screen Review Transaction
+  handleGoToReview = ()=>{
+    let parameters = {
+      voucher_info: this.state.params.voucher_info,
+      cart:this.state.cart,
+      total_amount:this.state.params.total_amount,
+      supplier_id: this.state.params.supplier_id,
+      full_name: this.state.params.full_name,
+      user_id: this.state.params.user_id,
+      attachments:this.state.attachments
+    }
+
+    let check_null = 0 ;
+    this.state.attachments.map((item) => {
+      if (item.name == "Valid ID") {
+        if (item.file[0].front == null) {
+          check_null++;
+        }
+        if (item.file[0].back == null) {
+          check_null++;
+        }
+      } else {
+        if (item.file == null) {
+          check_null++;
+        }       
+      }
+    });
+    
+    if(check_null == 0){
+      this.props.navigation.navigate('ReviewTransactionScreen',parameters);
+    }else{
+      Popup.show({
+        type: 'warning',              
+        title: 'Message',
+        textBody: 'Please complete all attachments.',                
+        buttonText:"I understand",
+        okButtonStyle:styles.confirmButton,
+        okButtonTextStyle: styles.confirmButtonText,
+        callback: () => {    
+          this.props.navigation.navigate('ReviewTransactionScreen',parameters);              
+          Popup.hide()                                              
+        },              
+      })
+
+    }
+
+    
+    
+
+  }
 
   render() {
 
@@ -375,7 +424,18 @@ export default class AttachmentScreen extends Component {
               index={0}
             />
           </Modal>
-
+              
+          
+        <Button
+            textStyle={styles.next_txt}
+            style={styles.next_btn}
+            activityIndicatorColor={'white'}
+            isLoading={this.state.isLoading}
+            disabledStyle={{opacity: 1}} 
+            onPress={this.handleGoToReview}
+          >
+            Review Transaction 
+          </Button>  
       </View>
     );
   }
@@ -433,5 +493,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "100",
     left: (Layout.width / 100) * 40,
+  },
+  confirmButton:{
+    backgroundColor:'white',
+    color:Colors.green,
+    borderColor:Colors.green,
+    borderWidth:1
+  },
+  confirmButtonText:{  
+    color:Colors.green,    
   },
 });

@@ -1,5 +1,5 @@
-import React,{useEffect,useState} from 'react';
-import { StyleSheet, TouchableOpacity,Image,View} from 'react-native';
+import React,{useEffect,useState,} from 'react';
+import { StyleSheet, TouchableOpacity,Image,View,BackHandler} from 'react-native';
 
 
 
@@ -9,7 +9,11 @@ import NetInfo from "@react-native-community/netinfo";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Colors from '../constants/Colors';
 import * as Animatable from 'react-native-animatable';
-
+import axios from 'axios';
+import * as ipConfig from '../ipconfig';
+import DeviceInfo from 'react-native-device-info';
+import {  Popup} from 'react-native-popup-confirm-toast';
+import Geolocation from '@react-native-community/geolocation';
 export default class AuthenticationScreen extends React.Component {
     constructor(props){
         super(props);
@@ -28,12 +32,86 @@ componentDidMount(){
           if(response.isConnected){
               
             let user_id = await AsyncStorage.getItem('user_id');
+            
+            axios.get(ipConfig.ipAddress + "/check_utility/"+DeviceInfo.getVersion()).then((response)=>{
+              console.warn(response.data['maintenance'])
 
-            if(user_id){
-              self.props.navigation.replace('Root');
-            }else{
-                self.props.navigation.replace('LoginScreen');
-            }
+
+                if(user_id){
+                    self.props.navigation.replace('Root');
+                  }else{
+                      self.props.navigation.replace('LoginScreen');
+                      
+                  }  
+            
+
+            
+            // ENABLE THIS BEFORE GENERATING APK
+            // check if the mobile application is on maintenance
+            // if(response.data['maintenance'] == '1'){
+            //   Popup.show({
+            //     type: 'danger',              
+            //     title: 'Error!',
+            //     textBody: "Sorry for the inconvenience. The mobile application is on maintenance. Please try again later.",                
+            //     buttonText:'Ok',
+            //     okButtonStyle:styles.confirmButton,
+            //     okButtonTextStyle: styles.confirmButtonText,
+            //     callback: () => {    
+            //       BackHandler.exitApp();
+            //       Popup.hide()                                    
+            //     },              
+            //   })
+
+            // }
+            // // check if the mobile app has new version
+            // else if(response.data['active'] == '0'){
+            //   Popup.show({
+            //     type: 'danger',              
+            //     title: 'Error!',
+            //     textBody: "The mobile application has new update. please download the new mobile application in voucher management platform website.",                
+            //     buttonText:'Ok',
+            //     okButtonStyle:styles.confirmButton,
+            //     okButtonTextStyle: styles.confirmButtonText,
+            //     callback: () => {    
+            //       BackHandler.exitApp();
+            //       Popup.hide()                                    
+            //     },              
+            //   })
+            // }else{
+            //   // check location
+            //   Geolocation.getCurrentPosition(async (openLocation)=>{
+              
+            //     if(openLocation){
+            //       if(user_id){
+            //         self.props.navigation.replace('Root');
+            //       }else{
+            //           self.props.navigation.replace('LoginScreen');
+                      
+            //       }  
+
+            //     }else{
+
+
+            //       Popup.show({
+            //         type: 'danger',              
+            //         title: 'Message',
+            //         textBody: "Please open your location first.",                
+            //         buttonText:'Ok',
+            //         okButtonStyle:styles.confirmButton,
+            //         okButtonTextStyle: styles.confirmButtonText,
+            //         callback: () => {    
+            //           BackHandler.exitApp();
+            //           Popup.hide()                                    
+            //         },              
+            //       })
+            //     }
+
+            //   })
+            // }
+            
+           
+                        
+          }).catch(err=>console.warn(err));
             
           }else{
             alert('No Internet Connection.Pleae check your internet connection.')
@@ -89,6 +167,15 @@ const styles = StyleSheet.create({
   linkText: {
     fontSize: 14,
     color: '#2e78b7',
+  },
+  confirmButton:{
+    backgroundColor:'white',
+    color:Colors.green,
+    borderColor:Colors.green,
+    borderWidth:1
+  },
+  confirmButtonText:{  
+    color:Colors.green,    
   },
 });
 
