@@ -69,14 +69,15 @@ export default class AttachmentScreen extends Component {
  
 
     this.setState({showProgress:true})
-
+    // check if location is open
     if(openLocation){
    
         
-      
+        // launch camera
        let getImagePicker = await launchCamera({
         mediaType: 'photo',
-        includeBase64: true,
+        includeBase64: true,        
+        isVertical: true
       });
       
 
