@@ -18,7 +18,7 @@ import Images from '../constants/Images';
 import Button from 'apsl-react-native-button';
 import Moment from 'react-moment';
 import NumberFormat from 'react-number-format';
-
+import Spinner from 'react-native-spinkit';
 export default class FarmerProfileScreen extends Component {
   constructor(props) {
     super(props);
@@ -29,7 +29,9 @@ export default class FarmerProfileScreen extends Component {
 
   }
 
- 
+  componentDidUpdate() {
+      
+  }
 
   // render recent claiming
   renderHistory = (item,index)=>(
@@ -194,7 +196,7 @@ const styles = StyleSheet.create({
   },
   next_txt:{
     color:Colors.light,    
-    fontFamily:'Gotham_light',
+    fontFamily:'Gotham_bold',
   },
   
   next_btn:{    

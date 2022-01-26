@@ -353,8 +353,7 @@ const styles = StyleSheet.create({
     right:20,
     height: 60,
     width: 60,
-    overflow: "hidden",
-    borderBottomColor: "black",
+    overflow: "hidden",    
     borderBottomWidth: 1,
   },
   cart_details: {

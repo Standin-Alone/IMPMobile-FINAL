@@ -23,6 +23,8 @@ export default class AttachmentScreen extends Component {
     super(props);
     this.state = {          
         params:this.props.route.params,          
+        latitude:'',
+        longitude:'',
         attachments:[
             {
               name: "Farmer with Commodity",
@@ -41,15 +43,6 @@ export default class AttachmentScreen extends Component {
           showImage:false,
           imageURI:''
     };
-  }
-
-
- async componentDidMount() {
-
-
-
-     
-    
   }
 
 
@@ -91,7 +84,10 @@ export default class AttachmentScreen extends Component {
 
 
         getImagePicker.assets.map(async response => {
-             // get geo tag
+
+        this.setState({latitude:openLocation.coords.latitude,longitude:openLocation.coords.longitude})
+
+        // get geo tag
         let base64_uri_exif = this.geotagging(response,openLocation);
     
         if (response.cancelled != true) {
@@ -129,11 +125,9 @@ export default class AttachmentScreen extends Component {
 
     
     }else{
-      
-      
-
+    
       Popup.show({
-        type: 'success',              
+        type: 'warning',              
         title: 'Message',
         textBody: "Please turn on your location first.",                
         buttonText:'Okay',
@@ -244,17 +238,21 @@ export default class AttachmentScreen extends Component {
         )}
         {/* valid id back component */}
         {item.file[0].back == null ? (
-          <Button
-            
-            style={styles.card_none}
-            onPress={() => this.openCamera(item.name + "(back)")}
-          >
-            <Image
-              source={Images.add_photo}
-              style={{ height: 50, resizeMode: "center" }}
-            />
-            <Text style={{fontSize:100}}>Press to add back side of ID.</Text>
-          </Button>
+        
+        <Button
+          
+          style={styles.card_none}
+          onPress={() => this.openCamera(item.name + "(back)")}
+        >
+         
+          <Image
+            source={Images.add_photo}
+            style={styles.card_add_icon}
+          />
+          
+          <Text style={styles.card_text}>Press to add back side of ID</Text>
+
+        </Button>
         ) : (
           <Card
             elevation={10}
@@ -329,14 +327,22 @@ export default class AttachmentScreen extends Component {
 
   // go to next screen Review Transaction
   handleGoToReview = ()=>{
+
+    
+    Geolocation.getCurrentPosition(async (geo_response)=>{
+
+
+    if(geo_response){
     let parameters = {
       voucher_info: this.state.params.voucher_info,
-      cart:this.state.cart,
+      cart:this.state.params.cart,
       total_amount:this.state.params.total_amount,
       supplier_id: this.state.params.supplier_id,
       full_name: this.state.params.full_name,
       user_id: this.state.params.user_id,
-      attachments:this.state.attachments
+      attachments:this.state.attachments,
+      latitude:geo_response.coords.latitude,
+      longitude:geo_response.coords.longitude
     }
 
     let check_null = 0 ;
@@ -365,14 +371,28 @@ export default class AttachmentScreen extends Component {
         buttonText:"I understand",
         okButtonStyle:styles.confirmButton,
         okButtonTextStyle: styles.confirmButtonText,
-        callback: () => {    
-          this.props.navigation.navigate('ReviewTransactionScreen',parameters);              
+        callback: () => {              
           Popup.hide()                                              
         },              
       })
 
     }
-
+  }else{
+    
+    Popup.show({
+      type: 'warning',              
+      title: 'Message',
+      textBody: "Please turn on your location first.",                
+      buttonText:'Okay',
+      okButtonStyle:styles.confirmButton,
+      okButtonTextStyle: styles.confirmButtonText,
+      callback: () => {                  
+        Popup.hide()                                    
+        
+      },              
+    })
+  }
+  });
     
     
 
@@ -502,5 +522,15 @@ const styles = StyleSheet.create({
   },
   confirmButtonText:{  
     color:Colors.green,    
+  },
+  next_btn:{        
+    width: (Layout.width / 100) * 90,
+    left: (Layout.width / 100) * 5,
+    borderColor: Colors.green,
+    backgroundColor: Colors.green,    
+  },
+  next_txt:{
+    color:Colors.light,    
+    fontFamily:'Gotham_bold',
   },
 });

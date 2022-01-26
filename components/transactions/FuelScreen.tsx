@@ -37,9 +37,6 @@ export default class FuelScreen extends Component {
 
   componentDidMount(): void {
     this.setState({data:this.state.params.program_items});
-
-
-
   }
 
   // commodity that has been added  to the cart
@@ -219,8 +216,7 @@ const styles = StyleSheet.create({
     top: 5,
     height: (Layout.height / 100) * 35,
     width: (Layout.width / 100) * 100,
-    overflow: "hidden",
-    borderBottomColor: "black",
+    overflow: "hidden",    
     borderBottomWidth: 1,
   },
   flat_list: {
