@@ -14,10 +14,12 @@ import { Card } from 'react-native-paper';
 import Geolocation from '@react-native-community/geolocation';
 import {launchCamera} from 'react-native-image-picker';
 import ImageViewer from "react-native-image-zoom-viewer";
+import ImageResizer from 'react-native-image-resizer';
 import Button from 'apsl-react-native-button';
 import {  Popup} from 'react-native-popup-confirm-toast';
 import {  dump, insert,ImageIFD,GPSIFD,ExifIFD,GPSHelper} from "piexifjs";
 import Spinner from "react-native-loading-spinner-overlay";
+import * as RNFS from 'react-native-fs';
 export default class AttachmentScreen extends Component {
   constructor(props) {
     super(props);
@@ -55,6 +57,14 @@ export default class AttachmentScreen extends Component {
 
 
 
+  rotateImage = async (uri) =>{
+  const rotated_image = await   ImageResizer.createResizedImage('data:image/JPEG,'+uri, 1920, 1080, 'JPEG', 50, 90, RNFS.DocumentDirectoryPath);
+  const convert_rotated_image_to_base64 = await RNFS.readFile(rotated_image.uri,'base64');
+ 
+  return convert_rotated_image_to_base64;
+}
+
+
 
    // Take Photo Button
  openCamera = async (document_type) => {
@@ -71,21 +81,22 @@ export default class AttachmentScreen extends Component {
     this.setState({showProgress:true})
     // check if location is open
     if(openLocation){
-   
-        
+      
+      
         // launch camera
        let getImagePicker = await launchCamera({
         mediaType: 'photo',
-        includeBase64: true,        
-        isVertical: true
+        includeBase64: true,                    
       });
       
+
 
       if (!getImagePicker.didCancel) {
 
 
         getImagePicker.assets.map(async response => {
-
+        let image_rotate = await this.rotateImage(response.base64);
+         
         this.setState({latitude:openLocation.coords.latitude,longitude:openLocation.coords.longitude})
 
         // get geo tag
@@ -95,19 +106,19 @@ export default class AttachmentScreen extends Component {
           this.state.attachments.map((item, index) => {
             if (document_type == item.name) {
               let attachmentState = [...this.state.attachments];
-              attachmentState[index].file = base64_uri_exif;
+              attachmentState[index].file = image_rotate;
               
               this.setState({attachments:attachmentState})
             } else if (document_type == item.name + "(front)") {
               //set file of front page of id
               let attachmentState = [...this.state.attachments];
-              attachmentState[index].file[0].front = base64_uri_exif;
+              attachmentState[index].file[0].front = image_rotate;
               
               this.setState({attachments:attachmentState})
             } else if (document_type == item.name + "(back)") {
               // set file of back page of id
               let attachmentState = [...this.state.attachments];
-              attachmentState[index].file[0].back = base64_uri_exif;                
+              attachmentState[index].file[0].back = image_rotates;                
               this.setState({attachments:attachmentState})
             }
           });
