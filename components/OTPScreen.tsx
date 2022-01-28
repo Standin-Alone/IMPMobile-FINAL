@@ -158,7 +158,7 @@ export default class OTPScreen extends Component {
           {/* username textbox */}
           <Animatable.View animation="slideInLeft" >
               <Fumi
-              label={'OTP'}
+              label={'Enter One time in here...'}
               iconClass={FontAwesomeIcon}
               iconName={'key'}
               iconColor={Colors.green}

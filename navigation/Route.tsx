@@ -13,6 +13,8 @@ import SelectedCommodityScreen from '../components/transactions/SelectedCommodit
 import ViewCartScreen from '../components/transactions/ViewCartScreen';
 import AttachmentScreen from '../components/transactions/AttachmentScreen';
 import ReviewTransactionScreen from '../components/transactions/ReviewTransactionScreen';
+import SummaryScreen from '../components/SummaryScreen';
+
 const Stack  = createStackNavigator();
 
 function MyStack(){
@@ -27,7 +29,8 @@ function MyStack(){
                 <Stack.Screen component={FuelScreen} name='FuelScreen' options={{headerTransparent:true,headerTitle:"Commodities",headerTitleStyle:{fontFamily:'Gotham_bold'}}} />
                 <Stack.Screen component={ViewCartScreen} name='ViewCartScreen' options={{headerTransparent:true,headerTitle:"My Cart",headerTitleStyle:{fontFamily:'Gotham_bold'}}} />
                 <Stack.Screen component={AttachmentScreen} name='AttachmentScreen' options={{headerTransparent:true,headerTitle:"Attachments",headerTitleStyle:{fontFamily:'Gotham_bold'}}} />
-                <Stack.Screen component={ReviewTransactionScreen} name='ReviewTransactionScreen' options={{headerShown:false,headerTransparent:true}}/>
+                <Stack.Screen component={SummaryScreen} name='SummaryScreen' options={{headerTransparent:true,headerTitle:"More Info",headerTitleStyle:{fontFamily:'Gotham_bold'}}} />
+                <Stack.Screen component={ReviewTransactionScreen} name='ReviewTransactionScreen' options={{headerShown:false,headerTransparent:true}}/>                
                 <Stack.Screen component={BottomTabNavigator} name='Root' options={{headerShown:false,headerTransparent:true}}/>
             </Stack.Navigator>
         </Root>

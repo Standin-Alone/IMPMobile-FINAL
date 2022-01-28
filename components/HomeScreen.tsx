@@ -114,11 +114,35 @@ export default class HomeScreen extends Component {
       elevation = {10}
       style     = {styles.empty_card}      
     >
-      <Card.Title title="No vouchers were transacted today." />
+      <Card.Title title="No existing vouchers." />
       <Card.Content></Card.Content>
     </Card>
   )
   
+
+     // got to summary 
+   goToSummary = (item) =>{  
+    
+    NetInfo.fetch().then(async (response: any) => {
+      this.props.navigation.push('SummaryScreen',{voucher_info : item});
+      // if (response.isConnected) {
+        
+      //   axios.get(ip_config.ip_address + "evoucher/api/get-transaction-history/"+reference_no).then((response)=>{                    
+      //     // push to summary screen 
+      //     setRefreshing(false)
+      //     navigation.push('SummaryScreen',{transactions:response.data,fullname:fullname,current_balance:current_balance});
+      //   }).catch(err=>{
+      //     setRefreshing(false)
+      //     console.warn(err.response)
+      //     AlertComponent.spiel_message_alert("Message","Something went wrong. Please try again later.","ok")
+      //   })        
+      // } else {
+      //   Alert.alert("Message", "No Internet Connection.");
+      //   setRefreshing(false);
+      // }
+
+    });
+  }
 
   // show image
   showImage = (uri: any) => {
@@ -128,36 +152,36 @@ export default class HomeScreen extends Component {
 
   
    leftComponent = () =>(  <Icon name="user" family="entypo" color={Colors.base} size={30} />)
-   rightComponent = (reference_no,fullname,current_balance) =>(  
+   rightComponent = (item) =>(  
               <Icon
-                 name="right" 
-                 family="antDesign" 
-                 color={Colors.base} 
+                 name="eye"                  
+                 color={Colors.light_green} 
                  size={30}  
-                 style={{right:10}} 
-                //  onPress={()=>goToSummary(reference_no,fullname,current_balance)}
+                 style={{right:30}} 
+                 onPress={()=>this.goToSummary(item)}
                  />
                  )
   renderItem =  (item,index) =>  
   ( 
     <Card
-      elevation = {10}
+      elevation = {1}
       style     = {styles.card}
       onPress   = {()=>this.showImage(item.base64)}
     >
+        <Card.Title        
+        title    = {item.reference_no}
+        subtitle = {<Moment element={Text}  
+        style    = {{color:Colors.muted}}  fromNow>{item.transac_date}</Moment>}        
+        left     = {this.leftComponent}
+        right    = {()=>this.rightComponent(item)}
+      />
       <Card.Cover source={{uri:'data:image/jpeg;base64,'+item.base64}}          
           resizeMode='cover'
           resizeMethod='resize'
         style={{height:(Layout.height/100) * 100}}
         
       />
-      <Card.Title        
-        title    = {item.reference_no}
-        subtitle = {<Moment element={Text}  
-        style    = {{color:Colors.muted}}  fromNow>{item.transac_date}</Moment>}        
-        left     = {this.leftComponent}
-        right    = {()=>this.rightComponent(item.reference_no,item.fullname,item.amount_val)}
-      />
+    
       
       <Card.Content>
         <Text style = {styles.name}>{item.fullname}</Text>
@@ -168,7 +192,9 @@ export default class HomeScreen extends Component {
   // filter button function
   filterButtonFunction = (item)=>{
     if(item == 'All'){
+
       this.setState({refreshing:true,selected_filter:item})
+      this.fetchData();
     }else if (item == 'Today'){
       
       // filter by today's date transactions
@@ -206,6 +232,7 @@ export default class HomeScreen extends Component {
             iconSize={20}
             iconWidth={40}
             inputPadding={16}
+                        
             style={[
               styles.search_text_input,
               {
@@ -275,7 +302,7 @@ const styles = StyleSheet.create({
     height: 100
   },
   today_voucher_flatlist:{
-    top:(Layout.height/100) * 15,
+    top:(Layout.height/100) * 16,
     width:(Layout.width/100) * 100,   
     height:(Layout.height/100) * 60,    
     backgroundColor:Colors.light,
@@ -285,10 +312,8 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRadius: 5,        
     top:10,
-    width:(Layout.width/100) * 90,     
-    
-    marginRight:(Layout.width/100) * 10  ,
-    left:10,
+    width:(Layout.width/100) * 100,         
+    backgroundColor:Colors.light,
     alignSelf: "center",
     marginBottom: 20,
   },
@@ -329,11 +354,11 @@ const styles = StyleSheet.create({
     left:(Layout.width / 100) * 3,
   },
   search_text_input:{
-    top:(Layout.height/100) * 10,
+    top:(Layout.height/100) * 10,    
     borderWidth:1,
     left:(Layout.width / 100) * 3,
     width:(Layout.width / 100) * 95,
-    borderRadius:20,
+    borderRadius:15,
     borderColor:'#ddd'
   },
   filter_button_style:{

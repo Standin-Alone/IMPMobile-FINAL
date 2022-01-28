@@ -141,7 +141,7 @@ export default class ViewCartScreen extends Component {
               style={styles.commodity_image}
             />
           )}
-          subtitle={"₱" + parseFloat(item.total_amount)}
+          subtitle={"₱" + parseFloat(item.total_amount).toFixed(2)}
           subtitleStyle={{
             fontFamily: "calibri-light",
             color: Colors.base,

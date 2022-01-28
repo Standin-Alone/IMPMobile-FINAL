@@ -156,40 +156,56 @@ export default class ReviewTransactionScreen extends Component {
       
       buttonText: 'CONFIRM',
       confirmText:'Cancel',                                 
-      callback: () => {
+      callback: (e) => {
+
+        console.warn(e);
+        Popup.hide()                 
         this.setState({show_spinner:true});
         // get transact
-        axios
-        .post(ipConfig.ipAddress+ "/submit-voucher-cfsmff", formData)
-        .then((response) => {       
-        
-              
-          if(response.data == 'success'){
-            this.setState({show_spinner:false});
-            Popup.show({
-              type: 'success',              
-              title: 'Message',
-              textBody: 'Transaction Complete',                
-              buttonText:"Go back to home.",
-              okButtonStyle:styles.confirmButton,
-              okButtonTextStyle: styles.confirmButtonText,
-              callback: () => {    
-                this.props.navigation.replace('Root');              
-                Popup.hide()                                              
-              },              
-            })
+
       
-          }else{
+
+        setTimeout(()=>{
+
+          axios
+          .post(ipConfig.ipAddress+ "/submit-voucher-cfsmff", formData)
+          .then((response) => {       
+          
+                
+            if(response.data == 'success'){
+              this.setState({show_spinner:false});
+              Popup.show({
+                type: 'success',              
+                title: 'Message',
+                textBody: 'Transaction Complete',                
+                buttonText:"Go back to home.",
+                okButtonStyle:styles.confirmButton,
+                okButtonTextStyle: styles.confirmButtonText,
+                callback: () => {    
+                               
+                  Popup.hide()                 
+                                               
+                  this.props.navigation.reset({
+                    index: 0,
+                    routes: [{ name: 'Root' }]
+                  });
+  
+                },              
+              })
+        
+            }else{
+              this.setState({show_spinner:false});
+              Popup.hide();
+              alert("Error uploading due to unstable connection. Please try again.*");
+            } 
+          })
+          .catch(function (error) {          
             this.setState({show_spinner:false});
-            Popup.hide();
-            alert("Error uploading due to unstable connection. Please try again.*");
-          } 
-        })
-        .catch(function (error) {          
-          this.setState({show_spinner:false});
-          alert("Error occured!." + error.response);
-          console.warn(error.response.data);      
-        });        
+            alert("Error occured!." + error.response);
+            console.warn(error.response.data);      
+          });  
+        },2000)
+           
         
       },
       okButtonStyle:styles.confirmButton,

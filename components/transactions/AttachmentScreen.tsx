@@ -511,7 +511,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 2,
     marginBottom: 20,
     borderRadius: 15,
-    width: (Layout.width / 100) * 92,
+    width: (Layout.width / 100) * 90,
   },
   card_none: {
     backgroundColor: Colors.light_green,
@@ -523,7 +523,7 @@ const styles = StyleSheet.create({
     height: 200,
     borderColor:Colors.blue_green,
     borderWidth:1,
-    width: (Layout.width / 100) * 92,
+    width: (Layout.width / 100) * 90,
   },
   card_text:{
     alignContent:'center',
