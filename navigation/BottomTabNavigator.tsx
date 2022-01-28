@@ -121,7 +121,7 @@ export default function BottomTabNavigator() {
                   callback: () => {
                     Popup.hide()
                     AsyncStorage.clear();
-                    navigation.replace('Authentication');
+                    navigation.replace('AuthenticationScreen');
                     
                   },
                   okButtonStyle:styles.confirmButton,

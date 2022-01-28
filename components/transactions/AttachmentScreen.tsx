@@ -18,7 +18,8 @@ import ImageResizer from 'react-native-image-resizer';
 import Button from 'apsl-react-native-button';
 import {  Popup} from 'react-native-popup-confirm-toast';
 import {  dump, insert,ImageIFD,GPSIFD,ExifIFD,GPSHelper} from "piexifjs";
-import Spinner from "react-native-loading-spinner-overlay";
+// import Spinner from "react-native-loading-spinner-overlay";
+import Spinner from 'react-native-spinkit';
 import * as RNFS from 'react-native-fs';
 export default class AttachmentScreen extends Component {
   constructor(props) {
@@ -27,6 +28,7 @@ export default class AttachmentScreen extends Component {
         params:this.props.route.params,          
         latitude:'',
         longitude:'',
+        show_spinner:false,
         attachments:[
             {
               name: "Farmer with Commodity",
@@ -41,7 +43,7 @@ export default class AttachmentScreen extends Component {
               file: null,
             },
           ],
-          showProgress:false,
+          showProgress:true,
           showImage:false,
           imageURI:''
     };
@@ -71,7 +73,7 @@ export default class AttachmentScreen extends Component {
     
     let checkLocation = false;
      
-    
+    this.setState({show_spinner:true});
     Geolocation.getCurrentPosition(async (openLocation)=>{
             
     
@@ -90,38 +92,46 @@ export default class AttachmentScreen extends Component {
       });
       
 
-
+      
       if (!getImagePicker.didCancel) {
 
-
+        
         getImagePicker.assets.map(async response => {
-        let image_rotate = await this.rotateImage(response.base64);
+        
          
         this.setState({latitude:openLocation.coords.latitude,longitude:openLocation.coords.longitude})
-
+        let image_rotate = await this.rotateImage(response.base64);
+        
+        
         // get geo tag
-        let base64_uri_exif = this.geotagging(response,openLocation);
-    
+        let base64_uri_exif = this.geotagging(image_rotate,openLocation);
+        
+            this.setState({show_spinner:false});
         if (response.cancelled != true) {
           this.state.attachments.map((item, index) => {
+            
             if (document_type == item.name) {
+
+              
               let attachmentState = [...this.state.attachments];
-              attachmentState[index].file = image_rotate;
+              attachmentState[index].file = base64_uri_exif;
               
               this.setState({attachments:attachmentState})
             } else if (document_type == item.name + "(front)") {
               //set file of front page of id
               let attachmentState = [...this.state.attachments];
-              attachmentState[index].file[0].front = image_rotate;
+              attachmentState[index].file[0].front = base64_uri_exif;
               
               this.setState({attachments:attachmentState})
             } else if (document_type == item.name + "(back)") {
               // set file of back page of id
               let attachmentState = [...this.state.attachments];
-              attachmentState[index].file[0].back = image_rotates;                
+              attachmentState[index].file[0].back = base64_uri_exif;                
               this.setState({attachments:attachmentState})
             }
           });
+        }else{
+          this.setState({show_spinner:false});
         }
 
             
@@ -130,9 +140,9 @@ export default class AttachmentScreen extends Component {
        
 
 
+      }else{
+        this.setState({show_spinner:false});
       }
-
-
 
 
     
@@ -330,7 +340,7 @@ export default class AttachmentScreen extends Component {
     
         let exifObj = { "0th":zeroth,"Exif":exif, "GPS":gps};
         let exifBtyes = dump(exifObj);
-        let newBase64 = insert(exifBtyes,'data:image/jpeg;base64,'+response.base64);    
+        let newBase64 = insert(exifBtyes,'data:image/jpeg;base64,'+response);    
     
         return newBase64.replace('data:image/jpeg;base64,','');
                 
@@ -339,7 +349,7 @@ export default class AttachmentScreen extends Component {
 
   // go to next screen Review Transaction
   handleGoToReview = ()=>{
-
+    
     
     Geolocation.getCurrentPosition(async (geo_response)=>{
 
@@ -404,6 +414,13 @@ export default class AttachmentScreen extends Component {
       },              
     })
   }
+  },(err)=>{
+    console.warn(err)
+
+  },{
+    
+    timeout: 20000, maximumAge: 3600000 
+
   });
     
     
@@ -414,12 +431,17 @@ export default class AttachmentScreen extends Component {
 
     return (
       <View  style={styles.container}>        
-       <Spinner
-        visible={this.state.showProgress}
-        color={Colors.blue_green}
-        size="large"
-        indicatorStyle={{ height: 1 }}
-      />
+           {this.state.show_spinner && (
+          <View style={styles.loading}>
+            <Spinner
+              isVisible={this.state.show_spinner}
+              size={100}
+              type={'Wave'}
+              color={Colors.light_green}
+            />
+          </View>
+        )}
+        
         <FlatList
             nestedScrollEnabled
             data={this.state.attachments}
@@ -544,5 +566,16 @@ const styles = StyleSheet.create({
   next_txt:{
     color:Colors.light,    
     fontFamily:'Gotham_bold',
-  },
+  }, 
+  loading: {
+    zIndex:1,
+    position: 'absolute',        
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  }
 });

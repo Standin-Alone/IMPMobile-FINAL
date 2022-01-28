@@ -68,7 +68,7 @@ export default class FuelScreen extends Component {
       <Card.Title
         title={item.item_name }
         titleStyle={styles.card_title}        
-        subtitle={"₱" + item.ceiling_amount + " per " + item.unit_measure}
+        subtitle={"₱" + item.ceiling_amount }
         right={() => (
           <Button
           textStyle={styles.add_to_cart_txt}

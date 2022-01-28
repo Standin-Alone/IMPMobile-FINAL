@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View,Text, StyleSheet, Keyboard} from 'react-native';
+import {View,Text, StyleSheet, Keyboard,Image} from 'react-native';
 import {Fumi} from 'react-native-textinput-effects';
 import Colors from '../constants/Colors';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
@@ -12,6 +12,7 @@ import * as Yup from 'yup';
 import axios from 'axios';
 import { Formik } from 'formik';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import Images from '../constants/Images';
 export default class LoginScreen extends Component {
   constructor(props) {
     super(props);
@@ -100,11 +101,13 @@ export default class LoginScreen extends Component {
       <View style={styles.container}>
         
         
+        <Animatable.Image source={Images.login_bg} style={styles.logo}  resizeMode={'contain'} animation="fadeInDownBig" delay={500}/>  
         
-            <Animatable.View style={styles.title_container} animation="fadeInDownBig">
+            <Animatable.View style={styles.title_container} animation="fadeInDownBig" >
                 <Text style={styles.title} numberOfLines={2}> Welcome to </Text>
                 <Text style={styles.title} numberOfLines={2}> Intervention Management Platform</Text>           
             </Animatable.View>              
+  
         <Formik
           initialValues = {{username:'',password:''}}
           validationSchema = {this.state.validation}
@@ -117,7 +120,7 @@ export default class LoginScreen extends Component {
           {/* username textbox */}
           <Animatable.View animation="slideInLeft" >
               <Fumi
-              label={'Username'}
+              label={'Email'}
               iconClass={FontAwesomeIcon}
               iconName={'user'}
               iconColor={Colors.green}
@@ -192,8 +195,15 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.light,
   },  
+  logo:{
+    width:(Layout.width / 100) *  60,
+    height:(Layout.height / 100) * 60,
+    alignSelf:'center',
+    top: (Layout.height / 100) * -10,   
+    position:'absolute'    
+    },
   title:{
-    top: (Layout.height / 100) * 20,   
+    top: (Layout.height / 100) * 35,   
     color:Colors.dark,     
     alignSelf:'center',
     fontFamily:'Gotham_bold',

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View,Text, StyleSheet} from 'react-native';
+import {View,Text, StyleSheet,Image} from 'react-native';
 import {Fumi} from 'react-native-textinput-effects';
 import Colors from '../constants/Colors';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
@@ -14,6 +14,7 @@ import { Formik } from 'formik';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Popup } from 'react-native-popup-confirm-toast';
+import Images from '../constants/Images';
 export default class OTPScreen extends Component {
   constructor(props) {
     super(props);
@@ -137,7 +138,7 @@ export default class OTPScreen extends Component {
       <View style={styles.container}>
         
         
-        
+        <Animatable.Image source={Images.otp_bg} style={styles.logo}  resizeMode={'contain'} animation="fadeInDownBig" delay={500}/>  
         <Animatable.View style={styles.title_container} animation="fadeInDownBig">
             <Text style={styles.otp}>One Time Pin</Text>
               <Text style={styles.otp_desc}>
@@ -151,7 +152,7 @@ export default class OTPScreen extends Component {
           onSubmit= {(values,{resetForm})=>this.handleVerifyOTP(values,resetForm)} 
           // validateOnChange={false}           
         >
-          {({ values, handleChange, errors, setFieldTouched, touched, isValid, handleSubmit }) =>(
+          {({ values, handleChange, errors, touched, handleSubmit }) =>(
 
         <View>
           {/* username textbox */}
@@ -220,6 +221,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.light,
   },  
+  logo:{
+    width:(Layout.width / 100) *  60,
+    height:(Layout.height / 100) * 60,
+    alignSelf:'center',
+    top: (Layout.height / 100) * -10,   
+    position:'absolute'    
+    },
   title:{
     top: (Layout.height / 100) * 20,   
     color:Colors.dark,     

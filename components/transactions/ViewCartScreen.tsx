@@ -117,8 +117,8 @@ export default class ViewCartScreen extends Component {
       totalHeight={40}
       iconSize={25}
       initValue={item.quantity}
-      step={1}
-      valueType="integer"
+      step={0.1}
+      valueType="real"
       rounded
       iconStyle={{ color: "white" }}
       rightButtonBackgroundColor={Colors.light_green}
@@ -222,7 +222,7 @@ handleCheckOut = ()=>{
         <FlatList
           nestedScrollEnabled
           data={this.state.data}
-          extraData={this.state.data}
+          extraData={this.state.new_data}
           style={styles.flat_list}
           renderItem={({ item, index }) => this.renderItem(item, index)}
           keyExtractor={(item) => item.name}

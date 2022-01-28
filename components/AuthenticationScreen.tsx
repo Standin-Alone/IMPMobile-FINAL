@@ -33,7 +33,7 @@ componentDidMount(){
               
             let user_id = await AsyncStorage.getItem('user_id');
             
-            axios.get(ipConfig.ipAddress + "/check_utility/"+DeviceInfo.getVersion()).then((response)=>{
+            axios.get(ipConfig.ipAddress + "/check_utility/"+DeviceInfo.getVersion()).then( async (response)=>{
               console.warn(response.data['maintenance'])
 
 
@@ -48,66 +48,89 @@ componentDidMount(){
             
             // ENABLE THIS BEFORE GENERATING APK
             // check if the mobile application is on maintenance
-            // if(response.data['maintenance'] == '1'){
-            //   Popup.show({
-            //     type: 'danger',              
-            //     title: 'Error!',
-            //     textBody: "Sorry for the inconvenience. The mobile application is on maintenance. Please try again later.",                
-            //     buttonText:'Ok',
-            //     okButtonStyle:styles.confirmButton,
-            //     okButtonTextStyle: styles.confirmButtonText,
-            //     callback: () => {    
-            //       BackHandler.exitApp();
-            //       Popup.hide()                                    
-            //     },              
-            //   })
+            if(response.data['maintenance'] == '1'){
+              Popup.show({
+                type: 'danger',              
+                title: 'Error!',
+                textBody: "Sorry for the inconvenience. The mobile application is on maintenance. Please try again later.",                
+                buttonText:'Ok',
+                okButtonStyle:styles.confirmButton,
+                okButtonTextStyle: styles.confirmButtonText,
+                callback: () => {    
+                  BackHandler.exitApp();
+                  Popup.hide()                                    
+                },              
+              })
 
-            // }
-            // // check if the mobile app has new version
-            // else if(response.data['active'] == '0'){
-            //   Popup.show({
-            //     type: 'danger',              
-            //     title: 'Error!',
-            //     textBody: "The mobile application has new update. please download the new mobile application in voucher management platform website.",                
-            //     buttonText:'Ok',
-            //     okButtonStyle:styles.confirmButton,
-            //     okButtonTextStyle: styles.confirmButtonText,
-            //     callback: () => {    
-            //       BackHandler.exitApp();
-            //       Popup.hide()                                    
-            //     },              
-            //   })
-            // }else{
-            //   // check location
-            //   Geolocation.getCurrentPosition(async (openLocation)=>{
+            }
+            // check if the mobile app has new version
+            else if(response.data['active'] == '0'){
+              Popup.show({
+                type: 'danger',              
+                title: 'Error!',
+                textBody: "The mobile application has new update. please download the new mobile application in voucher management platform website.",                
+                buttonText:'Ok',
+                okButtonStyle:styles.confirmButton,
+                okButtonTextStyle: styles.confirmButtonText,
+                callback: () => {    
+                  BackHandler.exitApp();
+                  Popup.hide()                                    
+                },              
+              })
+            }else{
+              // check location
+              await  Geolocation.getCurrentPosition(async (openLocation)=>{
               
-            //     if(openLocation){
-            //       if(user_id){
-            //         self.props.navigation.replace('Root');
-            //       }else{
-            //           self.props.navigation.replace('LoginScreen');
+                if(openLocation){
+                  if(user_id){
+                    self.props.navigation.replace('Root');
+                  }else{
+                      self.props.navigation.replace('LoginScreen');
                       
-            //       }  
+                  }  
 
-            //     }else{
+                }else{
 
 
-            //       Popup.show({
-            //         type: 'danger',              
-            //         title: 'Message',
-            //         textBody: "Please open your location first.",                
-            //         buttonText:'Ok',
-            //         okButtonStyle:styles.confirmButton,
-            //         okButtonTextStyle: styles.confirmButtonText,
-            //         callback: () => {    
-            //           BackHandler.exitApp();
-            //           Popup.hide()                                    
-            //         },              
-            //       })
-            //     }
+                  Popup.show({
+                    type: 'danger',              
+                    title: 'Message',
+                    textBody: "Please open your location first.",                
+                    buttonText:'Ok',
+                    okButtonStyle:styles.confirmButton,
+                    okButtonTextStyle: styles.confirmButtonText,
+                    callback: () => {    
+                      BackHandler.exitApp();
+                      Popup.hide()                                    
+                    },              
+                  })
+                }
 
-            //   })
-            // }
+              },(err)=>{
+                console.warn(err.code)
+                if (err.code === 2) {
+                  Popup.show({
+                    type: 'danger',              
+                    title: 'Message',
+                    textBody: "Please open your location first.",                
+                    buttonText:'Ok',
+                    okButtonStyle:styles.confirmButton,
+                    okButtonTextStyle: styles.confirmButtonText,
+                    callback: () => {    
+                      BackHandler.exitApp();
+                      Popup.hide()                                    
+                    },              
+                  })
+                }
+                console.warn(err)
+           
+              },{
+                enableHighAccuracy:true,
+                timeout: 5000,
+                maximumAge: 10000
+
+              })
+            }
             
            
                         

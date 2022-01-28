@@ -25,7 +25,7 @@ export default class SelectedCommodityScreen extends Component {
         params:this.props.route.params,      
         focus_amount:false,
         amount:'',
-        quantity:1,
+        quantity:1.0,
         total_amount:0.00,
         error:false,
         message:'',
@@ -102,6 +102,7 @@ export default class SelectedCommodityScreen extends Component {
 
    //quantity function
    handleQuantity = (value) => {
+     console.warn(value)
     var total_amount = parseFloat(this.state.amount) * value;
     
     if (
@@ -210,8 +211,8 @@ export default class SelectedCommodityScreen extends Component {
             totalHeight={50}
             iconSize={25}
             initValue={this.state.quantity}
-            step={1}
-            valueType="integer"
+            step={0.1}
+            valueType="real"
             rounded
             iconStyle={{ color: "white" }}
             inputStyle={styles.quantity_input}
