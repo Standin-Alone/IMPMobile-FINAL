@@ -81,7 +81,7 @@ export default class HomeScreen extends Component {
           )
           .then((response) => {
             if (response.status == 200) {
-                            
+
               this.setState({today_vouchers_list:response.data})
               this.setState({refreshing:false});
 
@@ -124,22 +124,22 @@ export default class HomeScreen extends Component {
    goToSummary = (item) =>{  
     
     NetInfo.fetch().then(async (response: any) => {
-      this.props.navigation.push('SummaryScreen',{voucher_info : item});
-      // if (response.isConnected) {
+      
+      if (response.isConnected) {
         
-      //   axios.get(ip_config.ip_address + "evoucher/api/get-transaction-history/"+reference_no).then((response)=>{                    
-      //     // push to summary screen 
-      //     setRefreshing(false)
-      //     navigation.push('SummaryScreen',{transactions:response.data,fullname:fullname,current_balance:current_balance});
-      //   }).catch(err=>{
-      //     setRefreshing(false)
-      //     console.warn(err.response)
-      //     AlertComponent.spiel_message_alert("Message","Something went wrong. Please try again later.","ok")
-      //   })        
-      // } else {
-      //   Alert.alert("Message", "No Internet Connection.");
-      //   setRefreshing(false);
-      // }
+        axios.get(ipConfig.ipAddress + "/get-transaction-history/"+item.reference_no).then((response)=>{                    
+          // push to summary screen 
+          console.warn(item)
+          this.props.navigation.push('SummaryScreen',{transactions:response.data,fullname:item.fullname,current_balance:item.current_balance,voucher_info:item});
+        }).catch(err=>{
+          
+          console.warn(err.response)
+          
+        })        
+      } else {
+        alert('No Internet Connection.Pleae check your internet connection.')
+        
+      }
 
     });
   }
@@ -151,7 +151,7 @@ export default class HomeScreen extends Component {
   };
 
   
-   leftComponent = () =>(  <Icon name="user" family="entypo" color={Colors.base} size={30} />)
+   leftComponent = () =>(  <Icon name="ticket" family="fontawesome" color={Colors.base} size={30} />)
    rightComponent = (item) =>(  
               <Icon
                  name="eye"                  
@@ -183,9 +183,9 @@ export default class HomeScreen extends Component {
       />
     
       
-      <Card.Content>
+      {/* <Card.Content>
         <Text style = {styles.name}>{item.fullname}</Text>
-      </Card.Content>
+      </Card.Content> */}
     </Card>
   )
 

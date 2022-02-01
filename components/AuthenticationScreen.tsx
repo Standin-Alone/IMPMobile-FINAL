@@ -37,12 +37,12 @@ componentDidMount(){
               console.warn(response.data['maintenance'])
 
 
-                if(user_id){
-                    self.props.navigation.replace('Root');
-                  }else{
-                      self.props.navigation.replace('LoginScreen');
+                // if(user_id){
+                //     self.props.navigation.replace('Root');
+                //   }else{
+                //       self.props.navigation.replace('LoginScreen');
                       
-                  }  
+                //   }  
             
 
             
@@ -122,7 +122,7 @@ componentDidMount(){
                     },              
                   })
                 }
-                console.warn(err)
+                console.warn(err.response)
            
               },{
                 enableHighAccuracy:true,
@@ -134,7 +134,7 @@ componentDidMount(){
             
            
                         
-          }).catch(err=>console.warn(err));
+          }).catch(err=>console.warn(err.response));
             
           }else{
             alert('No Internet Connection.Pleae check your internet connection.')
