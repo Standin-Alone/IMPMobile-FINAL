@@ -104,7 +104,7 @@ export default class LoginScreen extends Component {
         <Animatable.Image source={Images.login_bg} style={styles.logo}  resizeMode={'contain'} animation="fadeInDownBig" delay={500}/>  
         
             <Animatable.View style={styles.title_container} animation="fadeInDownBig" >
-                <Text style={styles.title} numberOfLines={2}> Welcome to </Text>
+                <Text style={styles.title} numberOfLines={2}> Welcome To </Text>
                 <Text style={styles.title} numberOfLines={2}> Intervention Management Platform</Text>           
             </Animatable.View>              
   
@@ -116,7 +116,7 @@ export default class LoginScreen extends Component {
         >
           {({ values, handleChange, errors, setFieldTouched, touched, isValid, handleSubmit }) =>(
 
-        <View>
+        <View style={{top:(Layout.height / 100) * 10}}>
           {/* username textbox */}
           <Animatable.View animation="slideInLeft" >
               <Fumi
@@ -193,26 +193,26 @@ export default class LoginScreen extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.light,
+    backgroundColor: 'white',
   },  
   logo:{
-    width:(Layout.width / 100) *  60,
-    height:(Layout.height / 100) * 60,
+    width:(Layout.width / 100) *  70,
+    height:(Layout.height / 100) * 70,
     alignSelf:'center',
     top: (Layout.height / 100) * -10,   
     position:'absolute'    
     },
   title:{
-    top: (Layout.height / 100) * 35,   
-    color:Colors.dark,     
-    alignSelf:'center',
+    top: (Layout.height / 100) * 45,   
+    color:Colors.dark,         
     fontFamily:'Gotham_bold',
     
     fontSize:20,    
   },
   title_container:{        
-    alignContent:'center',
-    alignSelf:'center'
+    alignContent:'flex-start',
+        left:(Layout.width / 100) *  3,
+        alignSelf:'flex-start'
   },
   username: {
     width: (Layout.width / 100) * 90,

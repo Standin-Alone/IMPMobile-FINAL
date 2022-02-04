@@ -32,10 +32,10 @@ componentDidMount(){
           if(response.isConnected){
               
             let user_id = await AsyncStorage.getItem('user_id');
-            
-            axios.get(ipConfig.ipAddress + "/check_utility/"+DeviceInfo.getVersion()).then( async (response)=>{
-              console.warn(response.data['maintenance'])
+            console.warn(DeviceInfo.getVersion())
 
+            axios.get(ipConfig.ipAddress + "/check_utility/"+DeviceInfo.getVersion()).then( async (response)=>{
+             
 
                 // if(user_id){
                 //     self.props.navigation.replace('Root');
@@ -81,7 +81,10 @@ componentDidMount(){
               // check location
               await  Geolocation.getCurrentPosition(async (openLocation)=>{
               
-                if(openLocation){
+                // if(openLocation && (openLocation.coords.latitude != 0 && openLocation.coords.longitude != 0))
+                if(openLocation)
+                {
+                  console.warn(openLocation)
                   if(user_id){
                     self.props.navigation.replace('Root');
                   }else{

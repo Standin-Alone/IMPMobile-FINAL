@@ -138,7 +138,7 @@ export default class SummaryScreen extends Component {
             return  this.convertedDate(value.transac_date)  ==  this.convertedDate(item.transac_date)  &&  item.transac_by_fullname == value.transac_by_fullname  ? (
                 <View>
                   <List.Item
-                    title={value.item_name + "(" + value.quantity + ")"}
+                    title={value.item_name + " (" + value.quantity + " " + value.unit_measure  +")"}
                     titleStyle={{ fontFamily: "calibri-light" }}
                     description={ 
                       "₱" + value.amount + " per " + value.unit_measure 
@@ -162,7 +162,7 @@ export default class SummaryScreen extends Component {
               right={()=>              
                {                 
                 let filter_transaction = this.state.transactions.filter((transaction_value)=> this.convertedDate(item.transac_date)  ==  this.convertedDate(transaction_value.transac_date) && transaction_value.transac_by_fullname == item.transac_by_fullname );
-                return (<Text style={{top:10}}>{"₱"+
+                return (<Text style={{top:10,fontFamily:'Gotham_bold',color:Colors.green}}>{"₱"+
                             filter_transaction.reduce((val,index) => { return this.convertedDate(index.transac_date)  ==  this.convertedDate(item.transac_date)  ? val += Number( index.total_amount)  : null }, 0 ).toFixed(2)                            
                     }</Text>)
                     

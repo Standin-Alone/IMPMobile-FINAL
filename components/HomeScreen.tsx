@@ -178,7 +178,7 @@ export default class HomeScreen extends Component {
       <Card.Cover source={{uri:'data:image/jpeg;base64,'+item.base64}}          
           resizeMode='cover'
           resizeMethod='resize'
-        style={{height:(Layout.height/100) * 100}}
+        style={{height:(Layout.height/100) * 30}}
         
       />
     
