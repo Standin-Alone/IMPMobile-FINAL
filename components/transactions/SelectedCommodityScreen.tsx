@@ -280,7 +280,7 @@ export default class SelectedCommodityScreen extends Component {
           
               
         <View style={{flex: 1}}>
-        <View style={{position: 'absolute', left: 0, right: 0, bottom: 0,top:(Layout.height / 100) * 45}}>
+        <View style={{position: 'absolute', left: 0, right: 0, bottom: 0,top:(Layout.height / 100) * 35}}>
           <Button
             textStyle={styles.add_to_cart_txt}
             style={styles.add_to_cart_btn}
@@ -360,7 +360,7 @@ const styles = StyleSheet.create({
   },
   quantity:{
       position:'absolute',
-      top:(Layout.height/100) * 45,
+      top:(Layout.height/100) * 52,
       left:(Layout.width/100) * 50,
       width:(Layout.width/100) *45,
       borderWidth:0,
@@ -368,7 +368,7 @@ const styles = StyleSheet.create({
     borderRightWidth:0,
     },
 quantity_input:{
-    width:(Layout.width/100) * 15,
+    width:(Layout.width/100) * 8,
     borderWidth:0,
     borderLeftWidth:0,
     borderRightWidth:0,

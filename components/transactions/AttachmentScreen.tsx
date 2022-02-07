@@ -88,7 +88,8 @@ export default class AttachmentScreen extends Component {
         // launch camera
        let getImagePicker = await launchCamera({
         mediaType: 'photo',
-        includeBase64: true,                    
+        includeBase64: true, 
+        quality:0.5                   
       });
       
 
@@ -98,43 +99,62 @@ export default class AttachmentScreen extends Component {
         
         getImagePicker.assets.map(async response => {
         
-         
-        this.setState({latitude:openLocation.coords.latitude,longitude:openLocation.coords.longitude})
-        let image_rotate = await this.rotateImage(response.base64);
-        
-        
-        // get geo tag
-        let base64_uri_exif = this.geotagging(image_rotate,openLocation);
-        
-            this.setState({show_spinner:false});
-        if (response.cancelled != true) {
-          this.state.attachments.map((item, index) => {
-            
-            if (document_type == item.name) {
 
-              
-              let attachmentState = [...this.state.attachments];
-              attachmentState[index].file = base64_uri_exif;
-              
-              this.setState({attachments:attachmentState})
-            } else if (document_type == item.name + "(front)") {
-              //set file of front page of id
-              let attachmentState = [...this.state.attachments];
-              attachmentState[index].file[0].front = base64_uri_exif;
-              
-              this.setState({attachments:attachmentState})
-            } else if (document_type == item.name + "(back)") {
-              // set file of back page of id
-              let attachmentState = [...this.state.attachments];
-              attachmentState[index].file[0].back = base64_uri_exif;                
-              this.setState({attachments:attachmentState})
+        // validate file type
+
+
+        if(response.type == 'image/jpeg' || response.type == 'image/jpg') {
+            this.setState({latitude:openLocation.coords.latitude,longitude:openLocation.coords.longitude})
+            let image_rotate = await this.rotateImage(response.base64);
+            
+            
+
+            
+            // get geo tag
+            let base64_uri_exif = this.geotagging(image_rotate,openLocation);
+            
+                this.setState({show_spinner:false});
+            if (response.cancelled != true) {
+              this.state.attachments.map((item, index) => {
+                
+                if (document_type == item.name) {
+
+                  
+                  let attachmentState = [...this.state.attachments];
+                  attachmentState[index].file = base64_uri_exif;
+                  
+                  this.setState({attachments:attachmentState})
+                } else if (document_type == item.name + "(front)") {
+                  //set file of front page of id
+                  let attachmentState = [...this.state.attachments];
+                  attachmentState[index].file[0].front = base64_uri_exif;
+                  
+                  this.setState({attachments:attachmentState})
+                } else if (document_type == item.name + "(back)") {
+                  // set file of back page of id
+                  let attachmentState = [...this.state.attachments];
+                  attachmentState[index].file[0].back = base64_uri_exif;                
+                  this.setState({attachments:attachmentState})
+                }
+              });
+            }else{
+              this.setState({show_spinner:false});
             }
-          });
-        }else{
-          this.setState({show_spinner:false});
-        }
+          } else{
 
-            
+            Popup.show({
+              type: 'warning',              
+              title: 'Message',
+              textBody: "Your file format is not valid.",                
+              buttonText:'I understand',
+              okButtonStyle:styles.confirmButton,
+              okButtonTextStyle: styles.confirmButtonText,
+              callback: () => {                  
+                Popup.hide()                                    
+                
+              },              
+            })
+          }
         });
        
        

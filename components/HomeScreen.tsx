@@ -33,7 +33,8 @@ export default class HomeScreen extends Component {
         search:'',
         refreshing:false,
         isShowImage:false,
-        imageURI:null
+        imageURI:null,
+        currentPage:1
     };
 
   }
@@ -52,7 +53,7 @@ export default class HomeScreen extends Component {
         ipConfig.ipAddress+ "/get-scanned-vouchers/"+supplier_id+"/"+1,         
         ).catch((error)=>error.response);
         if (result.status == 200) {            
-          this.setState({today_vouchers_list:result.data,refreshing:false})
+          this.setState({today_vouchers_list:result.data,refreshing:false,currentPage:1})
                     
         }else{
           // console.warn(result);
@@ -68,21 +69,69 @@ export default class HomeScreen extends Component {
   };
   
 
+
+   
+  // load more scanned vouchers
+   loadMore = async ()=>{
+      
+    let addPage = this.state.currentPage;
+
+
+    this.setState({refreshing:true});
+    const supplier_id = await AsyncStorage.getItem("supplier_id");
+    NetInfo.fetch().then((response: any) => {
+      if (response.isConnected) {
+        axios
+          .get(
+            ipConfig.ipAddress+ "/get-scanned-vouchers/"+supplier_id+"/"+addPage,    
+          )
+          .then((response) => {
+            
+            if (response.status == 200) {              
+              if(response.data.length){
+                console.warn(response.data.length)
+                let new_data = response.data;                
+                   
+                this.setState({today_vouchers_list: [...this.state.today_vouchers_list,new_data]});
+                
+                
+
+                
+              
+                this.setState({refreshing:false});
+                
+              } 
+            }
+
+           
+          })
+          .catch((error) => {
+            
+            console.warn(error.response);
+            this.setState({refreshing:false});
+          });
+      } else {
+        alert('No internet')
+      }
+    });
+  }
+
+
    getScannedVouchers = async () => {
     const supplier_id = await AsyncStorage.getItem("supplier_id");
-
+    let page = this.state.currentPage;
     this.setState({refreshing:true});
         
     NetInfo.fetch().then((response: any) => {
       if (response.isConnected) {
         axios
           .get(
-            ipConfig.ipAddress+ "/get-scanned-vouchers/"+supplier_id+"/"+1
+            ipConfig.ipAddress+ "/get-scanned-vouchers/"+supplier_id+"/"+page
           )
           .then((response) => {
             if (response.status == 200) {
 
-              this.setState({today_vouchers_list:response.data})
+              this.setState({today_vouchers_list:response.data,currentPage:1})
               this.setState({refreshing:false});
 
             }
@@ -122,7 +171,7 @@ export default class HomeScreen extends Component {
 
      // got to summary 
    goToSummary = (item) =>{  
-    
+    console.warn(this.state.today_vouchers_list);
     NetInfo.fetch().then(async (response: any) => {
       
       if (response.isConnected) {
@@ -267,7 +316,24 @@ export default class HomeScreen extends Component {
           renderItem={({ item, index }) =>  this.renderItem(item,index)}               
           contentContainerStyle={{flexGrow:0,paddingBottom:90}}
           style={styles.today_voucher_flatlist}
-          keyExtractor={(item,index)=>index}                           
+          keyExtractor={(item,index)=>index}          
+          
+          onEndReachedThreshold={0.1} // so when you are at 5 pixel from the bottom react run onEndReached function
+          onEndReached={async ({distanceFromEnd}) => {     
+          
+            
+             if (distanceFromEnd > 0 && (this.state.today_vouchers_list.length == (this.state.currentPage * 2))) 
+              { 
+
+                await this.setState((prevState) => ({currentPage:prevState.currentPage + 1}));
+                this.loadMore();
+              }
+              
+            
+        
+          }}
+
+
         />
 
         <Modal
