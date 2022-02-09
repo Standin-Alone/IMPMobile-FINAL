@@ -34,7 +34,7 @@ export default class HomeScreen extends Component {
         refreshing:false,
         isShowImage:false,
         imageURI:null,
-        currentPage:1
+        currentPage:0
     };
 
   }
@@ -50,10 +50,10 @@ export default class HomeScreen extends Component {
       if (response.isConnected) {
        
       const  result = await axios.get(
-        ipConfig.ipAddress+ "/get-scanned-vouchers/"+supplier_id+"/"+1,         
+        ipConfig.ipAddress+ "/get-scanned-vouchers/"+supplier_id+"/"+0,         
         ).catch((error)=>error.response);
         if (result.status == 200) {            
-          this.setState({today_vouchers_list:result.data,refreshing:false,currentPage:1})
+          this.setState({today_vouchers_list:result.data,refreshing:false,currentPage:0})
                     
         }else{
           // console.warn(result);
@@ -87,22 +87,24 @@ export default class HomeScreen extends Component {
           )
           .then((response) => {
             
-            if (response.status == 200) {              
+            if (response.status == 200) {  
+
               if(response.data.length){
                 console.warn(response.data.length)
                 let new_data = response.data;                
                    
-                this.setState({today_vouchers_list: [...this.state.today_vouchers_list,new_data]});
+                this.setState({today_vouchers_list: [...new Set(this.state.today_vouchers_list),...new_data]});
                 
                 
 
                 
-              
-                this.setState({refreshing:false});
+       
                 
               } 
             }
 
+                   
+            this.setState({refreshing:false});
            
           })
           .catch((error) => {
@@ -119,7 +121,7 @@ export default class HomeScreen extends Component {
 
    getScannedVouchers = async () => {
     const supplier_id = await AsyncStorage.getItem("supplier_id");
-    let page = this.state.currentPage;
+    let page = 0;
     this.setState({refreshing:true});
         
     NetInfo.fetch().then((response: any) => {
@@ -131,7 +133,7 @@ export default class HomeScreen extends Component {
           .then((response) => {
             if (response.status == 200) {
 
-              this.setState({today_vouchers_list:response.data,currentPage:1})
+              this.setState({today_vouchers_list:response.data,currentPage:0})
               this.setState({refreshing:false});
 
             }
@@ -186,10 +188,8 @@ export default class HomeScreen extends Component {
           
         })        
       } else {
-        alert('No Internet Connection.Pleae check your internet connection.')
-        
+        alert('No Internet Connection.Pleae check your internet connection.')        
       }
-
     });
   }
 
@@ -231,10 +231,7 @@ export default class HomeScreen extends Component {
         
       />
     
-      
-      {/* <Card.Content>
-        <Text style = {styles.name}>{item.fullname}</Text>
-      </Card.Content> */}
+       
     </Card>
   )
 
@@ -321,12 +318,12 @@ export default class HomeScreen extends Component {
           onEndReachedThreshold={0.1} // so when you are at 5 pixel from the bottom react run onEndReached function
           onEndReached={async ({distanceFromEnd}) => {     
           
-            
-             if (distanceFromEnd > 0 && (this.state.today_vouchers_list.length == (this.state.currentPage * 2))) 
+              console.warn(this.state.currentPage)
+             if (distanceFromEnd > 0 ) 
               { 
 
-                await this.setState((prevState) => ({currentPage:prevState.currentPage + 1}));
-                this.loadMore();
+                await this.setState((prevState) => ({currentPage:prevState.currentPage + 2}));
+                await this.loadMore();
               }
               
             

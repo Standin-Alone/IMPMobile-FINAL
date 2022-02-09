@@ -53,11 +53,11 @@ export default class ViewCartScreen extends Component {
   );
 
   // quantity function 
-  handleQuantity =   (item,index,value)=> {
+  handleQuantity =   async (item,index,value)=> {
     let sum = 0;
     var total_amount = parseFloat(item.price) * value;
     
-    let compute_total = this.state.data.map((prev) => {
+    let compute_total = await this.state.data.map((prev) => {
       sum += prev.total_amount;
       return sum;
     });
@@ -93,6 +93,7 @@ export default class ViewCartScreen extends Component {
         prevState.data[index].quantity = value;
         prevState.data[index].status = "error";
         prevState.data[index].message = "Your total amount of "+item.name+" exceed in limit amount of ₱"+item.ceiling_amount; 
+        
       }
     },
     () => {
