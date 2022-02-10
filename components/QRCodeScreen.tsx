@@ -70,9 +70,9 @@ export default class QRCodeScreen extends Component{
                       okButtonStyle:styles.confirmButton,
                       okButtonTextStyle: styles.confirmButtonText,
                       callback: () => {    
-                        this.setState({isBarcodeRead:true});              
+                        
                         Popup.hide()            
-                        this.props.navigation.navigate("FarmerProfileScreen",{data:response.data["data"],
+                        this.props.navigation.replace("FarmerProfileScreen",{data:response.data["data"],
                           program_items:response.data["program_items"],
                           history:response.data["history"],
                           supplier_id:get_supplier_id,
@@ -80,6 +80,7 @@ export default class QRCodeScreen extends Component{
                           user_id:get_user_id,                          
                         
                         });
+                        this.setState({isBarcodeRead:true});              
                                                 
                       },              
                     })

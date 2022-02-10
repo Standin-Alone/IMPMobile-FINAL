@@ -54,6 +54,7 @@ export default class LoginScreen extends Component {
           if(response.isConnected){
             
             axios.post(ipConfig.ipAddress+'/sign_in',data).then((response)=>{              
+              console.warn(response.data )            
               if(response.data['Message'] == 'true'){
                 
                 
@@ -77,6 +78,17 @@ export default class LoginScreen extends Component {
               else if(response.data['Message'] == 'no account'){                
                 resetForm();
                 this.setState({isLoading:false,error:true,error_message:'Account does not exist'})                
+              } 
+              // check if account is for approval
+              else if(response.data['Message'] == 'Your account status is for approval.'){    
+                
+                resetForm();
+                this.setState({isLoading:false,error:true,error_message:'Your account status is for approval.'})                
+              } 
+              // check if account is enabled
+              else if(response.data['Message'] == 'Disabled'){                
+                resetForm();
+                this.setState({isLoading:false,error:true,error_message:'Your account is disabled.'})                
               }              
               // check if username and password is correct
               else{

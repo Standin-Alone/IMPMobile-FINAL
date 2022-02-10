@@ -18,7 +18,7 @@ import { createFilter } from "react-native-search-filter";
 import Moment from 'react-moment';
 import ImageViewer from "react-native-image-zoom-viewer";
 import moment from 'moment';
-
+import {  Popup} from 'react-native-popup-confirm-toast';
 const KEYS_TO_FILTERS = ["reference_no", "fullname"];
 export default class HomeScreen extends Component {
   constructor(props) {
@@ -51,14 +51,12 @@ export default class HomeScreen extends Component {
        
       const  result = await axios.get(
         ipConfig.ipAddress+ "/get-scanned-vouchers/"+supplier_id+"/"+0,         
-        ).catch((error)=>error.response);
+        ).catch((error)=>error.response.data.message);
         if (result.status == 200) {            
           this.setState({today_vouchers_list:result.data,refreshing:false,currentPage:0})
                     
-        }else{
-          // console.warn(result);
         }
-        
+        this.setState({refreshing:false});
       } else {
         // Alert.alert("Message", "No Internet Connection.");
         this.setState({refreshing:false});
@@ -142,11 +140,22 @@ export default class HomeScreen extends Component {
           })
           .catch((error) => {
             // Alert.alert('Error!','Something went wrong.')
-            console.warn(error.response);
+            console.warn(error.response.data.message);
             this.setState({refreshing:false});
           });
       } else {
-        // Alert.alert("Message", "No Internet Connection.");
+        Popup.show({
+          type: 'danger',              
+          title: 'Message',
+          textBody: "No internet connection.",                
+          buttonText:'Ok',
+          okButtonStyle:styles.confirmButton,
+          okButtonTextStyle: styles.confirmButtonText,
+          callback: () => {                
+            Popup.hide()                                    
+          },              
+        })
+   
       }
     });
 

@@ -25,7 +25,7 @@ export default class ViewCartScreen extends Component {
 
   componentDidMount(): void {
       this.setState({data:this.state.params.cart,total:  this.state.params.cart.reduce((prev, current) => prev + current.total_amount, 0).toFixed(2)});
-    console.warn(this.state.params.cart)
+    console.warn(this.state.params.cart.reduce((prev, current) => prev + current.total_amount, 0).toFixed(2))
   }
 
 
@@ -54,15 +54,10 @@ export default class ViewCartScreen extends Component {
 
   // quantity function 
   handleQuantity =   async (item,index,value)=> {
-    let sum = 0;
+
     var total_amount = parseFloat(item.price) * value;
     
-    let compute_total = await this.state.data.map((prev) => {
-      sum += prev.total_amount;
-      return sum;
-    });
-
-      console.warn(compute_total);
+ 
           
   //   // set condition when total amount of item exceed in ceiling amount
     if(total_amount <= item.ceiling_amount ){  
@@ -82,7 +77,7 @@ export default class ViewCartScreen extends Component {
 
       
     
-    this.setState({total:compute_total[0]})
+    this.setState({total: this.state.data.reduce((prev, current) => prev + current.total_amount, 0).toFixed(2)})
   }
   else{
 
@@ -100,7 +95,7 @@ export default class ViewCartScreen extends Component {
       console.warn('error')
    });
     
-   this.setState({total:compute_total[0]})
+   this.setState({total: this.state.data.reduce((prev, current) => prev + current.total_amount, 0).toFixed(2)})
 
 
   }    

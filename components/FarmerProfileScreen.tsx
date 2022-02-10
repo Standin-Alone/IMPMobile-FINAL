@@ -61,7 +61,10 @@ export default class FarmerProfileScreen extends Component {
 
   
   handleGoBack = () => {
-    this.props.navigation.goBack();
+    this.props.navigation.reset({
+      index: 0,
+      routes: [{name: 'Root'}],
+    })
   }
 
   handleGoToCommodity = () => { 
