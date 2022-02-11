@@ -54,7 +54,7 @@ export default class LoginScreen extends Component {
           if(response.isConnected){
             
             axios.post(ipConfig.ipAddress+'/sign_in',data).then((response)=>{              
-              console.warn(response.data )            
+              
               if(response.data['Message'] == 'true'){
                 
                 

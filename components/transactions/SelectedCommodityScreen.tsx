@@ -18,9 +18,13 @@ import NumberFormat from 'react-number-format';
 import {Fumi} from 'react-native-textinput-effects';
 import NumericInput from "react-native-numeric-input";
 import {  Popup} from 'react-native-popup-confirm-toast';
+import { SharedElement } from 'react-navigation-shared-element';
+
+
 export default class SelectedCommodityScreen extends Component {
   constructor(props) {
     super(props);
+    
     this.state = {          
         params:this.props.route.params,      
         focus_amount:false,
@@ -38,6 +42,11 @@ export default class SelectedCommodityScreen extends Component {
     
   }
 
+
+
+  componentDidMount(){
+    
+  }
   //  add to cart button
   addToCart = (price, limit_price) => {
     if (price <= limit_price) {
@@ -122,7 +131,7 @@ export default class SelectedCommodityScreen extends Component {
       this.setState({
         total_amount : total_amount,
         quantity : value,
-        message: "You exceed on the limit price ",
+        message: "You exceed on the price limit ",
         error: true,
 
     })    
@@ -197,12 +206,14 @@ export default class SelectedCommodityScreen extends Component {
 
     return (
       <View  style={styles.container}>        
+          
+            <Image source={{uri: "data:image/jpeg;base64," + this.state.params.item.base64}} style={styles.logo}  />
         
-        <Animatable.Image animation="fadeInDownBig" source={{uri: "data:image/jpeg;base64," + this.state.params.item.base64}} style={styles.logo} />
 
         <Animatable.Text style={styles.commodity_title}><FontAwesomeIcon name="info-circle" color={Colors.blue_green} size={20}/>  {this.state.params.item.item_name} ({this.state.params.item.unit_measure})</Animatable.Text>
         {/* Quantity Input */}
         <NumericInput
+        
             value={this.state.quantity}
             onChange={(value) => this.handleQuantity(value)}
             minValue={1}
@@ -214,7 +225,7 @@ export default class SelectedCommodityScreen extends Component {
             step={0.1}
             valueType="real"
             rounded
-            iconStyle={{ color: "white" }}
+            iconStyle={{ color: "white"}}
             inputStyle={styles.quantity_input}
             containerStyle={styles.quantity}
             
@@ -340,7 +351,7 @@ const styles = StyleSheet.create({
   commodity_title:{
     top:(Layout.height/100) * 15,
     left:10,
-    fontSize:20,
+    fontSize:14,
     fontFamily:'Gotham_bold',
     color:Colors.header_text
   },
@@ -361,8 +372,8 @@ const styles = StyleSheet.create({
   quantity:{
       position:'absolute',
       top:(Layout.height/100) * 52,
-      left:(Layout.width/100) * 50,
-      width:(Layout.width/100) *45,
+      left:(Layout.width/100) * 60,
+      width:(Layout.width/100) *35,
       borderWidth:0,
       borderLeftWidth:0,
     borderRightWidth:0,

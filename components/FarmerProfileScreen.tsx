@@ -69,7 +69,7 @@ export default class FarmerProfileScreen extends Component {
 
   handleGoToCommodity = () => { 
     let get_program = this.state.params.data[0].shortname;   
-    console.warn(get_program);
+  
     this.props.navigation.navigate('FuelScreen',this.state.params);    
     // if(get_program == 'FS'){      
     //   this.props.navigation.navigate('FuelScreen',this.state.params);    

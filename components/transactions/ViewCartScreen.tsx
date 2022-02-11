@@ -25,7 +25,7 @@ export default class ViewCartScreen extends Component {
 
   componentDidMount(): void {
       this.setState({data:this.state.params.cart,total:  this.state.params.cart.reduce((prev, current) => prev + current.total_amount, 0).toFixed(2)});
-    console.warn(this.state.params.cart.reduce((prev, current) => prev + current.total_amount, 0).toFixed(2))
+    
   }
 
 
@@ -61,18 +61,16 @@ export default class ViewCartScreen extends Component {
           
   //   // set condition when total amount of item exceed in ceiling amount
     if(total_amount <= item.ceiling_amount ){  
-      console.warn(total_amount);
+      
       this.setState((prevState) => {
-        console.warn(prevState.data[index].name);
+        
         if (prevState.data[index].name == item.name) {
           prevState.data[index].total_amount = total_amount;
           prevState.data[index].quantity = value;
           prevState.data[index].status = "success";
           
         }
-      },  () => {
-        console.warn('true')
-     });
+      });
       
 
       
@@ -90,10 +88,7 @@ export default class ViewCartScreen extends Component {
         prevState.data[index].message = "Your total amount of "+item.name+" exceed in limit amount of ₱"+item.ceiling_amount; 
         
       }
-    },
-    () => {
-      console.warn('error')
-   });
+    });
     
    this.setState({total: this.state.data.reduce((prev, current) => prev + current.total_amount, 0).toFixed(2)})
 

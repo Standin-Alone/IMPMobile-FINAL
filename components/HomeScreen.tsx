@@ -88,7 +88,7 @@ export default class HomeScreen extends Component {
             if (response.status == 200) {  
 
               if(response.data.length){
-                console.warn(response.data.length)
+                
                 let new_data = response.data;                
                    
                 this.setState({today_vouchers_list: [...new Set(this.state.today_vouchers_list),...new_data]});
@@ -182,14 +182,14 @@ export default class HomeScreen extends Component {
 
      // got to summary 
    goToSummary = (item) =>{  
-    console.warn(this.state.today_vouchers_list);
+    
     NetInfo.fetch().then(async (response: any) => {
       
       if (response.isConnected) {
         
         axios.get(ipConfig.ipAddress + "/get-transaction-history/"+item.reference_no).then((response)=>{                    
           // push to summary screen 
-          console.warn(item)
+          
           this.props.navigation.push('SummaryScreen',{transactions:response.data,fullname:item.fullname,current_balance:item.current_balance,voucher_info:item});
         }).catch(err=>{
           
@@ -327,7 +327,7 @@ export default class HomeScreen extends Component {
           onEndReachedThreshold={0.1} // so when you are at 5 pixel from the bottom react run onEndReached function
           onEndReached={async ({distanceFromEnd}) => {     
           
-              console.warn(this.state.currentPage)
+              
              if (distanceFromEnd > 0 ) 
               { 
 

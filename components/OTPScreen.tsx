@@ -44,7 +44,7 @@ export default class OTPScreen extends Component {
   // handle verify otp
   handleVerifyOTP = (values,resetForm)=>{
 
-    console.warn(this.state.params.user_id);
+    
     let data = {
       user_id:this.state.params.user_id,
       code:values.otp
@@ -53,12 +53,12 @@ export default class OTPScreen extends Component {
         
       this.setState({isLoading:true,error:false})
       // axios post here
-      console.warn(data);
+      
       NetInfo.fetch().then(async (response)=>{
         
         if(response.isConnected){
           axios.post(ipConfig.ipAddress+'/validate-otp',data).then( async (response)=>{
-            console.warn(response);
+            
             this.setState({error:false})
             if (response.data == true) {      
               AsyncStorage.setItem("user_id", this.state.params.user_id.toLocaleString());
@@ -106,7 +106,7 @@ export default class OTPScreen extends Component {
       NetInfo.fetch().then(async (response)=>{
         if(response.isConnected){
           axios.post(ipConfig.ipAddress+'/resend-otp',data).then((response)=>{
-            console.warn(response.data);                  
+                         
             if(response.data['Message'] == 'true'){
               alert('Successfully resend new OTP to your email.');
                 

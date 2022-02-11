@@ -27,9 +27,11 @@ function MyStack(){
                 <Stack.Screen component={FarmerProfileScreen} name='FarmerProfileScreen' options={{headerShown:false,headerTransparent:true}}/>
                 <Stack.Screen component={SelectedCommodityScreen} name='SelectedCommodityScreen' options={{headerTitle:'Commodity',headerTransparent:true}}
                 
+
+                
                 sharedElements={(route, otherRoute, showing) => {
-                    const { item } = route.params;
-                    return [`item.${item.sub_id}.photo`];
+                    const { item } = route.params;                    
+                    return [{   id: item.item_id,                                                }];
                   }}
                   
                 />

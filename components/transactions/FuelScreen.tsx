@@ -148,7 +148,7 @@ export default class FuelScreen extends Component {
         <FlatList
           nestedScrollEnabled
           data={this.state.data.filter((item) =>
-            !item.item_name.toLowerCase().match("fertilizer") &&
+        
             !this.state.cart.find((value) => value.name === item.item_name)
             ? item : null
             )}

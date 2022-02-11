@@ -80,9 +80,9 @@ export default class AuthenticationScreen extends React.Component {
                 Geolocation.getCurrentPosition(
                   async openLocation => {
                     // if(openLocation && (openLocation.coords.latitude != 0 && openLocation.coords.longitude != 0))
-                    console.warn(openLocation);
+                    
                     if (openLocation) {
-                      console.warn(openLocation);
+                      
                       if (user_id) {
                         self.props.navigation.replace('Root');
                       } else {

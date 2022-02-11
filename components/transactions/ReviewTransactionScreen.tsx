@@ -156,9 +156,9 @@ export default class ReviewTransactionScreen extends Component {
       
       buttonText: 'CONFIRM',
       confirmText:'Cancel',                                 
-      callback: (e) => {
+      callback: () => {
 
-        console.warn(e);
+        
         Popup.hide()                 
         this.setState({show_spinner:true});
         // get transact
@@ -202,7 +202,7 @@ export default class ReviewTransactionScreen extends Component {
           .catch(function (error) {          
             this.setState({show_spinner:false});
             alert("Error occured!." + error.response);
-            console.warn(error.response.data);      
+            
           });  
         },2000)
            
