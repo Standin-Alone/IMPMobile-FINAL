@@ -29,6 +29,7 @@ export default class AuthenticationScreen extends React.Component {
     setTimeout(() => {
       NetInfo.fetch().then(async response => {
         if (response.isConnected) {
+     
           let user_id = await AsyncStorage.getItem('user_id');
 
           axios
@@ -36,6 +37,7 @@ export default class AuthenticationScreen extends React.Component {
               ipConfig.ipAddress + '/check_utility/' + DeviceInfo.getVersion(),
             )
             .then(async response => {
+              
               // if(user_id){
               //     self.props.navigation.replace('Root');
               //   }else{

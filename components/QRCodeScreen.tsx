@@ -51,7 +51,7 @@ export default class QRCodeScreen extends Component{
               form
             )
             .then( (response) => {
-              
+                console.warn(response.data)
               if (response.data["Message"] == "true") {
                 // navigation.navigate('ClaimVoucher',response.data[0]['data']);
                 // setScanned(false);
@@ -91,7 +91,7 @@ export default class QRCodeScreen extends Component{
                     
                     Popup.show({
                       type: 'danger',              
-                      title: 'Error!',
+                      title: 'Message',
                       textBody: "This voucher is fully claimed",                
                       buttonText:'Ok',
                       okButtonStyle:styles.confirmButton,
@@ -110,7 +110,7 @@ export default class QRCodeScreen extends Component{
                   
                   Popup.show({
                     type: 'danger',              
-                    title: 'Error!',
+                    title: 'Message',
                     textBody: "Not Enough Balance.",                
                     buttonText:'Ok',
                     okButtonStyle:styles.confirmButton,
@@ -125,7 +125,7 @@ export default class QRCodeScreen extends Component{
               }else if(response.data["Message"] == "Not Yet Open") {
                 Popup.show({
                   type: 'danger',              
-                  title: 'Error!',
+                  title: 'Message',
                   textBody: "The time of voucher transaction is from 6:00 am to 6:00 pm only.",                
                   buttonText:'Ok',
                   okButtonStyle:styles.confirmButton,
@@ -137,28 +137,45 @@ export default class QRCodeScreen extends Component{
                 })
 
               }
-              // else if(response.data["Message"] == "already scanned") {
+              else if(response.data["Message"] == "on-going process") {
                 
                   
-              //   Popup.show({
-              //     type: 'danger',              
-              //     title: 'Error!',
-              //     textBody: "This voucher is already scanned by the others.",                
-              //     buttonText:'Ok',
-              //     okButtonStyle:styles.confirmButton,
-              //     okButtonTextStyle: styles.confirmButtonText,
-              //     callback: () => {    
-              //       this.setState({isBarcodeRead:true});              
-              //       Popup.hide()                                    
-              //     },              
-              //   })
+                Popup.show({
+                  type: 'danger',              
+                  title: 'Message',
+                  textBody: "The voucher process is currently on-going.",                
+                  buttonText:'Ok',
+                  okButtonStyle:styles.confirmButton,
+                  okButtonTextStyle: styles.confirmButtonText,
+                  callback: () => {    
+                    this.setState({isBarcodeRead:true});              
+                    Popup.hide()                                    
+                  },              
+                })
                                
-              // }             
+              }   
+              else if(response.data["Message"] == "already scanned") {
+                
+                  
+                Popup.show({
+                  type: 'danger',              
+                  title: 'Message',
+                  textBody: "This voucher is already scanned by the others.",                
+                  buttonText:'Ok',
+                  okButtonStyle:styles.confirmButton,
+                  okButtonTextStyle: styles.confirmButtonText,
+                  callback: () => {    
+                    this.setState({isBarcodeRead:true});              
+                    Popup.hide()                                    
+                  },              
+                })
+                               
+              }             
               else {
                   
                 Popup.show({
                   type: 'danger',              
-                  title: 'Error!',
+                  title: 'Message',
                   textBody: "Reference Number doesn't exist.",                
                   buttonText:'Ok',
                   okButtonStyle:styles.confirmButton,
@@ -176,7 +193,7 @@ export default class QRCodeScreen extends Component{
               console.warn(error.response);                           
               Popup.show({
                 type: 'danger',              
-                title: 'Error!',
+                title: 'Message',
                 textBody: "Something went wrong!",                
                 buttonText:'Ok',
                 okButtonStyle:styles.confirmButton,

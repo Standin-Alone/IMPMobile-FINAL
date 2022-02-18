@@ -18,13 +18,15 @@ import Images from '../constants/Images';
 import Button from 'apsl-react-native-button';
 import Moment from 'react-moment';
 import NumberFormat from 'react-number-format';
+import {Popup } from 'react-native-popup-confirm-toast';
 import Spinner from 'react-native-spinkit';
 export default class FarmerProfileScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {          
         params:this.props.route.params,
-        history:this.props.route.params.history
+        history:this.props.route.params.history,
+        show_spinner:false
     };
 
   }
@@ -67,10 +69,105 @@ export default class FarmerProfileScreen extends Component {
     })
   }
 
+  returnCart = (new_cart)=>{
+ 
+    
+  }
+
+
+
+  // go to commodity
   handleGoToCommodity = () => { 
-    let get_program = this.state.params.data[0].shortname;   
-  
-    this.props.navigation.navigate('FuelScreen',this.state.params);    
+    
+    
+    this.setState({show_spinner:true});
+    
+    let cart = [];
+      // check internet connection
+      NetInfo.fetch().then(async (response)=>{
+        let data  = {
+            supplier_id:await AsyncStorage.getItem('supplier_id'),
+            reference_no:this.state.params.data[0].reference_no
+        }
+
+        if(response.isConnected){
+          
+        // check if voucher has draft transaction
+        axios.post(ipConfig.ipAddress+'/check-draft-transaction',data).then((response)=>{              
+          this.setState({show_spinner:false});
+          let result = response.data;              
+          
+          if(result['message'] == 'true'){
+                                
+            if(result['draft_cart'].length != 0){
+
+
+         
+
+              // push  draft cart
+              result['draft_cart'].map((item_cart)=>
+                
+                cart.push(
+                  {
+                    sub_id: item_cart.sub_program_id,
+                    image: this.state.params.program_items.filter((item_program)=>item_program.sub_id == item_cart.sub_program_id)[0].base64,
+                    name: this.state.params.program_items.filter((item_program)=>item_program.sub_id == item_cart.sub_program_id)[0].item_name,
+                    unit_measure: this.state.params.program_items.filter((item_program)=>item_program.sub_id == item_cart.sub_program_id)[0].unit_measure,
+                    ceiling_amount: this.state.params.program_items.filter((item_program)=>item_program.sub_id == item_cart.sub_program_id)[0].ceiling_amount,
+                    total_amount: item_cart.total_amount,
+                    quantity: item_cart.quantity,
+                    price: item_cart.amount,
+                    reference_no: this.state.params.data[0].reference_no,
+                    item_category: item_cart.item_category,
+                    supplier_id: data.supplier_id
+                  }
+                )
+              )
+                  
+
+              // continue the last transaction to view cart screen
+              this.props.navigation.navigate("ViewCartScreen", {
+                  cart: cart,
+                  available_balance: this.state.params.data[0].Available_Balance,
+                  voucher_info:this.state.params.data,
+                  supplier_id: this.state.params.supplier_id,
+                  full_name: this.state.params.full_name,
+                  user_id: this.state.params.user_id,
+                  program_data :this.state.params.program_items,
+                  return_cart:this.returnCart.bind(this),             
+                  data:this.state.params.data,
+              });
+                            
+            }else{
+
+                // go to commodity screen 
+              this.props.navigation.navigate('CommodityScreen',this.state.params); 
+            
+            }
+
+          }else{
+            // go to commodity screen 
+            this.props.navigation.navigate('CommodityScreen',this.state.params); 
+          }
+          
+
+        }).catch(err=>{
+          this.setState({show_spinner:false});
+          console.warn(err)})
+
+        }else{
+          this.setState({show_spinner:false});
+        }
+        
+      });
+    
+
+
+    
+
+
+
+
     // if(get_program == 'FS'){      
     //   this.props.navigation.navigate('FuelScreen',this.state.params);    
     // }else if(get_program == 'RRP2' ){
@@ -85,6 +182,16 @@ export default class FarmerProfileScreen extends Component {
     return (
       <View  style={styles.container}>        
 
+      {this.state.show_spinner && (
+          <View style={styles.loading}>
+            <Spinner
+              isVisible={this.state.show_spinner}
+              size={100}
+              type={'Wave'}
+              color={Colors.light_green}
+            />
+          </View>
+        )}
       <LinearGradient colors={['#A9F99E', Colors.green, Colors.blue_green]} style={styles.cover}>
           <FontAwesomeIcon name="arrow-left" color={Colors.light} style={styles.go_back} size={30} onPress={this.handleGoBack}/>
           {/* Current Balance */}
@@ -134,7 +241,7 @@ export default class FarmerProfileScreen extends Component {
             disabledStyle={{opacity: 1}}
             onPress ={this.handleGoToCommodity}
             >
-            Go to Commodities
+           Start Transaction
           </Button>
         </View>
       </View>
@@ -214,6 +321,7 @@ const styles = StyleSheet.create({
     marginLeft: (Layout.width / 100) * 1,
     height:(Layout.height / 100) * 20,
     borderRadius: 15,            
+    borderWidth:1,
     width: (Layout.width / 100) * 90,
   },
   flat_list:{
@@ -226,6 +334,17 @@ const styles = StyleSheet.create({
     top:(Layout.height / 100) * 2,      
     left: (Layout.width / 100) * 5,
     position:'absolute'
+  },  
+  loading: {
+    zIndex:1,
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    alignItems: 'center',
+    justifyContent: 'center',
   }
   
 });

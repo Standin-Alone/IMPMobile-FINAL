@@ -142,7 +142,8 @@ export default class ReviewTransactionScreen extends Component {
       current_balance: this.state.params.voucher_info.amount_val,      
       latitude:this.state.params.latitude,
       longitude:this.state.params.longitude,
-      program: this.state.params.voucher_info.shortname
+      program: this.state.params.voucher_info.shortname,
+      one_time_transaction:this.state.params.one_time_transaction,
 
     };
     formData.append("voucher_info", JSON.stringify(voucher_info));
@@ -171,7 +172,7 @@ export default class ReviewTransactionScreen extends Component {
           .post(ipConfig.ipAddress+ "/submit-voucher-cfsmff", formData)
           .then((response) => {       
           
-                
+              console.warn(response.data)
             if(response.data == 'success'){
               this.setState({show_spinner:false});
               Popup.show({
@@ -199,7 +200,8 @@ export default class ReviewTransactionScreen extends Component {
               alert("Error uploading due to unstable connection. Please try again.*");
             } 
           })
-          .catch(function (error) {          
+          .catch(function (error) {   
+            console.warn(error.response)       
             this.setState({show_spinner:false});
             alert("Error occured!." + error.response);
             

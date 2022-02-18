@@ -228,8 +228,7 @@ export default class HomeScreen extends Component {
     >
         <Card.Title        
         title    = {item.reference_no}
-        subtitle = {<Moment element={Text}  
-        style    = {{color:Colors.muted}}  fromNow>{item.transac_date}</Moment>}        
+        subtitle = {<View><Text><Icon name="clock-o" family="fontawesome" color={Colors.base} size={15} /> <Moment element={Text}    style    = {{color:Colors.muted}}  fromNow>{item.transac_date}</Moment></Text></View>}        
         left     = {this.leftComponent}
         right    = {()=>this.rightComponent(item)}
       />

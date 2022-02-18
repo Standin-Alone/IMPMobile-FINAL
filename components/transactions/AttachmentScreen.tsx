@@ -29,6 +29,7 @@ export default class AttachmentScreen extends Component {
         latitude:'',
         longitude:'',
         show_spinner:false,
+        other_documents_count:1,
         attachments:[
             {
               name: "Farmer with Commodity",
@@ -42,6 +43,12 @@ export default class AttachmentScreen extends Component {
               name: "Receipt",
               file: null,
             },
+            {
+              name: "Other Documents",
+              file: [],
+            },
+        
+            
           ],
           showProgress:true,
           showImage:false,
@@ -116,8 +123,17 @@ export default class AttachmentScreen extends Component {
                 this.setState({show_spinner:false});
             if (response.cancelled != true) {
               this.state.attachments.map((item, index) => {
+
+
                 
-                if (document_type == item.name) {
+                if (document_type == 'Other Documents' && item.name == 'Other Documents') {
+
+                  console.warn(item.name);  
+                  let attachmentState = [...this.state.attachments];
+                  attachmentState[index].file.push(base64_uri_exif);
+                  
+                  this.setState({attachments:attachmentState})
+                }else if (document_type == item.name) {
 
                   
                   let attachmentState = [...this.state.attachments];
@@ -189,9 +205,88 @@ export default class AttachmentScreen extends Component {
   
 // render card in flatlist
  renderItem = (item, index) => {
-    return item.file == null ? (
+    return (
+
+           // condition for other documents
+    item.name == 'Other Documents' ?
+
+    (     
+
+
+
+
+      item.file.length == 0 ?
       <View>
-        <Text style={styles.title}> <FontAwesomeIcon name="info-circle" color={Colors.blue_green} size={25}/> {item.name}</Text>
+          <Text style={styles.title}> <FontAwesomeIcon name="info-circle" color={Colors.blue_green} size={25}/> {item.name}</Text>
+          <Button
+            
+            style={styles.card_none}
+            onPress={() => this.openCamera(item.name)}
+          >
+            <Image
+              source={Images.add_photo}
+              style={styles.card_add_icon}
+            />
+            
+            <Text style={styles.card_text}>Press to add picture</Text>
+          </Button>
+
+          
+        </View>
+      :
+      item.file.map((item_other_documents,index)=>(
+
+        <View>
+
+        {index == 0 &&
+          <Text style={styles.title}> <FontAwesomeIcon name="info-circle" color={Colors.blue_green} size={25}/> {item.name}</Text>
+        }
+          <Card
+            elevation={10}
+            style={styles.card}
+            onPress={() => this.showImage(item_other_documents)}
+          >
+            <Card.Cover
+              resizeMode="contain"
+              source={{ uri: "data:image/jpeg;base64," + item_other_documents }}
+            />
+            <Card.Actions>
+              <Text
+                style={styles.retake}
+                onPress={() => this.openCamera(item.name)}
+              >
+                Press here to retake photo...
+              </Text>
+            </Card.Actions>
+          </Card>      
+                      
+
+          {item.file.length == (index +1) &&
+
+            <Button            
+            style={styles.card_none}
+            onPress={() => this.openCamera(item.name)}
+            >
+            <Image
+              source={Images.add_photo}
+              style={styles.card_add_icon}
+            />
+
+            <Text style={styles.card_text}>Press to add picture</Text>
+            </Button>
+          }
+          
+
+        </View>
+     
+      ))    
+    )  
+    
+    :
+    
+    item.file == null ? (
+      <View>
+        <Text style={styles.title}> <FontAwesomeIcon name="info-circle" color={Colors.blue_green} size={25}/> {item.name} <Text style={[styles.title,{color:Colors.danger}]}>*</Text></Text>
         <Button
           
           style={styles.card_none}
@@ -205,12 +300,17 @@ export default class AttachmentScreen extends Component {
           <Text style={styles.card_text}>Press to add picture</Text>
         </Button>
       </View>
-    ) : // valid id condition if both front and back is null
+    ) : 
+ 
+    
+        
+    
+    // valid id condition if both front and back is null
     item.name == "Valid ID" &&
       item.file[0].front == null &&
       item.file[0].back == null ? (
       <View>
-        <Text style={styles.title}> <FontAwesomeIcon name="info-circle" color={Colors.blue_green} size={25}/> {item.name}</Text>
+        <Text style={styles.title}> <FontAwesomeIcon name="info-circle" color={Colors.blue_green} size={25}/> {item.name} <Text style={[styles.title,{color:Colors.danger}]}>*</Text></Text>
         <Button
           
           style={styles.card_none}
@@ -244,7 +344,7 @@ export default class AttachmentScreen extends Component {
     ) : // valid id condition
     item.name == "Valid ID" ? (
       <View>
-        <Text style={styles.title}> <FontAwesomeIcon name="info-circle" color={Colors.blue_green} size={25}/> {item.name}</Text>
+        <Text style={styles.title}> <FontAwesomeIcon name="info-circle" color={Colors.blue_green} size={25}/> {item.name} </Text>
         {/* valid id front component */}
         {item.file[0].front == null ? (
           <Button
@@ -335,8 +435,8 @@ export default class AttachmentScreen extends Component {
           </Card.Actions>
         </Card>
       </View>
-    );
-  };
+    )
+    )};
 
 
     // GEO TAGGING
@@ -397,6 +497,7 @@ export default class AttachmentScreen extends Component {
           check_null++;
         }
       } else {
+        console.warn(item.file)
         if (item.file == null) {
           check_null++;
         }       
@@ -460,8 +561,10 @@ export default class AttachmentScreen extends Component {
               color={Colors.light_green}
             />
           </View>
-        )}
-        
+        )}  
+
+
+        {/* attachments flatlist */}
         <FlatList
             nestedScrollEnabled
             data={this.state.attachments}
@@ -482,10 +585,12 @@ export default class AttachmentScreen extends Component {
                 </Button>
               </View>
             )}
+         
             renderItem={({ item, index }) => this.renderItem(item, index)}
             keyExtractor={(item) => item.name}
           />
-
+          
+     
       
           <Modal
             visible={this.state.showImage}
@@ -584,6 +689,16 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.green,    
   },
   next_txt:{
+    color:Colors.light,    
+    fontFamily:'Gotham_bold',
+  }, 
+  other_document_button:{        
+    width: (Layout.width / 100) * 90,
+    left: (Layout.width / 100) * 1,
+    borderColor: Colors.dark_blue,
+    backgroundColor: Colors.dark_blue,    
+  },
+  other_document_txt:{
     color:Colors.light,    
     fontFamily:'Gotham_bold',
   }, 
