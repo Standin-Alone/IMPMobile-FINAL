@@ -105,7 +105,7 @@ export default class QRCodeScreen extends Component{
                  
                   }
                 } else {
-                  alert("Not Enough Balance.");
+                  
 
                   
                   Popup.show({

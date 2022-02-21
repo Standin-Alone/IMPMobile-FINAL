@@ -21,6 +21,9 @@ import NumberFormat from 'react-number-format';
 import ImageViewer from "react-native-image-zoom-viewer";
 import Spinner from 'react-native-spinkit';
 import {  Popup} from 'react-native-popup-confirm-toast';
+import Carousel from 'react-native-snap-carousel';
+
+
 export default class ReviewTransactionScreen extends Component {
   constructor(props) {
     super(props);
@@ -50,7 +53,7 @@ export default class ReviewTransactionScreen extends Component {
 
   renderItem = (item, index) => (
     
-      <Card elevation={20} style={styles.card}>
+      <Card elevation={5} style={styles.card}>
         <Card.Title
           title={item.name + " (" + item.quantity + item.unit_measure + ")"}
           left={() => (
@@ -82,40 +85,86 @@ export default class ReviewTransactionScreen extends Component {
       (      
 
       <View style={{flex:1,flexDirection:'row'}}>
-      <Card elevation={20} 
+      <Card elevation={5} 
             style={styles.card_attachment}
             onPress={() => this.showImage(item.file[0].front)}>
         <Card.Title
+          left={()=>(
+              <Image
+              source={{uri: "data:image/jpeg;base64," + item.file[0].front}}
+              style={styles.attachments_cover}
+            />
+          )}
           title={item.name +' (Front)' }                        
           titleStyle={styles.card_attachments_title}          
         />
-        <Card.Cover source={{uri: "data:image/jpeg;base64," + item.file[0].front}} resizeMode='contain' style={[styles.attachments_cover]}/>
+        {/* <Card.Cover source={{uri: "data:image/jpeg;base64," + item.file[0].front}} resizeMode='contain' style={[styles.attachments_cover]}/> */}
       </Card>      
 
-      <Card elevation={20} 
+      <Card elevation={5} 
             style={styles.card_attachment}
             onPress={() => this.showImage(item.file[0].back)}
       >
         <Card.Title
+          left={()=>(
+            <Image
+            source={{uri: "data:image/jpeg;base64," + item.file[0].back}}
+            style={styles.attachments_cover}
+            />
+          )}
           title={item.name  +' (Back)' }                      
           titleStyle={styles.card_attachments_title}          
         />
-        <Card.Cover source={{uri: "data:image/jpeg;base64," + item.file[0].back}} resizeMode='contain' style={[styles.attachments_cover]}/>
+        {/* <Card.Cover source={{uri: "data:image/jpeg;base64," + item.file[0].back}} resizeMode='contain' style={[styles.attachments_cover]}/> */}
       </Card>      
 
       </View>
 
       
-      ):(
+      ): item.name == 'Other Documents' ? 
 
-        <Card elevation={20} 
-              style={styles.card_attachment}
-              onPress={() => this.showImage(item.file)}>
+      item.file.map(item_other_documents=>    
+         (
+        <Card elevation={5} 
+              style={[styles.card_attachment]}
+              onPress={() => this.showImage(item_other_documents)}>
         <Card.Title
+
+          left={()=>(
+              <Image
+              source={{uri: "data:image/jpeg;base64," + item_other_documents}}
+              style={styles.attachments_cover}
+            />
+          )}
+
           title={item.name}                            
           titleStyle={styles.card_attachments_title}          
         />
-        <Card.Cover source={{uri: "data:image/jpeg;base64," + item.file}} resizeMode='contain' style={[styles.attachments_cover]}/>
+        {/* <Card.Cover source={{uri: "data:image/jpeg;base64," + item.file}} resizeMode='contain' style={[styles.attachments_cover]}/> */}
+      </Card>    
+      )    
+      )
+   
+      :
+      
+      (
+
+        <Card elevation={5} 
+              style={[styles.card_attachment]}
+              onPress={() => this.showImage(item.file)}>
+        <Card.Title
+
+          left={()=>(
+              <Image
+              source={{uri: "data:image/jpeg;base64," + item.file}}
+              style={styles.attachments_cover}
+            />
+          )}
+
+          title={item.name}                            
+          titleStyle={styles.card_attachments_title}          
+        />
+        {/* <Card.Cover source={{uri: "data:image/jpeg;base64," + item.file}} resizeMode='contain' style={[styles.attachments_cover]}/> */}
       </Card>    
       )
 
@@ -149,7 +198,7 @@ export default class ReviewTransactionScreen extends Component {
     formData.append("voucher_info", JSON.stringify(voucher_info));
     formData.append("commodity", JSON.stringify(this.state.params.cart));
     formData.append("attachments", JSON.stringify(this.state.params.attachments));
-
+    
     Popup.show({
       type: 'confirm',
       title: 'Warning',
@@ -172,7 +221,7 @@ export default class ReviewTransactionScreen extends Component {
           .post(ipConfig.ipAddress+ "/submit-voucher-cfsmff", formData)
           .then((response) => {       
           
-              console.warn(response.data)
+              
             if(response.data == 'success'){
               this.setState({show_spinner:false});
               Popup.show({
@@ -201,8 +250,9 @@ export default class ReviewTransactionScreen extends Component {
             } 
           })
           .catch(function (error) {   
-            console.warn(error.response)       
             this.setState({show_spinner:false});
+            console.warn(error.response.data)       
+            
             alert("Error occured!." + error.response);
             
           });  
@@ -215,12 +265,9 @@ export default class ReviewTransactionScreen extends Component {
     
     })
 
-
-
-
-
-
   }
+
+  
   render() {
  
     return (
@@ -257,6 +304,20 @@ export default class ReviewTransactionScreen extends Component {
 
 
       <Animatable.Text animation="slideInLeft" numberOfLines={2} style={styles.history_title}><FontAwesomeIcon name="info-circle" color={Colors.blue_green} size={16}/> Attachments</Animatable.Text>        
+
+      
+{/*       
+      <View style={{top:(Layout.height / 100) * 20,height:(Layout.height / 100) * 20}}>
+        <Carousel              
+          data={this.state.params.attachments}
+          renderItem={({ item, index }) => this.renderAttachments(item, index)}        
+          sliderWidth={(Layout.width / 100 ) * 95}        
+          itemWidth={400}         
+          layout={'default'} layoutCardOffset={`18`}
+        />
+      </View> */}
+
+
       <FlatList
           horizontal
           data={this.state.params.attachments}
@@ -286,17 +347,21 @@ export default class ReviewTransactionScreen extends Component {
 
         
         <View style={{position: 'absolute', left: 0, right: 0, bottom: 0}}>
-        <Text style={styles.total_amount_title}>
-            Total Amount:
-        </Text>
 
-        <NumberFormat
-            value={this.state.params.total_amount}
-            displayType={"text"}
-            decimalScale={2}
-            thousandSeparator={true}            
-            renderText={(result, props) => this.renderTotalAmountText(result)}
-          />
+
+        
+          <Text style={styles.total_amount_title}>
+              Total Amount:
+          </Text>
+
+          <NumberFormat
+              value={this.state.params.total_amount}
+              displayType={"text"}
+              decimalScale={2}
+              thousandSeparator={true}            
+              renderText={(result, props) => this.renderTotalAmountText(result)}
+            />
+        
         {/* view attachments modal */}
       
           <Button
@@ -367,7 +432,7 @@ const styles = StyleSheet.create({
     height: (Layout.height / 100 ) * 10,     
   },
   flat_list_attachment_content:{
-
+    
     overflow:'scroll'
   },
   card_attachment: {    
@@ -375,22 +440,23 @@ const styles = StyleSheet.create({
     marginBottom: 10,    
     borderRadius: 10,
     borderWidth:1,
-    height:(Layout.height / 100 ) * 5,
-  
+    height:(Layout.height / 100 ) * 20,
+    width:(Layout.width / 100 ) * 94,  
     borderColor:Colors.blue_green
   },
   attachments_cover:{
-    width:100,
-    height:100
+    top: (Layout.height / 100 ) * 5,   
+    height:(Layout.height / 100 ) * 15,
+    width:(Layout.width / 100 ) * 20,  
   },
   card_attachments_title:{ 
-    fontFamily: "calibri-light", 
-    fontWeight: "bold",
-    fontSize:8,
+    fontFamily: "Gotham_bold",     
+    fontSize:20,
+    left:20,
     alignSelf:'center'
   },
   cover:{
-    height:150,
+    height:(Layout.height / 100 ) * 16,    
     borderBottomLeftRadius:35,
     borderBottomRightRadius:35
   },

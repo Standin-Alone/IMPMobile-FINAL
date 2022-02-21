@@ -188,14 +188,18 @@ const styles = StyleSheet.create({
       top:(Layout.height / 100) * 15,
       height:(Layout.height / 100) *40,
       width:(Layout.width / 100) *95,
-      backgroundColor:'white'
+      backgroundColor:'white',
+      borderWidth:1,
+      borderColor:Colors.fade
   },
   remaining_balance_card:{
     left:10,
     top:(Layout.height / 100) * 12,
     height:(Layout.height / 100) *  10,
     width:(Layout.width / 100) *95,
-    backgroundColor:'white'
+    backgroundColor:'white',
+    borderWidth:1,
+    borderColor:Colors.fade
     },
   transaction_card:{
     left:10,
@@ -204,7 +208,9 @@ const styles = StyleSheet.create({
     width:(Layout.width / 100) *95,
     backgroundColor:'white',
     flexGrow:0,
-    paddingBottom:200
+    paddingBottom:200,
+    borderWidth:1,
+    borderColor:Colors.fade
 
     },
   more_info_pic:{
@@ -215,9 +221,9 @@ const styles = StyleSheet.create({
   },
   farmer_details:{
       
-      left:10,
-      top:(Layout.height / 100) * 1,
-      width:(Layout.width / 100) * 70,      
+    left:10,
+    top:(Layout.height / 100) * 1,
+    width:(Layout.width / 100) * 70,      
   },
   remaining_balance_label:{
         left:10,

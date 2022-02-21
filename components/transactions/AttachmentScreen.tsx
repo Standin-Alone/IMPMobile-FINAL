@@ -128,7 +128,7 @@ export default class AttachmentScreen extends Component {
                 
                 if (document_type == 'Other Documents' && item.name == 'Other Documents') {
 
-                  console.warn(item.name);  
+                  
                   let attachmentState = [...this.state.attachments];
                   attachmentState[index].file.push(base64_uri_exif);
                   
@@ -497,7 +497,7 @@ export default class AttachmentScreen extends Component {
           check_null++;
         }
       } else {
-        console.warn(item.file)
+        
         if (item.file == null) {
           check_null++;
         }       
@@ -510,7 +510,7 @@ export default class AttachmentScreen extends Component {
       Popup.show({
         type: 'warning',              
         title: 'Message',
-        textBody: 'Please complete all attachments.',                
+        textBody: 'Please complete all required attachments.',                
         buttonText:"I understand",
         okButtonStyle:styles.confirmButton,
         okButtonTextStyle: styles.confirmButtonText,
