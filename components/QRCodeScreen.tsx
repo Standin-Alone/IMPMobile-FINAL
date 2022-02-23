@@ -12,8 +12,7 @@ import * as ipConfig from '../ipconfig';
 import {  Popup} from 'react-native-popup-confirm-toast';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { RNCamera } from 'react-native-camera';
-import { Alert } from 'react-native';
-import moment from 'moment';
+import Spinner from 'react-native-spinkit';
 export default class QRCodeScreen extends Component{
     constructor(props) {        
         super(props);
@@ -22,7 +21,8 @@ export default class QRCodeScreen extends Component{
             scanned:false,
             isLoading:false,
             hasPermission:false,
-            isBarcodeRead: true,            
+            isBarcodeRead: true,
+            show_spinner:false            
         }              
        
     }
@@ -34,13 +34,15 @@ export default class QRCodeScreen extends Component{
       const get_supplier_id = await AsyncStorage.getItem("supplier_id");
       const get_full_name = await AsyncStorage.getItem("full_name");
       
-      
+        
       let form = { reference_num: scanResult.data,supplier_id:get_supplier_id };
       
 
 
 
       if(this.state.isBarcodeRead){   
+
+        this.setState({show_spinner:true});
       // check internet connection
       NetInfo.fetch().then((response: any) => {
         if (response.isConnected) {
@@ -80,7 +82,7 @@ export default class QRCodeScreen extends Component{
                           user_id:get_user_id,                          
                         
                         });
-                        this.setState({isBarcodeRead:true});              
+                        this.setState({isBarcodeRead:true,show_spinner:false});              
                                                 
                       },              
                     })
@@ -92,12 +94,12 @@ export default class QRCodeScreen extends Component{
                     Popup.show({
                       type: 'danger',              
                       title: 'Message',
-                      textBody: "This voucher is fully claimed",                
+                      textBody: "This voucher is already fully claimed",                
                       buttonText:'Ok',
                       okButtonStyle:styles.confirmButton,
                       okButtonTextStyle: styles.confirmButtonText,
                       callback: () => {    
-                        this.setState({isBarcodeRead:true});              
+                        this.setState({isBarcodeRead:true,show_spinner:false});              
                         Popup.hide()                                    
                       },              
                     })
@@ -111,12 +113,12 @@ export default class QRCodeScreen extends Component{
                   Popup.show({
                     type: 'danger',              
                     title: 'Message',
-                    textBody: "Not Enough Balance.",                
+                    textBody: "This voucher is already fully claimed",                
                     buttonText:'Ok',
                     okButtonStyle:styles.confirmButton,
                     okButtonTextStyle: styles.confirmButtonText,
                     callback: () => {    
-                      this.setState({isBarcodeRead:true});              
+                      this.setState({isBarcodeRead:true,show_spinner:false});              
                       Popup.hide()                                    
                     },              
                   })
@@ -131,7 +133,7 @@ export default class QRCodeScreen extends Component{
                   okButtonStyle:styles.confirmButton,
                   okButtonTextStyle: styles.confirmButtonText,
                   callback: () => {    
-                    this.setState({isBarcodeRead:true});              
+                    this.setState({isBarcodeRead:true,show_spinner:false});              
                     Popup.hide()                                    
                   },              
                 })
@@ -148,7 +150,7 @@ export default class QRCodeScreen extends Component{
                   okButtonStyle:styles.confirmButton,
                   okButtonTextStyle: styles.confirmButtonText,
                   callback: () => {    
-                    this.setState({isBarcodeRead:true});              
+                    this.setState({isBarcodeRead:true,show_spinner:false});              
                     Popup.hide()                                    
                   },              
                 })
@@ -165,7 +167,7 @@ export default class QRCodeScreen extends Component{
                   okButtonStyle:styles.confirmButton,
                   okButtonTextStyle: styles.confirmButtonText,
                   callback: () => {    
-                    this.setState({isBarcodeRead:true});              
+                    this.setState({isBarcodeRead:true,show_spinner:false});              
                     Popup.hide()                                    
                   },              
                 })
@@ -181,7 +183,7 @@ export default class QRCodeScreen extends Component{
                   okButtonStyle:styles.confirmButton,
                   okButtonTextStyle: styles.confirmButtonText,
                   callback: () => {    
-                    this.setState({isBarcodeRead:true});              
+                    this.setState({isBarcodeRead:true,show_spinner:false});              
                     Popup.hide()                                    
                   },              
                 })
@@ -199,13 +201,28 @@ export default class QRCodeScreen extends Component{
                 okButtonStyle:styles.confirmButton,
                 okButtonTextStyle: styles.confirmButtonText,
                 callback: () => {    
-                  this.setState({isBarcodeRead:true});              
+                  this.setState({isBarcodeRead:true,show_spinner:false});              
                   Popup.hide()                                    
                 },              
               }) 
             });
         } else {
-          alert("No Internet Connection.");
+          Popup.show({
+            type: 'danger',
+            title: 'Message',
+            textBody: 'No Internet Connection.Pleae check your internet connection.',
+            buttonText: 'Retry',
+            okButtonStyle: styles.confirmButton,
+            okButtonTextStyle: styles.confirmButtonText,
+            callback: () => {  
+              Popup.hide();
+                          
+              this.setState({isBarcodeRead:true,show_spinner:false});              
+             
+            },
+          });
+          
+          
    
         }
       });
@@ -217,7 +234,20 @@ export default class QRCodeScreen extends Component{
     render(){
         return (
             <View style={styles.container}>        
-        
+
+            
+          {this.state.show_spinner && (
+            <View style={styles.loading}>
+              <Spinner
+                isVisible={this.state.show_spinner}
+                size={100}
+                type={'Wave'}
+                color={Colors.light_green}
+              />
+            </View>
+          )}
+
+          
             {this.state.scanned == false ? (        
             <RNCamera
             onBarCodeRead = {this.handleBarCodeRead.bind(this)}
@@ -269,6 +299,17 @@ const styles = StyleSheet.create({
     confirmButtonText:{  
       color:Colors.green,    
     },
+    loading: {
+      zIndex:1,
+      position: 'absolute',
+      left: 0,
+      right: 0,
+      top: 0,
+      bottom: 0,
+      backgroundColor: 'rgba(0,0,0,0.5)',
+      alignItems: 'center',
+      justifyContent: 'center',
+    }
 
   
   

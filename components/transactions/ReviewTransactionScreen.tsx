@@ -179,7 +179,7 @@ export default class ReviewTransactionScreen extends Component {
 
   // transact voucher button
   handleGetTransact = () =>{
-    
+  let self = this;
     let formData = new FormData();
     let voucher_info = {
       reference_no: this.state.params.voucher_info.reference_no,
@@ -198,7 +198,9 @@ export default class ReviewTransactionScreen extends Component {
     formData.append("voucher_info", JSON.stringify(voucher_info));
     formData.append("commodity", JSON.stringify(this.state.params.cart));
     formData.append("attachments", JSON.stringify(this.state.params.attachments));
-    
+
+
+    // SHOW CONFIRMATION
     Popup.show({
       type: 'confirm',
       title: 'Warning',
@@ -218,9 +220,9 @@ export default class ReviewTransactionScreen extends Component {
         setTimeout(()=>{
 
           axios
-          .post(ipConfig.ipAddress+ "/submit-voucher-cfsmff", formData)
+          .post(ipConfig.ipAddress+ "/submit-voucher", formData)
           .then((response) => {       
-          
+            
               
             if(response.data == 'success'){
               this.setState({show_spinner:false});
@@ -243,18 +245,39 @@ export default class ReviewTransactionScreen extends Component {
                 },              
               })
         
-            }else{
+            } else  if(response.data == 'claimed'){
+
+              Popup.show({
+                type: 'danger',              
+                title: 'Message',
+                textBody: "This voucher is already fully claimed.",                
+                buttonText:'Ok',
+                okButtonStyle:styles.confirmButton,
+                okButtonTextStyle: styles.confirmButtonText,
+                callback: () => {    
+                  this.setState({show_spinner:false});              
+                  Popup.hide()      
+
+                  this.props.navigation.reset({
+                    index: 0,
+                    routes: [{ name: 'Root' }]
+                  });                              
+                },              
+              })
+            }else{  
+          
               this.setState({show_spinner:false});
               Popup.hide();
               alert("Error uploading due to unstable connection. Please try again.*");
             } 
           })
           .catch(function (error) {   
-            this.setState({show_spinner:false});
+            self.setState({show_spinner:false});
             console.warn(error.response.data)       
             
-            alert("Error occured!." + error.response);
             
+            alert("Error occured!." + error.response);
+         
           });  
         },2000)
            
@@ -337,7 +360,7 @@ export default class ReviewTransactionScreen extends Component {
           style={styles.flat_list}
           contentContainerStyle={styles.flat_list_content}
           renderItem={({ item, index }) => this.renderItem(item, index)}
-          keyExtractor={(item) => item.name}
+          keyExtractor={(item,index) => index}
         />
 
       

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "113008859700",
+    "project_id": "imp-mobile-fab69",
+    "storage_bucket": "imp-mobile-fab69.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:113008859700:android:fd68f3484fc08828b2c861",
+        "android_client_info": {
+          "package_name": "com.impmobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "113008859700-5js6b2v6u3aoqdoocsio14htb4ntsgdh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBuJRqbpUK3nb-HS7d99ftR2mbSWAfM8vY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "113008859700-5js6b2v6u3aoqdoocsio14htb4ntsgdh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

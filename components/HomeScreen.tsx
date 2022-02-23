@@ -174,7 +174,7 @@ export default class HomeScreen extends Component {
       elevation = {10}
       style     = {styles.empty_card}      
     >
-      <Card.Title title="No existing vouchers." />
+      <Card.Title title="No existing transactions." />
       <Card.Content></Card.Content>
     </Card>
   )

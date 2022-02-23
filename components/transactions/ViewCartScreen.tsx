@@ -53,7 +53,7 @@ export default class ViewCartScreen extends Component {
           this.setState({new_data:new_data});
             console.warn(new_data.length);
           if(new_data.length  == 0){
-            console.warn('helo')
+            
           // check internet connection                            
           NetInfo.fetch().then((response)=>{
 
@@ -322,7 +322,7 @@ handleCheckOut = ()=>{
           style={styles.flat_list}
           contentContainerStyle={{paddingBottom:90}}
           renderItem={({ item, index }) => this.renderItem(item, index)}
-          keyExtractor={(item) => item.item_category}
+          keyExtractor={(item,index) => index}
         />
 
 

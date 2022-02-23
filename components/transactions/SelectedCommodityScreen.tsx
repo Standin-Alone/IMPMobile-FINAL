@@ -50,7 +50,7 @@ export default class SelectedCommodityScreen extends Component {
       {label: 'Ammonium Sulfate (21-0-0)', value: 'Ammonium Sulfate (21-0-0)'},
       {label: 'Ammonium Phosphate (16-20-0)', value: 'Ammonium Phosphate (16-20-0)'},
       {label: 'Muriate of Potash (0-0-60)', value: 'Muriate of Potash (0-0-60)'},
-      {label: 'Others (to be specified/indicated)', value: 'others'},
+      {label: 'Other grades', value: 'Other grades'},
     ];  
 
     let index = categories.length - 1;
@@ -71,7 +71,7 @@ export default class SelectedCommodityScreen extends Component {
 
   //  add to cart button
   addToCart = async (price, ) => {
-    console.warn(price)
+    
     if ((price != 0.00  || price != 0 ) &&
         this.state.fertilizer_category != ''
         && price != null          

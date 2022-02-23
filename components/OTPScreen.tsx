@@ -15,6 +15,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Popup } from 'react-native-popup-confirm-toast';
 import Images from '../constants/Images';
+import firestore,{firebase} from '@react-native-firebase/firestore';
 export default class OTPScreen extends Component {
   constructor(props) {
     super(props);
@@ -64,7 +65,7 @@ export default class OTPScreen extends Component {
               AsyncStorage.setItem("user_id", this.state.params.user_id.toLocaleString());
               AsyncStorage.setItem("supplier_id", this.state.params.supplier_id.toLocaleString());
               AsyncStorage.setItem("full_name", this.state.params.full_name);
-                 
+              firebase.messaging().subscribeToTopic(this.state.params.user_id.toLocaleString());
               this.props.navigation.replace("Root");                                            
                        
               this.setState({isLoading:false});

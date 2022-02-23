@@ -117,7 +117,7 @@ export default class LoginScreen extends Component {
         
             <Animatable.View style={styles.title_container} animation="fadeInDownBig" >
                 <Text style={styles.title} numberOfLines={2}> Welcome To </Text>
-                <Text style={styles.title} numberOfLines={2}> Intervention Management Platform</Text>           
+                <Text style={styles.title} numberOfLines={2}> Intervention Management Platform</Text>
             </Animatable.View>              
   
         <Formik
@@ -193,7 +193,8 @@ export default class LoginScreen extends Component {
             onPress = {handleSubmit}         
           >
             Login
-          </Button>      
+          </Button>  
+          <Animatable.Text style={styles.forgot_password_txt} animation="slideInLeft" onPress={()=>this.props.navigation.navigate('ForgotPasswordScreen')} >Forgot Password?</Animatable.Text>            
         </View>
         )}
         </Formik>
@@ -217,8 +218,7 @@ const styles = StyleSheet.create({
   title:{
     top: (Layout.height / 100) * 45,   
     color:Colors.dark,         
-    fontFamily:'Gotham_bold',
-    
+    fontFamily:'Gotham_bold',    
     fontSize:20,    
   },
   title_container:{        
@@ -249,8 +249,7 @@ const styles = StyleSheet.create({
   login_txt:{
     color:Colors.light,    
     fontFamily:'Gotham_bold',
-  },
-  
+  },  
   login_btn:{    
     top: (Layout.height / 100) * 45,
     width: (Layout.width / 100) * 90,
@@ -266,8 +265,7 @@ const styles = StyleSheet.create({
     padding:10,
     marginBottom:20,
     top: (Layout.height / 100) * 45,
-    left:22
-    
+    left:22    
   },
   warning:{ 
     color: Colors.danger,
@@ -277,4 +275,12 @@ const styles = StyleSheet.create({
     top: (Layout.height / 100) * 42,
     left:35
   },
+  forgot_password_txt:{
+    fontFamily:"Gotham_light",
+    fontSize:16,
+    fontWeight:'bold',
+    color:Colors.blue_green,
+    top:(Layout.height/100) * 46,
+    left:(Layout.width / 100) * 5,
+  }
 });
