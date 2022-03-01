@@ -30,112 +30,109 @@ const Stack  = createSharedElementStackNavigator();
 function MyStack(){
   
       
-PushNotification.configure({
-    onNotification: function(notification) {
-        const { data } = notification;
-        
+    // PushNotification.configure({
+    //     onNotification: function(notification) {
+    //         const { data } = notification;
+            
 
-        PushNotification.cancelLocalNotification(data);
-                                     
-    }
-  });
-  
-
-  
-
-    if (!firebase.apps.length) {
-        firebase.initializeApp(Firebase.credentials).catch((err)=>console.warn(err));
-    }
-
- 
-firebase.messaging().setBackgroundMessageHandler(async remoteMessage => {
-
-                  PushNotification.createChannel({
-                    channelId:  remoteMessage.data.channel,
-                    channelName:remoteMessage.data.channel,
-                    soundName: 'default',     
-                    vibrate: true,
-                  },()=>{console.warn('created')});
+    //         PushNotification.cancelLocalNotification(data);
+                                        
+    //     }
+    // });
 
 
-                    // create channel for notification
-                PushNotification.localNotification({
-                  channelId: remoteMessage.data.channel, // (required)
-                  channelName: remoteMessage.data.channel,
-                  autoCancel: true,
-                  userInfo: {id:remoteMessage.data.channel},
-                  subText: 'Notification',
-                  title: 'Intervention Management Platform',
-                  message: remoteMessage.data.message,
-                  vibrate: true,
-                  vibration: 300,
-                  playSound: true,
-                  soundName: 'default',
-                  priority:'high'
-              });
+    // if (!firebase.apps.length) {
+    //     firebase.initializeApp(Firebase.credentials).catch((err)=>console.warn(err));
+    // }
+
+    // firebase 
+    // firebase.messaging().setBackgroundMessageHandler(async remoteMessage => {
+
+    //               PushNotification.createChannel({
+    //                 channelId:  remoteMessage.data.channel,
+    //                 channelName:remoteMessage.data.channel,
+    //                 soundName: 'default',     
+    //                 vibrate: true,
+    //               },()=>{console.warn('created')});
+
+
+    //                 // create channel for notification
+    //             PushNotification.localNotification({
+    //               channelId: remoteMessage.data.channel, // (required)
+    //               channelName: remoteMessage.data.channel,
+    //               autoCancel: true,
+    //               userInfo: {id:remoteMessage.data.channel},
+    //               subText: 'Notification',
+    //               title: 'Intervention Management Platform',
+    //               message: remoteMessage.data.message,
+    //               vibrate: true,
+    //               vibration: 300,
+    //               playSound: true,
+    //               soundName: 'default',
+    //               priority:'high'
+    //           });
 
  
-    });
+    // });
   
   
 
-    firebase.messaging().onMessage(async(remoteMessage)=>{
-        try {            
-            // create channel for notification0
-            PushNotification.createChannel({
-                channelId:  remoteMessage.data.channel,
-                channelName: 'Sample',
-                soundName: 'default',     
-                vibrate: true,
-              },()=>{console.warn('created')});
+    // firebase.messaging().onMessage(async(remoteMessage)=>{
+    //     try {            
+    //         // create channel for notification0
+    //         PushNotification.createChannel({
+    //             channelId:  remoteMessage.data.channel,
+    //             channelName: 'Sample',
+    //             soundName: 'default',     
+    //             vibrate: true,
+    //           },()=>{console.warn('created')});
 
 
-            // create push notification
-            PushNotification.localNotification({
-              channelId: remoteMessage.data.channel, // (required)
-              channelName: 'Sample',
-              autoCancel: true,
-              userInfo: {id:remoteMessage.data.channel},
-              subText: 'Notification',
-              title: 'Intervention Management Platform',
-              message: remoteMessage.data.message,            
-              vibrate: true,
-              vibration: 300,
-              playSound: true,
-              soundName: 'default',
-              priority:'high'
-          });
+    //         // create push notification
+    //         PushNotification.localNotification({
+    //           channelId: remoteMessage.data.channel, // (required)
+    //           channelName: 'Sample',
+    //           autoCancel: true,
+    //           userInfo: {id:remoteMessage.data.channel},
+    //           subText: 'Notification',
+    //           title: 'Intervention Management Platform',
+    //           message: remoteMessage.data.message,            
+    //           vibrate: true,
+    //           vibration: 300,
+    //           playSound: true,
+    //           soundName: 'default',
+    //           priority:'high'
+    //       });
 
 
-          } catch (err) { console.log(err) }
+    //       } catch (err) { console.log(err) }
 
-    })
+    // })
 
     
 
 
 
 
-    SocketConnection.socket.on('connect',async msg => {  
-     console.warn('connected');
+    // SocketConnection.socket.on('connect',async msg => {  
+    //  console.warn('connected');
             
 
      
         
-      SocketConnection.socket.on('room',  result => {
+    //   SocketConnection.socket.on('room',  result => {
 
     
 
 
-      
+        // create channel for notification
         //     PushNotification.createChannel({
         //         channelId: result.channel,
         //         channelName: 'Sample',
         //         soundName: 'default',     
         //         vibrate: true,
         //       },()=>{console.warn('created')});
-              
-        // // create channel for notification
+                      
         // PushNotification.localNotification({
         //     channelId: result.channel, // (required)
         //     channelName: 'Sample',
@@ -151,14 +148,9 @@ firebase.messaging().setBackgroundMessageHandler(async remoteMessage => {
         //     priority:'high'
         // });
             
-// create channel for notification
-    
+    //     });
 
-   
-            
-        });
-
-    });
+    // });
     
     return(
         <Root>
@@ -200,7 +192,7 @@ firebase.messaging().setBackgroundMessageHandler(async remoteMessage => {
               
                   
                 />
-                <Stack.Screen component={ViewCartScreen} name='ViewCartScreen' options={{headerTransparent:true,headerTitle:"My Cart",headerTitleStyle:{fontFamily:'Gotham_bold'}}} />
+                <Stack.Screen component={ViewCartScreen} name='ViewCartScreen'/>
                 <Stack.Screen component={AttachmentScreen} name='AttachmentScreen' options={{headerTransparent:true,headerTitle:"Attachments",headerTitleStyle:{fontFamily:'Gotham_bold'}}} />
                 <Stack.Screen component={SummaryScreen} name='SummaryScreen' options={{headerTransparent:true,headerTitle:"More Info",headerTitleStyle:{fontFamily:'Gotham_bold'}}} />
                 <Stack.Screen component={ReviewTransactionScreen} name='ReviewTransactionScreen' options={{headerShown:false,headerTransparent:true}}/>                

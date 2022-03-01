@@ -146,9 +146,19 @@ export default class SummaryScreen extends Component {
 
                     
                     right={() => (
-                      <Text style={{ top: 10 }}>
-                        {"₱" + value.total_amount}
-                      </Text>
+
+                      <NumberFormat
+                        value={ value.total_amount}
+                        displayType={"text"}
+                        decimalScale={2}
+                        thousandSeparator={true}                
+                        renderText={(values) => (
+                          <Text style={{ top: 10 }}>
+                            {"₱" + values}
+                          </Text>
+                        )}
+                      />
+                     
                     )}
                   />
                   <Divider />
@@ -162,9 +172,20 @@ export default class SummaryScreen extends Component {
               right={()=>              
                {                 
                 let filter_transaction = this.state.transactions.filter((transaction_value)=> this.convertedDate(item.transac_date)  ==  this.convertedDate(transaction_value.transac_date) && transaction_value.transac_by_fullname == item.transac_by_fullname );
-                return (<Text style={{top:10,fontFamily:'Gotham_bold',color:Colors.green}}>{"₱"+
-                            filter_transaction.reduce((val,index) => { return this.convertedDate(index.transac_date)  ==  this.convertedDate(item.transac_date)  ? val += Number( index.total_amount)  : null }, 0 ).toFixed(2)                            
-                    }</Text>)
+                return (
+                
+                  <NumberFormat
+                    value={ filter_transaction.reduce((val,index) => { return this.convertedDate(index.transac_date)  ==  this.convertedDate(item.transac_date)  ? val += Number( index.total_amount)  : null }, 0 )}
+                    displayType={"text"}
+                    decimalScale={2}
+                    thousandSeparator={true}                
+                    renderText={(values) => (
+                      <Text style={{top:10,fontFamily:'Gotham_bold',color:Colors.green}}>
+                        {"₱"+values}
+                      </Text>
+                    )}
+                  />                
+                )
                     
                 }} 
               />                           
@@ -186,7 +207,7 @@ const styles = StyleSheet.create({
   info_card:{
       left:10,
       top:(Layout.height / 100) * 15,
-      height:(Layout.height / 100) *40,
+      height:(Layout.height / 100) *25,
       width:(Layout.width / 100) *95,
       backgroundColor:'white',
       borderWidth:1,

@@ -19,6 +19,7 @@ import Moment from 'react-moment';
 import ImageViewer from "react-native-image-zoom-viewer";
 import moment from 'moment';
 import {  Popup} from 'react-native-popup-confirm-toast';
+import Images from '../constants/Images';
 const KEYS_TO_FILTERS = ["reference_no", "fullname"];
 export default class HomeScreen extends Component {
   constructor(props) {
@@ -170,12 +171,10 @@ export default class HomeScreen extends Component {
   }
 
   emptyComponent = () =>(
-    <Card
-      elevation = {10}
+    <Card      
       style     = {styles.empty_card}      
-    >
-      <Card.Title title="No existing transactions." />
-      <Card.Content></Card.Content>
+    >      
+      <Card.Cover source={Images.no_data_bg}  resizeMode="cover" width={200} height={10}/>
     </Card>
   )
   
@@ -389,11 +388,10 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   empty_card: {
-    flex: 1,
-    borderRadius: 5,        
+    height:200,
+    borderRadius: 5,            
     top:10,
-    width:(Layout.width/100) * 90,     
-    
+    width:(Layout.width/100) * 90,         
     marginRight:(Layout.width/100) * 10  ,
     left:10,
     alignSelf: "center",

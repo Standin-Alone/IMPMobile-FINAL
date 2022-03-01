@@ -26,7 +26,7 @@ export default class AuthenticationScreen extends React.Component {
     this.state = {};
   }
 
-  retryConnection = () =>{
+  retryConnection = (self) =>{
     setTimeout(() => {
       NetInfo.fetch().then(async response => {
         if (response.isConnected) {
@@ -158,7 +158,36 @@ export default class AuthenticationScreen extends React.Component {
   }
 
   componentDidMount() {
+
+
     let self = this;
+
+
+    // check if internet connection is back again
+    NetInfo.addEventListener((state)=>{ 
+
+       if(state.isConnected){
+         console.warn('connected')
+         this.retryConnection(self)
+       }else{
+          
+        Popup.show({
+          type: 'danger',
+          title: 'Message',
+          textBody: 'No Internet Connection.Pleae check your internet connection.',
+          buttonText: 'Retry',
+          okButtonStyle: styles.confirmButton,
+          okButtonTextStyle: styles.confirmButtonText,
+          callback: () => {              
+            Popup.hide();
+
+            this.retryConnection(self)
+            
+          },
+        });
+       }
+    });
+
     setTimeout(() => {
       NetInfo.fetch().then(async response => {
         if (response.isConnected) {
@@ -267,6 +296,7 @@ export default class AuthenticationScreen extends React.Component {
         } else {
           
 
+          // pop up no internet connection
           Popup.show({
             type: 'danger',
             title: 'Message',
@@ -277,7 +307,7 @@ export default class AuthenticationScreen extends React.Component {
             callback: () => {              
               Popup.hide();
 
-              this.retryConnection()
+              
               
             },
           });

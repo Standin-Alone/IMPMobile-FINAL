@@ -134,6 +134,7 @@ export default class FarmerProfileScreen extends Component {
                   full_name: this.state.params.full_name,
                   user_id: this.state.params.user_id,
                   program_data :this.state.params.program_items,
+                  program_items :this.state.params.program_items,
                   return_cart:this.returnCart.bind(this),             
                   data:this.state.params.data,
               });

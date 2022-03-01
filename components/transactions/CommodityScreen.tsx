@@ -36,7 +36,12 @@ export default class CommodityScreen extends Component {
 
 
   componentDidMount(): void {
-    this.props.navigation.setOptions({title:'hindi ko to cart'});
+
+    if(this.state.params.hasOwnProperty('cart')){
+      this.setState({cart:this.state.params.cart});    
+      console.warn('meron')
+    }
+
     this.setState({data:this.state.params.program_items});
   }
 

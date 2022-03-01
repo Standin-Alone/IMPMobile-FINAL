@@ -2,7 +2,9 @@ import React, {Component} from 'react';
 import {View,Text, StyleSheet,FlatList,Image,Pressable} from 'react-native';
 import Colors from '../../constants/Colors';
 import Layout from '../../constants/Layout';
-import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
+// import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
+import { FontAwesomeIcon}  from '@fortawesome/react-native-fontawesome'
+import { faCartPlus,faEdit,faInfoCircle} from '@fortawesome/free-solid-svg-icons'
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Card } from 'react-native-paper';
 import NumericInput from "react-native-numeric-input";
@@ -16,8 +18,8 @@ import * as ipConfig from '../../ipconfig';
 import Spinner from 'react-native-spinkit';
 import Modal from "react-native-modal";
 import FakeCurrencyInput from 'react-native-currency-input';
-export default class ViewCartScreen extends Component {
-  constructor(props) {
+export default class ViewCartScreen extends Component {  
+  constructor(props:any) {
     super(props);
     this.state = {          
         params:this.props.route.params,     
@@ -29,17 +31,63 @@ export default class ViewCartScreen extends Component {
         edit_total_amount_value:0
     };
 
+    console.warn(this.props.route.params);
+    
+    this.props.navigation.setOptions( ()=>({
+      headerTransparent:true,
+      headerTitle:"My Cart",
+      headerTitleStyle:{fontFamily:'Gotham_bold'},
+      headerRight: () => (
+          // go to selected commodity screen
+        <Pressable          
+        onPress={  () => {                                      
+            
+            
+          
+        }}
+        style={({ pressed }) => ({
+          opacity: pressed ? 0.5 : 1,    
+          right:(Layout.width / 100 ) * 10        
+        })}>
+        
+        <FontAwesomeIcon icon={faCartPlus} size={25} color={Colors.green}  transform="fa-fade"  />       
+      </Pressable>
+      ),
+  }))
+
   }
 
+  
+ 
 
   componentDidMount(): void {
-
-    this.setState({data:this.state.params.cart,total:  Number(this.state.params.cart.reduce((prev, current) => prev + parseFloat(current.total_amount), 0)).toFixed(2)});
-    
+    // header options
+      this.props.navigation.setOptions({
+        headerTransparent:true,
+        headerTitle:"My Cart",
+        headerTitleStyle:{fontFamily:'Gotham_bold'},
+        headerRight: () => (
+          // go to selected commodity screen
+          
+          <Pressable          
+          onPress={  () => {                                      
+                            
+            this.props.navigation.navigate('CommodityScreen',this.state.params);
+          }}
+          style={({ pressed }) => ({
+            opacity: pressed ? 0.5 : 1,    
+            right:(Layout.width / 100 ) * 10        
+          })}>          
+          <FontAwesomeIcon icon={faCartPlus} size={25} color={Colors.green}  transform="fa-fade"  />       
+        </Pressable>
+        ),
+  })
+    this.setState({data:this.state.params.cart,total:  Number(this.state.params.cart.reduce((prev, current) => prev + parseFloat(current.total_amount), 0)).toFixed(2)});    
   }
 
-
-  rightContent = (delete_index,item) => (
+ 
+  // delete item function
+  rightContent = (delete_index : any,item : any) => (
     <View style={{ top:(Layout.height / 100) * 5}}>
       <Icon
         name="trash"
@@ -48,35 +96,40 @@ export default class ViewCartScreen extends Component {
         size={50}
         onPress={() => {
           let new_data = this.state.data;
+          // remove delete 
           new_data.splice(delete_index, delete_index + 1);
           
           this.setState({new_data:new_data});
-            console.warn(new_data.length);
+          this.setState({show_spinner:true});
+
           if(new_data.length  == 0){
             
-          // check internet connection                            
-          NetInfo.fetch().then((response)=>{
+            // check internet connection                            
+            NetInfo.fetch().then((response)=>{
 
-            if(response.isConnected){
+              if(response.isConnected){
 
-            let payload = {
-                cart:[item]
-            }
+              let payload = {
+                  cart:[item]
+              }
 
-            // save to cart as draft
-            axios.post(ipConfig.ipAddress+'/delete-cart',payload).then((response)=>{              
-              
-                this.state.params.return_cart(new_data)
-                this.props.navigation.goBack();                  
+              // save to cart as draft
+              axios.post(ipConfig.ipAddress+'/delete-cart',payload).then((response)=>{              
                 
+                  this.state.params.return_cart(new_data)
+                  this.setState({show_spinner:false});
+                  this.props.navigation.goBack();                  
+                  
 
-            }).catch(err=>console.warn(err));
+              }).catch(err=>console.warn(err));
 
-            }else{
-              
-            }
-          });
-              }          
+              }else{
+                
+              }
+            });
+          }else{
+            this.setState({show_spinner:false});
+          }          
         }}
       />
   
@@ -128,6 +181,7 @@ export default class ViewCartScreen extends Component {
       valueType="real"
       rounded
       iconStyle={{ color: "white" }}
+      containerStyle={{right:(Layout.width / 100) * 41,bottom:(Layout.height / 100) * 2,position:'absolute'}}
       rightButtonBackgroundColor={Colors.light_green}
       leftButtonBackgroundColor={Colors.light_green}
     />
@@ -159,13 +213,8 @@ export default class ViewCartScreen extends Component {
 
 
   // render item
-
   renderItem = (item, index) => (
-    <Swipeable renderRightActions={() => this.rightContent(index,item)}>
-      
-       
-
-
+    <Swipeable renderRightActions={() => this.rightContent(index,item)}>             
       <Card elevation={20} style={styles.card}>
         <Card.Title
           title={(item.item_category != '' ? item.item_category : item.name) + " (" + item.unit_measure + ")"}          
@@ -177,7 +226,7 @@ export default class ViewCartScreen extends Component {
           )}
           subtitle={       
                       
-            <NumberFormat
+          <NumberFormat
             value={item.total_amount}
             displayType={"text"}
             decimalScale={2}
@@ -193,26 +242,24 @@ export default class ViewCartScreen extends Component {
             )}
           />
           }
-       
-          titleStyle={{ fontFamily: "Gotham_bold", fontWeight: "bold",fontSize:15 }}
-          right={() => this.numericInput(item, index)}
+          
+          titleStyle={{ fontFamily: "Gotham_bold", fontWeight: "bold",fontSize:15 }}          
         />
         <Card.Content style={{marginTop:20,marginLeft:(Layout.height / 100 ) * 40}}>  
-        <Pressable
-          onPress={  () => {            
-            
+
+        {/* quantity component */}
+        {this.numericInput(item, index)}
+
+        {/* edit price button */}
+        <Pressable          
+          onPress={  () => {                        
               this.setState({show_edit_modal:true,edit_item:item,edit_index:index,edit_total_amount_value:item.total_amount});
           }}
           style={({ pressed }) => ({
             opacity: pressed ? 0.5 : 1,
             
           })}>
-          <FontAwesomeIcon
-            name="edit"
-            size={25}
-            color={Colors.dark_blue}
-            
-          />
+          <FontAwesomeIcon icon={faEdit} size={20} color={Colors.dark_blue} style={{left:20}} transform="fa-fade"  />       
         </Pressable>
         </Card.Content>
       </Card>
@@ -384,7 +431,7 @@ handleCheckOut = ()=>{
         <View style={{position: 'absolute', left: 0, right: 0, bottom: 0}}>
         {/* Cart Summary Details */}
         <Card style={styles.cart_details} elevation={10}>
-        <Card.Title title={"Details"} titleStyle={styles.details_title} left={()=><FontAwesomeIcon name="info-circle" color={Colors.blue_green} size={20}/>}/>
+        <Card.Title title={" Details"} titleStyle={styles.details_title} left={()=><FontAwesomeIcon icon={faInfoCircle} size={25} color={Colors.blue_green}  transform="fa-fade"  />       }/>
         <Card.Content>
           <View style={{ flexDirection: "row", marginBottom: 20 }}>
             <View style={{ flex: 1 }}>
