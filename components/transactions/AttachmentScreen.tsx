@@ -4,12 +4,6 @@ import Colors from '../../constants/Colors';
 import Images from '../../constants/Images';
 import Layout from '../../constants/Layout';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
-import * as Animatable from 'react-native-animatable';
-import NetInfo from "@react-native-community/netinfo";
-import axios from 'axios';
-import * as ipConfig from '../../ipconfig';
-import * as Yup from 'yup';
-import { Formik } from 'formik';
 import { Card } from 'react-native-paper';
 import Geolocation from '@react-native-community/geolocation';
 import {launchCamera} from 'react-native-image-picker';
@@ -21,6 +15,8 @@ import {  dump, insert,ImageIFD,GPSIFD,ExifIFD,GPSHelper} from "piexifjs";
 // import Spinner from "react-native-loading-spinner-overlay";
 import Spinner from 'react-native-spinkit';
 import * as RNFS from 'react-native-fs';
+import Swipeable from "react-native-gesture-handler/Swipeable";
+import Icon from 'react-native-vector-icons/FontAwesome';
 export default class AttachmentScreen extends Component {
   constructor(props) {
     super(props);
@@ -202,7 +198,48 @@ export default class AttachmentScreen extends Component {
 
 
   };
-  
+
+// right content of swipeable
+// delete item function
+rightContent = (delete_index : any,item : any) => (
+  <View style={{ top:(Layout.height / 100) * 5}}>
+    <Icon
+      name="trash"
+      family="entypo"
+      color={Colors.danger}
+      size={50}
+      onPress={() => {
+
+        
+        let new_data = this.state.attachments;
+
+        new_data.map((item_result)=>{
+          if(item_result.name == 'Other Documents'){
+            // remove file of other documents
+            item_result.file.splice(delete_index, delete_index + 1);
+          }
+        });
+
+
+        this.setState({attachments:new_data})
+        
+        
+        
+        
+      
+        
+      
+
+        
+     
+
+        
+      }}
+    />
+
+  </View>
+);
+
 // render card in flatlist
  renderItem = (item, index) => {
     return (
@@ -211,10 +248,6 @@ export default class AttachmentScreen extends Component {
     item.name == 'Other Documents' ?
 
     (     
-
-
-
-
       item.file.length == 0 ?
       <View>
           <Text style={styles.title}> <FontAwesomeIcon name="info-circle" color={Colors.blue_green} size={25}/> {item.name}</Text>
@@ -234,51 +267,54 @@ export default class AttachmentScreen extends Component {
           
         </View>
       :
+
+
       item.file.map((item_other_documents,index)=>(
-
+    
         <View>
-
-        {index == 0 &&
-          <Text style={styles.title}> <FontAwesomeIcon name="info-circle" color={Colors.blue_green} size={25}/> {item.name}</Text>
-        }
-          <Card
-            elevation={10}
-            style={styles.card}
-            onPress={() => this.showImage(item_other_documents)}
-          >
-            <Card.Cover
-              resizeMode="contain"
-              source={{ uri: "data:image/jpeg;base64," + item_other_documents }}
-            />
-            <Card.Actions>
-              <Text
-                style={styles.retake}
-                onPress={() => this.openCamera(item.name)}
-              >
-                Press here to retake photo...
-              </Text>
-            </Card.Actions>
-          </Card>      
-                      
-
-          {item.file.length == (index +1) &&
-
-            <Button            
-            style={styles.card_none}
-            onPress={() => this.openCamera(item.name)}
-            >
-            <Image
-              source={Images.add_photo}
-              style={styles.card_add_icon}
-            />
-
-            <Text style={styles.card_text}>Press to add picture</Text>
-            </Button>
+          {index == 0 &&
+            <Text style={styles.title}> <FontAwesomeIcon name="info-circle" color={Colors.blue_green} size={25}/> {item.name}</Text>
           }
-          
 
-        </View>
-     
+          <Swipeable renderRightActions={() => this.rightContent(index,item_other_documents)}>             
+            <Card
+              elevation={10}
+              style={styles.card}
+              onPress={() => this.showImage(item_other_documents)}
+            >
+              <Card.Cover
+                resizeMode="contain"
+                source={{ uri: "data:image/jpeg;base64," + item_other_documents }}
+              />
+              <Card.Actions>
+                <Text
+                  style={styles.retake}
+                  onPress={() => this.openCamera(item.name)}
+                >
+                  Press here to retake photo...
+                </Text>
+              </Card.Actions>
+            </Card>      
+            </Swipeable>
+
+            {item.file.length == (index +1) &&
+
+              <Button            
+              style={styles.card_none}
+              onPress={() => this.openCamera(item.name)}
+              >
+              <Image
+                source={Images.add_photo}
+                style={styles.card_add_icon}
+              />
+
+              <Text style={styles.card_text}>Press to add picture</Text>
+              </Button>
+            }
+            
+
+          </View>
+        
       ))    
     )  
     

@@ -140,13 +140,13 @@ export default class ViewCartScreen extends Component {
   handleQuantity =    async (item,index,value)=> {
     var total_amount = parseFloat(item.total_amount);
  
-          
+          console.warn(value);
       
       this.setState((prevState) => {
         
         if (prevState.data[index].name == item.name) {
           prevState.data[index].total_amount = total_amount;
-          prevState.data[index].quantity = value;
+          prevState.data[index].quantity = value.toString().includes('-') ? 0.00 : value;
           prevState.data[index].status = "success";
           
         }
@@ -292,11 +292,11 @@ handleCheckOut = ()=>{
 
   if (count_error == 0 ){
     // THIS CONDITION IS FOR ONE TIME TRANSACTION ONLY
-      console.warn();
+      
     let total_float = parseFloat(this.state.total);
     let available_balance_float = parseFloat(this.state.params.available_balance);
-    if((total_float >= available_balance_float) && this.state.params.voucher_info[0].one_time_transaction == '1' ){
-
+    
+    if((total_float >= available_balance_float) && dataToSend.voucher_info.one_time_transaction == '1'   && this.state.data.some(item => item.quantity != 0) ){
       
       let data = {
         cart:this.state.data
@@ -312,12 +312,25 @@ handleCheckOut = ()=>{
           }
           this.setState({show_spinner:false});
         }).catch(err=>{
-          console.warn(err.response.data)
+          console.warn(err)
           this.setState({show_spinner:false});
         });
           
 
-    } else{      
+    }else if (this.state.data.some(item => item.quantity <= 0)){
+      Popup.show({
+        type: 'danger',
+        title: 'Message',
+        textBody: 'Quantity of the commodity cannot be 0. Please check your items in cart.',
+        buttonText: 'Okay',
+        okButtonStyle: styles.confirmButton,
+        okButtonTextStyle: styles.confirmButtonText,
+        callback: () => {  
+          Popup.hide();
+          this.setState({show_spinner:false});
+        },
+      });
+    }else{      
 
       
       Popup.show({
@@ -337,6 +350,18 @@ handleCheckOut = ()=>{
   } 
 
   }else{
+
+    Popup.show({
+      type: 'danger',
+      title: 'Message',
+      textBody: 'No Internet Connection.Please check your internet connection.',
+      buttonText: 'Okay',
+      okButtonStyle: styles.confirmButton,
+      okButtonTextStyle: styles.confirmButtonText,
+      callback: () => {  
+        Popup.hide();
+      },
+    });
 
   }}); 
   

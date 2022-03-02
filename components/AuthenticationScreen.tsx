@@ -69,7 +69,7 @@ export default class AuthenticationScreen extends React.Component {
                   type: 'danger',
                   title: 'Error!',
                   textBody:
-                    'The mobile application has new update. please download the new mobile application in voucher management platform website.',
+                    'The mobile application has new update. please download the new mobile application in intervention management platform website.',
                   buttonText: 'Ok',
                   okButtonStyle: styles.confirmButton,
                   okButtonTextStyle: styles.confirmButtonText,
@@ -200,12 +200,6 @@ export default class AuthenticationScreen extends React.Component {
             )
             .then(async response => {
               
-              // if(user_id){
-              //     self.props.navigation.replace('Root');
-              //   }else{
-              //       self.props.navigation.replace('LoginScreen');
-
-              //   }
 
               // ENABLE THIS BEFORE GENERATING APK
               // check if the mobile application is on maintenance

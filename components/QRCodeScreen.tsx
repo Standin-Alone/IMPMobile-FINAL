@@ -3,6 +3,7 @@ import {
     StyleSheet,
     Text,
     View,
+    BackHandler
   } from 'react-native';
 import Colors from '../constants/Colors';
 import BarcodeMask from 'react-native-barcode-mask';
@@ -13,6 +14,7 @@ import {  Popup} from 'react-native-popup-confirm-toast';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { RNCamera } from 'react-native-camera';
 import Spinner from 'react-native-spinkit';
+import DeviceInfo from 'react-native-device-info';
 export default class QRCodeScreen extends Component{
     constructor(props) {        
         super(props);
@@ -26,7 +28,52 @@ export default class QRCodeScreen extends Component{
         }              
        
     }
-    
+
+    // check version
+    check_version = ()=>{ 
+
+      let is_usable = false;
+      axios.get(ipConfig.ipAddress + '/check_utility/' + DeviceInfo.getVersion()).then(async response => {
+        if (response.data['maintenance'] == '1') {
+
+          Popup.show({
+            type: 'danger',
+            title: 'Error!',
+            textBody:
+              'Sorry for the inconvenience. The mobile application is on maintenance. Please try again later.',
+            buttonText: 'Ok',
+            okButtonStyle: styles.confirmButton,
+            okButtonTextStyle: styles.confirmButtonText,
+            callback: () => {
+              BackHandler.exitApp();
+              Popup.hide();
+            },
+          });
+          
+
+        }else if( response.data['active'] == '0') {
+            Popup.show({
+              type: 'danger',
+              title: 'Error!',
+              textBody:
+                'The mobile application has new update. please download the new mobile application in voucher management platform website.',
+              buttonText: 'Ok',
+              okButtonStyle: styles.confirmButton,
+              okButtonTextStyle: styles.confirmButtonText,
+              callback: () => {
+                BackHandler.exitApp();
+                Popup.hide();
+              },
+            });
+        }else{
+
+          is_usable = true;
+        }
+
+      }).catch(err => console.warn(err.response));
+
+      return is_usable;
+    }
 
 
     handleBarCodeRead = async (scanResult)=>{
@@ -47,49 +94,109 @@ export default class QRCodeScreen extends Component{
       NetInfo.fetch().then((response: any) => {
         if (response.isConnected) {
           this.setState({isBarcodeRead:false});
-          axios
-            .post(
-              ipConfig.ipAddress + "/get_voucher_info",
-              form
-            )
-            .then( (response) => {
-                console.warn(response.data)
-              if (response.data["Message"] == "true") {
-                // navigation.navigate('ClaimVoucher',response.data[0]['data']);
-                // setScanned(false);
-                // setIsShow(false);
-                // Test Available Balance
+        
+          // check imp mobile application version
+          axios.get(ipConfig.ipAddress + '/check_utility/' + DeviceInfo.getVersion()).then(async response => {
+            // close app if  maintenenace
+            if (response.data['maintenance'] == '1') {
+              this.setState({isBarcodeRead:true,show_spinner:false});              
+              Popup.show({
+                type: 'danger',
+                title: 'Error!',
+                textBody:
+                  'Sorry for the inconvenience. The mobile application is on maintenance. Please try again later.',
+                buttonText: 'Ok',
+                okButtonStyle: styles.confirmButton,
+                okButtonTextStyle: styles.confirmButtonText,
+                callback: () => {
+                  BackHandler.exitApp();
+                  Popup.hide();
+                },
+              });
+              
+              
+            }
+            // close app if apk has new updates
+            else if( response.data['active'] == '0') {
+              this.setState({isBarcodeRead:true,show_spinner:false});              
+              Popup.show({
+                type: 'danger',
+                title: 'Error!',
+                textBody:
+                  'The mobile application has new update. please download the new mobile application in intervention management platform website.',
+                buttonText: 'Ok',
+                okButtonStyle: styles.confirmButton,
+                okButtonTextStyle: styles.confirmButtonText,
+                callback: () => {
+                  BackHandler.exitApp();
+                  Popup.hide();
+                },
+              });
+            }else{
+              
+            // scan voucher start here
+            axios
+              .post(
+                ipConfig.ipAddress + "/get_voucher_info",
+                form
+              )
+              .then( (response) => {
+                  console.warn(response.data)
+                if (response.data["Message"] == "true") {
+                  // navigation.navigate('ClaimVoucher',response.data[0]['data']);
+                  // setScanned(false);
+                  // setIsShow(false);
+                  // Test Available Balance
+                  
+                  if (response.data["data"][0].Available_Balance != 0.00) {                
+                    if(response.data["data"][0].voucher_status != 'FULLY CLAIMED' ){
+                      
+                      
+                      Popup.show({
+                        type: 'success',              
+                        title: 'Success!',
+                        textBody: "Successfully scanned the QR Code.",                
+                        buttonText:'Ok',
+                        okButtonStyle:styles.confirmButton,
+                        okButtonTextStyle: styles.confirmButtonText,
+                        callback: () => {    
+                          
+                          Popup.hide()            
+                          this.props.navigation.replace("FarmerProfileScreen",{data:response.data["data"],
+                            program_items:response.data["program_items"],
+                            history:response.data["history"],
+                            supplier_id:get_supplier_id,
+                            full_name:get_full_name,
+                            user_id:get_user_id,                          
+                          
+                          });
+                          this.setState({isBarcodeRead:true,show_spinner:false});              
+                                                  
+                        },              
+                      })
+                      
+                    }
+                    else{
+                      
+                      
+                      Popup.show({
+                        type: 'danger',              
+                        title: 'Message',
+                        textBody: "This voucher is already fully claimed",                
+                        buttonText:'Ok',
+                        okButtonStyle:styles.confirmButton,
+                        okButtonTextStyle: styles.confirmButtonText,
+                        callback: () => {    
+                          this.setState({isBarcodeRead:true,show_spinner:false});              
+                          Popup.hide()                                    
+                        },              
+                      })
                 
-                if (response.data["data"][0].Available_Balance != 0.00) {                
-                  if(response.data["data"][0].voucher_status != 'FULLY CLAIMED' ){
+                  
+                    }
+                  } else {
                     
-                    
-                    Popup.show({
-                      type: 'success',              
-                      title: 'Success!',
-                      textBody: "Successfully scanned the QR Code.",                
-                      buttonText:'Ok',
-                      okButtonStyle:styles.confirmButton,
-                      okButtonTextStyle: styles.confirmButtonText,
-                      callback: () => {    
-                        
-                        Popup.hide()            
-                        this.props.navigation.replace("FarmerProfileScreen",{data:response.data["data"],
-                          program_items:response.data["program_items"],
-                          history:response.data["history"],
-                          supplier_id:get_supplier_id,
-                          full_name:get_full_name,
-                          user_id:get_user_id,                          
-                        
-                        });
-                        this.setState({isBarcodeRead:true,show_spinner:false});              
-                                                
-                      },              
-                    })
-                    
-                  }
-                  else{
-                    
+
                     
                     Popup.show({
                       type: 'danger',              
@@ -103,17 +210,13 @@ export default class QRCodeScreen extends Component{
                         Popup.hide()                                    
                       },              
                     })
-               
-                 
+                
                   }
-                } else {
-                  
-
-                  
+                }else if(response.data["Message"] == "Not Yet Open") {
                   Popup.show({
                     type: 'danger',              
                     title: 'Message',
-                    textBody: "This voucher is already fully claimed",                
+                    textBody: "The time of voucher transaction is from 6:00 am to 6:00 pm only.",                
                     buttonText:'Ok',
                     okButtonStyle:styles.confirmButton,
                     okButtonTextStyle: styles.confirmButtonText,
@@ -122,30 +225,66 @@ export default class QRCodeScreen extends Component{
                       Popup.hide()                                    
                     },              
                   })
-               
+
                 }
-              }else if(response.data["Message"] == "Not Yet Open") {
-                Popup.show({
-                  type: 'danger',              
-                  title: 'Message',
-                  textBody: "The time of voucher transaction is from 6:00 am to 6:00 pm only.",                
-                  buttonText:'Ok',
-                  okButtonStyle:styles.confirmButton,
-                  okButtonTextStyle: styles.confirmButtonText,
-                  callback: () => {    
-                    this.setState({isBarcodeRead:true,show_spinner:false});              
-                    Popup.hide()                                    
-                  },              
-                })
+                else if(response.data["Message"] == "on-going process") {
+                  
+                    
+                  Popup.show({
+                    type: 'danger',              
+                    title: 'Message',
+                    textBody: "The voucher process is currently on-going.",                
+                    buttonText:'Ok',
+                    okButtonStyle:styles.confirmButton,
+                    okButtonTextStyle: styles.confirmButtonText,
+                    callback: () => {    
+                      this.setState({isBarcodeRead:true,show_spinner:false});              
+                      Popup.hide()                                    
+                    },              
+                  })
+                                
+                }   
+                else if(response.data["Message"] == "already scanned") {
+                  
+                    
+                  Popup.show({
+                    type: 'danger',              
+                    title: 'Message',
+                    textBody: "This voucher is already scanned by the others.",                
+                    buttonText:'Ok',
+                    okButtonStyle:styles.confirmButton,
+                    okButtonTextStyle: styles.confirmButtonText,
+                    callback: () => {    
+                      this.setState({isBarcodeRead:true,show_spinner:false});              
+                      Popup.hide()                                    
+                    },              
+                  })
+                                
+                }             
+                else {
+                    
+                  Popup.show({
+                    type: 'danger',              
+                    title: 'Message',
+                    textBody: "Reference Number doesn't exist.",                
+                    buttonText:'Ok',
+                    okButtonStyle:styles.confirmButton,
+                    okButtonTextStyle: styles.confirmButtonText,
+                    callback: () => {    
+                      this.setState({isBarcodeRead:true,show_spinner:false});              
+                      Popup.hide()                                    
+                    },              
+                  })
 
-              }
-              else if(response.data["Message"] == "on-going process") {
-                
                   
+                }
+              })
+              .catch((error) => {
+                console.warn(error.response);                           
                 Popup.show({
                   type: 'danger',              
                   title: 'Message',
-                  textBody: "The voucher process is currently on-going.",                
+                  textBody: "Something went wrong!",                
                   buttonText:'Ok',
                   okButtonStyle:styles.confirmButton,
                   okButtonTextStyle: styles.confirmButtonText,
@@ -153,59 +292,11 @@ export default class QRCodeScreen extends Component{
                     this.setState({isBarcodeRead:true,show_spinner:false});              
                     Popup.hide()                                    
                   },              
-                })
-                               
-              }   
-              else if(response.data["Message"] == "already scanned") {
-                
-                  
-                Popup.show({
-                  type: 'danger',              
-                  title: 'Message',
-                  textBody: "This voucher is already scanned by the others.",                
-                  buttonText:'Ok',
-                  okButtonStyle:styles.confirmButton,
-                  okButtonTextStyle: styles.confirmButtonText,
-                  callback: () => {    
-                    this.setState({isBarcodeRead:true,show_spinner:false});              
-                    Popup.hide()                                    
-                  },              
-                })
-                               
-              }             
-              else {
-                  
-                Popup.show({
-                  type: 'danger',              
-                  title: 'Message',
-                  textBody: "Reference Number doesn't exist.",                
-                  buttonText:'Ok',
-                  okButtonStyle:styles.confirmButton,
-                  okButtonTextStyle: styles.confirmButtonText,
-                  callback: () => {    
-                    this.setState({isBarcodeRead:true,show_spinner:false});              
-                    Popup.hide()                                    
-                  },              
-                })
+                }) 
+              });
+          }
 
-                
-              }
-            })
-            .catch((error) => {
-              console.warn(error.response);                           
-              Popup.show({
-                type: 'danger',              
-                title: 'Message',
-                textBody: "Something went wrong!",                
-                buttonText:'Ok',
-                okButtonStyle:styles.confirmButton,
-                okButtonTextStyle: styles.confirmButtonText,
-                callback: () => {    
-                  this.setState({isBarcodeRead:true,show_spinner:false});              
-                  Popup.hide()                                    
-                },              
-              }) 
-            });
+        }).catch(err => console.warn(err.response));
         } else {
           Popup.show({
             type: 'danger',

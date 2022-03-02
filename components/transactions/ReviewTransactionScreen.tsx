@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View,Text, StyleSheet,FlatList,Image,Modal} from 'react-native';
+import {View,Text, StyleSheet,FlatList,Image,Modal,BackHandler} from 'react-native';
 import Colors from '../../constants/Colors';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import Layout from '../../constants/Layout';
@@ -22,7 +22,7 @@ import ImageViewer from "react-native-image-zoom-viewer";
 import Spinner from 'react-native-spinkit';
 import {  Popup} from 'react-native-popup-confirm-toast';
 import Carousel from 'react-native-snap-carousel';
-
+import DeviceInfo from 'react-native-device-info';
 
 export default class ReviewTransactionScreen extends Component {
   constructor(props) {
@@ -79,46 +79,45 @@ export default class ReviewTransactionScreen extends Component {
     // render attachments
 
     renderAttachments = (item, index) => (
-      
 
       item.name == 'Valid ID' ? 
       (      
 
-      <View style={{flex:1,flexDirection:'row'}}>
-      <Card elevation={5} 
-            style={styles.card_attachment}
-            onPress={() => this.showImage(item.file[0].front)}>
+        <View style={{flex:1,flexDirection:'row'}}>
+        <Card elevation={5} 
+              style={styles.card_attachment}
+              onPress={() => this.showImage(item.file[0].front)}>
+          <Card.Title
+            left={()=>(
+                <Image
+                source={{uri: "data:image/jpeg;base64," + item.file[0].front}}
+                style={styles.attachments_cover}
+              />
+            )}
+            title={item.name +' (Front)' }                        
+            titleStyle={styles.card_attachments_title}          
+          />
+          {/* <Card.Cover source={{uri: "data:image/jpeg;base64," + item.file[0].front}} resizeMode='contain' style={[styles.attachments_cover]}/> */}
+        </Card>      
+
+        <Card elevation={5} 
+              style={styles.card_attachment}
+              onPress={() => this.showImage(item.file[0].back)}
+        >
         <Card.Title
-          left={()=>(
+            left={()=>(
               <Image
-              source={{uri: "data:image/jpeg;base64," + item.file[0].front}}
+              source={{uri: "data:image/jpeg;base64," + item.file[0].back}}
               style={styles.attachments_cover}
-            />
-          )}
-          title={item.name +' (Front)' }                        
-          titleStyle={styles.card_attachments_title}          
-        />
-        {/* <Card.Cover source={{uri: "data:image/jpeg;base64," + item.file[0].front}} resizeMode='contain' style={[styles.attachments_cover]}/> */}
-      </Card>      
+              />
+            )}
+            title={item.name  +' (Back)' }                      
+            titleStyle={styles.card_attachments_title}          
+          />
+          {/* <Card.Cover source={{uri: "data:image/jpeg;base64," + item.file[0].back}} resizeMode='contain' style={[styles.attachments_cover]}/> */}
+        </Card>      
 
-      <Card elevation={5} 
-            style={styles.card_attachment}
-            onPress={() => this.showImage(item.file[0].back)}
-      >
-        <Card.Title
-          left={()=>(
-            <Image
-            source={{uri: "data:image/jpeg;base64," + item.file[0].back}}
-            style={styles.attachments_cover}
-            />
-          )}
-          title={item.name  +' (Back)' }                      
-          titleStyle={styles.card_attachments_title}          
-        />
-        {/* <Card.Cover source={{uri: "data:image/jpeg;base64," + item.file[0].back}} resizeMode='contain' style={[styles.attachments_cover]}/> */}
-      </Card>      
-
-      </View>
+        </View>
 
       
       ): item.name == 'Other Documents' ? 
@@ -179,19 +178,19 @@ export default class ReviewTransactionScreen extends Component {
 
   // transact voucher button
   handleGetTransact = () =>{
-  let self = this;
+    let self = this;
     let formData = new FormData();
     let voucher_info = {
-      reference_no: this.state.params.voucher_info.reference_no,
-      rsbsa_no: this.state.params.voucher_info.rsbsa_no,
-      supplier_id: this.state.params.supplier_id,
-      fund_id: this.state.params.voucher_info.fund_id,
-      user_id: this.state.params.user_id,
-      full_name: this.state.params.full_name,
-      current_balance: this.state.params.voucher_info.amount_val,      
-      latitude:this.state.params.latitude,
-      longitude:this.state.params.longitude,
-      program: this.state.params.voucher_info.shortname,
+      reference_no        : this.state.params.voucher_info.reference_no,
+      rsbsa_no            : this.state.params.voucher_info.rsbsa_no,
+      supplier_id         : this.state.params.supplier_id,
+      fund_id             : this.state.params.voucher_info.fund_id,
+      user_id             : this.state.params.user_id,
+      full_name           : this.state.params.full_name,
+      current_balance     : this.state.params.voucher_info.amount_val,      
+      latitude            :this.state.params.latitude,
+      longitude           :this.state.params.longitude,
+      program             : this.state.params.voucher_info.shortname,
       one_time_transaction:this.state.params.one_time_transaction,
 
     };
@@ -199,106 +198,143 @@ export default class ReviewTransactionScreen extends Component {
     formData.append("commodity", JSON.stringify(this.state.params.cart));
     formData.append("attachments", JSON.stringify(this.state.params.attachments));
 
-
-    // SHOW CONFIRMATION
-    Popup.show({
-      type: 'confirm',
-      title: 'Warning',
-      textBody: 'Do you want submit your transaction?',
-      
-      buttonText: 'CONFIRM',
-      confirmText:'Cancel',                                 
-      callback: () => {
-
-        
-        Popup.hide()                 
-        this.setState({show_spinner:true});
-        // get transact
-
-      
-
-        setTimeout(()=>{
-
-          axios
-          .post(ipConfig.ipAddress+ "/submit-voucher", formData)
-          .then((response) => {       
-            
-              
-            if(response.data == 'success'){
-              this.setState({show_spinner:false});
-              Popup.show({
-                type: 'success',              
-                title: 'Message',
-                textBody: 'Transaction Complete',                
-                buttonText:"Go back to home.",
-                okButtonStyle:styles.confirmButton,
-                okButtonTextStyle: styles.confirmButtonText,
-                callback: () => {    
-                               
-                  Popup.hide()                 
-                                               
-                  this.props.navigation.reset({
-                    index: 0,
-                    routes: [{ name: 'Root' }]
-                  });
-  
-                },              
-              })
-        
-            } else  if(response.data == 'claimed'){
-
-              Popup.show({
-                type: 'danger',              
-                title: 'Message',
-                textBody: "This voucher is already fully claimed.",                
-                buttonText:'Ok',
-                okButtonStyle:styles.confirmButton,
-                okButtonTextStyle: styles.confirmButtonText,
-                callback: () => {    
-                  this.setState({show_spinner:false});              
-                  Popup.hide()      
-
-                  this.props.navigation.reset({
-                    index: 0,
-                    routes: [{ name: 'Root' }]
-                  });                              
-                },              
-              })
-            }else{  
-          
-              this.setState({show_spinner:false});
-              Popup.hide();
-              
-              Popup.show({
-                type: 'danger',
-                title: 'Message',
-                textBody: 'Error uploading due to unstable connection. Please try again.',
-                buttonText: 'Okay',
-                okButtonStyle: styles.confirmButton,
-                okButtonTextStyle: styles.confirmButtonText,
-                callback: () => {  
-                  Popup.hide();
-                },
-              });
-            } 
-          })
-          .catch(function (error) {   
-            self.setState({show_spinner:false});
-            console.warn(error.response.data)       
-            
-            
-            
-         
-          });  
-        },2000)
-           
-        
-      },
-      okButtonStyle:styles.confirmButton,
-      okButtonTextStyle: styles.confirmButtonText
     
-    })
 
+      // check imp mobile application version
+      axios.get(ipConfig.ipAddress + '/check_utility/' + DeviceInfo.getVersion()).then(async response => {
+        // close app if  maintenenace
+        if (response.data['maintenance'] == '1') {
+
+          this.setState({show_spinner:false});              
+          Popup.show({
+            type: 'danger',
+            title: 'Error!',
+            textBody:
+              'Sorry for the inconvenience. The mobile application is on maintenance. Please try again later.',
+            buttonText: 'Ok',
+            okButtonStyle: styles.confirmButton,
+            okButtonTextStyle: styles.confirmButtonText,
+            callback: () => {
+              BackHandler.exitApp();
+              Popup.hide();
+            },
+          });
+                    
+        }
+        // close app if apk has new updates
+        else if( response.data['active'] == '0') {
+
+          this.setState({show_spinner:false});              
+          Popup.show({
+            type: 'danger',
+            title: 'Error!',
+            textBody:
+              'The mobile application has new update. please download the new mobile application in intervention management platform website.',
+            buttonText: 'Ok',
+            okButtonStyle: styles.confirmButton,
+            okButtonTextStyle: styles.confirmButtonText,
+            callback: () => {
+              BackHandler.exitApp();
+              Popup.hide();
+            },
+          });
+
+      }else{
+       
+      // SHOW CONFIRMATION
+      Popup.show({
+        type: 'confirm',
+        title: 'Warning',
+        textBody: 'Do you want submit your transaction?',
+        
+        buttonText: 'CONFIRM',
+        confirmText:'Cancel',                                 
+        callback: () => {
+
+          this.setState({show_spinner:true});
+          Popup.hide()                 
+          
+          // get transact        
+          setTimeout(()=>{
+
+            axios
+            .post(ipConfig.ipAddress+ "/submit-voucher", formData)
+            .then((response) => {       
+              
+                
+              if(response.data == 'success'){
+                this.setState({show_spinner:false});
+                Popup.show({
+                  type: 'success',              
+                  title: 'Message',
+                  textBody: 'Transaction Complete',                
+                  buttonText:"Go back to home.",
+                  okButtonStyle:styles.confirmButton,
+                  okButtonTextStyle: styles.confirmButtonText,
+                  callback: () => {    
+                                
+                    Popup.hide()                 
+                                                
+                    this.props.navigation.reset({
+                      index: 0,
+                      routes: [{ name: 'Root' }]
+                    });
+    
+                  },              
+                })
+          
+              } else  if(response.data == 'claimed'){
+
+                Popup.show({
+                  type: 'danger',              
+                  title: 'Message',
+                  textBody: "This voucher is already fully claimed.",                
+                  buttonText:'Ok',
+                  okButtonStyle:styles.confirmButton,
+                  okButtonTextStyle: styles.confirmButtonText,
+                  callback: () => {    
+                    this.setState({show_spinner:false});              
+                    Popup.hide()      
+
+                    this.props.navigation.reset({
+                      index: 0,
+                      routes: [{ name: 'Root' }]
+                    });                              
+                  },              
+                })
+              }else{  
+            
+                this.setState({show_spinner:false});
+                Popup.hide();
+                
+                Popup.show({
+                  type: 'danger',
+                  title: 'Message',
+                  textBody: 'Error uploading due to unstable connection. Please try again.',
+                  buttonText: 'Okay',
+                  okButtonStyle: styles.confirmButton,
+                  okButtonTextStyle: styles.confirmButtonText,
+                  callback: () => {  
+                    Popup.hide();
+                  },
+                });
+              } 
+            })
+            .catch(function (error) {   
+              self.setState({show_spinner:false});
+              console.warn(error.response.data)                                                    
+            });  
+          },2000)
+            
+          
+        },
+        okButtonStyle:styles.confirmButton,
+        okButtonTextStyle: styles.confirmButtonText
+      
+      })
+    }
+
+    }).catch(err => console.warn(err.response));
   }
 
   
