@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View,Text, StyleSheet,FlatList,Modal} from 'react-native';
+import {View,Text, StyleSheet,FlatList,Modal,Image} from 'react-native';
 import {Fumi} from 'react-native-textinput-effects';
 import Colors from '../constants/Colors';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
@@ -9,8 +9,6 @@ import * as Animatable from 'react-native-animatable';
 import NetInfo from "@react-native-community/netinfo";
 import axios from 'axios';
 import * as ipConfig from '../ipconfig';
-import * as Yup from 'yup';
-import { Formik } from 'formik';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Card } from 'react-native-paper';
@@ -20,6 +18,7 @@ import ImageViewer from "react-native-image-zoom-viewer";
 import moment from 'moment';
 import {  Popup} from 'react-native-popup-confirm-toast';
 import Images from '../constants/Images';
+import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 const KEYS_TO_FILTERS = ["reference_no", "fullname"];
 export default class HomeScreen extends Component {
   constructor(props) {
@@ -27,8 +26,8 @@ export default class HomeScreen extends Component {
     this.state = {          
         params:this.props.route.params,
         isFocus:false,
-        full_name:'',
-        today_vouchers_list:[],
+        merchant_name:'',
+        vouchers_list:[],
         filter_buttons:['All','Today'],
         selected_filter:'All',
         search:'',
@@ -54,7 +53,7 @@ export default class HomeScreen extends Component {
         ipConfig.ipAddress+ "/get-scanned-vouchers/"+supplier_id+"/"+0,         
         ).catch((error)=>error.response.data.message);
         if (result.status == 200) {            
-          this.setState({today_vouchers_list:result.data,refreshing:false,currentPage:0})
+          this.setState({vouchers_list:result.data,refreshing:false,currentPage:0})
                     
         }
         this.setState({refreshing:false});
@@ -88,17 +87,9 @@ export default class HomeScreen extends Component {
             
             if (response.status == 200) {  
 
-              if(response.data.length){
-                
-                let new_data = response.data;                
-                   
-                this.setState({today_vouchers_list: [...new Set(this.state.today_vouchers_list),...new_data]});
-                
-                
-
-                
-       
-                
+              if(response.data.length){                
+                let new_data = response.data;                                   
+                this.setState({vouchers_list: [...new Set(this.state.vouchers_list),...new_data]});              
               } 
             }
 
@@ -112,7 +103,20 @@ export default class HomeScreen extends Component {
             this.setState({refreshing:false});
           });
       } else {
-        alert('No internet')
+        Popup.show({
+          type: 'danger',
+          title: 'Message',
+          textBody: 'No Internet Connection.Please check your internet connection.',
+          buttonText: 'Okay',
+          okButtonStyle: styles.confirmButton,
+          okButtonTextStyle: styles.confirmButtonText,
+          callback: () => {  
+            Popup.hide();
+                        
+            
+           
+          },
+        });
       }
     });
   }
@@ -132,7 +136,7 @@ export default class HomeScreen extends Component {
           .then((response) => {
             if (response.status == 200) {
 
-              this.setState({today_vouchers_list:response.data,currentPage:0})
+              this.setState({vouchers_list:response.data,currentPage:0})
               this.setState({refreshing:false});
 
             }
@@ -166,17 +170,31 @@ export default class HomeScreen extends Component {
   async componentDidMount(){
 
     this.fetchData();
-    this.setState({full_name:await AsyncStorage.getItem('full_name')})
+    let full_name = await AsyncStorage.getItem('full_name');
+    let first_name = full_name?.split(' ')[0];
+    this.setState({merchant_name:first_name})
 
   }
 
-  emptyComponent = () =>(
-    <Card      
-      style     = {styles.empty_card}      
-    >      
-      <Card.Cover source={Images.no_data_bg}  resizeMode="cover" width={200} height={10}/>
-    </Card>
-  )
+  emptyComponent = () =>(    
+    this.state.refreshing ? 
+    // card placeholder loader
+    <SkeletonPlaceholder>
+      <View style={{ flexDirection: "row"}}>                
+          <View style={{ marginLeft: 20 }}>
+            <View style={{ flexDirection: "row"}}>
+              <View style={{ width: 60, height: 60, borderRadius: 50 }} />  
+              <View style={{  width: (Layout.width  / 100) * 40, height: 20, borderRadius: 4,top:20 ,left:5}}/>
+            </View>            
+            
+            <View style={{marginTop: 6, width: (Layout.width  / 100) * 90, height:  (Layout.height  / 100) * 10, borderRadius: 4 }} />
+            <View style={{ marginTop: 6, width: (Layout.width  / 100) * 30, height: 20, borderRadius: 4 }}/>
+          </View>
+      </View>
+      </SkeletonPlaceholder> 
+      :
+      <Image source={Images.no_data_bg} style={styles.logo}  resizeMode={'cover'}/>          
+    )
   
 
      // got to summary 
@@ -190,13 +208,22 @@ export default class HomeScreen extends Component {
           // push to summary screen 
           
           this.props.navigation.push('SummaryScreen',{transactions:response.data,fullname:item.fullname,current_balance:item.current_balance,voucher_info:item});
-        }).catch(err=>{
-          
-          console.warn(err.response)
-          
-        })        
-      } else {
-        alert('No Internet Connection.Pleae check your internet connection.')        
+        }).catch(err=>{          
+          console.warn(err.response)          
+        });
+      
+      }else{
+        Popup.show({
+          type: 'danger',
+          title: 'Message',
+          textBody: 'No Internet Connection.Please check your internet connection.',
+          buttonText: 'Retry',
+          okButtonStyle: styles.confirmButton,
+          okButtonTextStyle: styles.confirmButtonText,
+          callback: () => {  
+            Popup.hide();                                               
+          },
+        });
       }
     });
   }
@@ -251,16 +278,21 @@ export default class HomeScreen extends Component {
     }else if (item == 'Today'){
       
       // filter by today's date transactions
-      let get_today_transactions = this.state.today_vouchers_list ? this.state.today_vouchers_list.filter((voucher_items)=>
+      let get_today_transactions = this.state.vouchers_list ? this.state.vouchers_list.filter((voucher_items)=>
             moment().format('YYYY-MM-DD') == moment(voucher_items.transac_date).format('YYYY-MM-DD') 
           ): [];
 
-      this.setState({selected_filter:item,today_vouchers_list:get_today_transactions})
+      this.setState({selected_filter:item,vouchers_list:get_today_transactions})
     }
   } 
+
+  // render filter button
   renderFilterButtons  = (item) =>(
     <Button
-      style= {[styles.filter_button_style,{borderColor: this.state.selected_filter == item ? Colors.blue_green : '#ddd'}]}
+      textStyle={{color:this.state.selected_filter == item ? Colors.light : Colors.fade,fontFamily:'Gotham_light',fontWeight:'bold'}}
+      style= {[styles.filter_button_style,{
+            borderColor: this.state.selected_filter == item ? Colors.blue_green : Colors.light,
+            backgroundColor:this.state.selected_filter == item ? Colors.blue_green : Colors.light}]}      
       onPress= {()=>this.filterButtonFunction(item)}
     >
       {item}
@@ -268,17 +300,18 @@ export default class HomeScreen extends Component {
   )
   render() {
 
-    const filteredVouchers = this.state.today_vouchers_list.filter(
+    const filteredVouchers = this.state.vouchers_list.filter(
       createFilter(this.state.search, KEYS_TO_FILTERS)
     );
 
     return (
       <View style={styles.container}>        
         
-        <Animatable.Text style={styles.greetings} animation="fadeInDownBig" >Hello, John Edcel</Animatable.Text>        
-        <Animatable.Text style={styles.question} animation="fadeInDownBig" >What voucher transaction do you want to search?</Animatable.Text>        
+        <Animatable.Text style={styles.greetings} animation="fadeInDownBig" adjustsFontSizeToFit>Hello Merchant {this.state.merchant_name}</Animatable.Text>        
+        <Animatable.Text style={styles.question} animation="fadeInDownBig" adjustsFontSizeToFit>What voucher transaction do you want to search?</Animatable.Text>        
         <Fumi
             label={'Search by reference number'}
+            labelStyle={styles.search_label}            
             iconClass={FontAwesomeIcon}
             iconName={'search'}
             iconColor={Colors.green}
@@ -314,12 +347,12 @@ export default class HomeScreen extends Component {
           
           onRefresh={this.getScannedVouchers}
           refreshing={this.state.refreshing}                                  
-          data={this.state.today_vouchers_list ? filteredVouchers : null}
-          extraData = {this.state.today_vouchers_list}
+          data={this.state.vouchers_list ? filteredVouchers : null}
+          extraData = {this.state.vouchers_list}
           ListEmptyComponent={this.emptyComponent}
           renderItem={({ item, index }) =>  this.renderItem(item,index)}               
           contentContainerStyle={{flexGrow:0,paddingBottom:90}}
-          style={styles.today_voucher_flatlist}
+          style={styles.voucher_flatlist}
           keyExtractor={(item,index)=>index}          
           
           onEndReachedThreshold={0.1} // so when you are at 5 pixel from the bottom react run onEndReached function
@@ -367,11 +400,18 @@ const styles = StyleSheet.create({
   //   width:(Layout.width/100) * 20,    
   //   left:10
   // },
+  logo:{
+    width:(Layout.width / 100) *  90,
+    height:(Layout.height / 100) * 30,
+    alignSelf:'center',
+    
+    
+  },
   card_cover:{    
     width:  100,
     height: 100
   },
-  today_voucher_flatlist:{
+  voucher_flatlist:{
     top:(Layout.height/100) * 16,
     width:(Layout.width/100) * 100,   
     height:(Layout.height/100) * 60,    
@@ -398,7 +438,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   recent_title:{
-    top:(Layout.height/100) * 15,
+    top:(Layout.height/100) * 20,
     left:10,
     fontFamily:'Gotham_bold',
     color:Colors.header_text
@@ -414,7 +454,7 @@ const styles = StyleSheet.create({
     top:(Layout.height/100) * 5,
     color:Colors.blue_green,    
     left:10,
-    fontSize:25,      
+    fontSize:22,      
   },
   question:{
     fontFamily:"Gotham_light",
@@ -435,14 +475,28 @@ const styles = StyleSheet.create({
     top:(Layout.height/100) * 1,
     marginLeft:(Layout.width / 100) * 5,
     borderRadius:20,
+    fontFamily:"Gotham_light",
+    fontWeight:'bold',
     borderColor:Colors.blue_green,
+    color:Colors.light,
     width:(Layout.width / 100) * 25,
   },
   flatlist_filter_buttons:{
-    flexGrow:0,
-    
+    flexGrow:0,     
     top:(Layout.height/100) * 12,
     height:(Layout.height/100) * 5,
+  },
+  confirmButton:{
+    backgroundColor:'white',
+    color:Colors.green,
+    borderColor:Colors.green,
+    borderWidth:1
+  },
+  confirmButtonText:{  
+    color:Colors.green,    
+  },
+  search_label:{
+    fontFamily:'Gotham_light',
+    fontWeight:'bold'
   }
-
 });

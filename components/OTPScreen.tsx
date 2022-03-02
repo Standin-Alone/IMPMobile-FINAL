@@ -66,7 +66,7 @@ export default class OTPScreen extends Component {
               AsyncStorage.setItem("supplier_id", this.state.params.supplier_id.toLocaleString());
               AsyncStorage.setItem("full_name", this.state.params.full_name);
               firebase.messaging().subscribeToTopic(this.state.params.user_id.toLocaleString());
-              this.props.navigation.replace("Root");                                            
+              this.props.navigation.replace("Root",{full_name:this.state.params.full_name});                                            
                        
               this.setState({isLoading:false});
             } else if(response.data == 'expired') {
@@ -84,7 +84,17 @@ export default class OTPScreen extends Component {
             this.setState({isLoading:false,error:true})
           });
       }else{
-        alert('No internet connection');
+        Popup.show({
+          type: 'danger',
+          title: 'Message',
+          textBody: 'No Internet Connection.Please check your internet connection.',
+          buttonText: 'Retry',
+          okButtonStyle: styles.confirmButton,
+          okButtonTextStyle: styles.confirmButtonText,
+          callback: () => {  
+            Popup.hide();
+          },
+        });
       }
     });
      
@@ -109,7 +119,17 @@ export default class OTPScreen extends Component {
           axios.post(ipConfig.ipAddress+'/resend-otp',data).then((response)=>{
                          
             if(response.data['Message'] == 'true'){
-              alert('Successfully resend new OTP to your email.');
+              Popup.show({
+                type: 'success',
+                title: 'Message',
+                textBody: 'Your new OTP has been successfully sent to your email.',
+                buttonText: 'Okay',
+                okButtonStyle: styles.confirmButton,
+                okButtonTextStyle: styles.confirmButtonText,
+                callback: () => {  
+                  Popup.hide();
+                },
+              });
                 
               AsyncStorage.setItem(
                 "otp_code",
@@ -126,7 +146,20 @@ export default class OTPScreen extends Component {
             this.setState({isResendLoading:false,error:false})
           });
       }else{
-        alert('No internet connection');
+        Popup.show({
+          type: 'danger',
+          title: 'Message',
+          textBody: 'No Internet Connection.Please check your internet connection.',
+          buttonText: 'Retry',
+          okButtonStyle: styles.confirmButton,
+          okButtonTextStyle: styles.confirmButtonText,
+          callback: () => {  
+            Popup.hide();
+                        
+            
+           
+          },
+        });
         this.setState({isResendLoading:false})
       }
     });
@@ -293,6 +326,15 @@ const styles = StyleSheet.create({
     marginBottom:20,
     top: (Layout.height / 100) * 42,
     
+  },
+  confirmButton:{
+    backgroundColor:'white',
+    color:Colors.green,
+    borderColor:Colors.green,
+    borderWidth:1
+  },
+  confirmButtonText:{  
+    color:Colors.green,    
   },
   otp: { textAlign: "center", fontSize: 25,color:Colors.dark ,top: (Layout.height / 100) * 35,fontFamily:'Gotham_bold'},
   otp_desc: { textAlign: "center", fontSize: 18,marginBottom:20,color:Colors.dark,top: (Layout.height / 100) * 35},

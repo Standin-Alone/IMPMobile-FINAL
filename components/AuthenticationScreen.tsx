@@ -138,7 +138,7 @@ export default class AuthenticationScreen extends React.Component {
           Popup.show({
             type: 'danger',
             title: 'Message',
-            textBody: 'No Internet Connection.Pleae check your internet connection.',
+            textBody: 'No Internet Connection.Please check your internet connection.',
             buttonText: 'Retry',
             okButtonStyle: styles.confirmButton,
             okButtonTextStyle: styles.confirmButtonText,
@@ -174,7 +174,7 @@ export default class AuthenticationScreen extends React.Component {
         Popup.show({
           type: 'danger',
           title: 'Message',
-          textBody: 'No Internet Connection.Pleae check your internet connection.',
+          textBody: 'No Internet Connection.Please check your internet connection.',
           buttonText: 'Retry',
           okButtonStyle: styles.confirmButton,
           okButtonTextStyle: styles.confirmButtonText,
@@ -300,7 +300,7 @@ export default class AuthenticationScreen extends React.Component {
           Popup.show({
             type: 'danger',
             title: 'Message',
-            textBody: 'No Internet Connection.Pleae check your internet connection.',
+            textBody: 'No Internet Connection.Please check your internet connection.',
             buttonText: 'Retry',
             okButtonStyle: styles.confirmButton,
             okButtonTextStyle: styles.confirmButtonText,

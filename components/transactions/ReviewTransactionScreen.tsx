@@ -268,7 +268,18 @@ export default class ReviewTransactionScreen extends Component {
           
               this.setState({show_spinner:false});
               Popup.hide();
-              alert("Error uploading due to unstable connection. Please try again.*");
+              
+              Popup.show({
+                type: 'danger',
+                title: 'Message',
+                textBody: 'Error uploading due to unstable connection. Please try again.',
+                buttonText: 'Okay',
+                okButtonStyle: styles.confirmButton,
+                okButtonTextStyle: styles.confirmButtonText,
+                callback: () => {  
+                  Popup.hide();
+                },
+              });
             } 
           })
           .catch(function (error) {   
@@ -276,7 +287,7 @@ export default class ReviewTransactionScreen extends Component {
             console.warn(error.response.data)       
             
             
-            alert("Error occured!." + error.response);
+            
          
           });  
         },2000)

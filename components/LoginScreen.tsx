@@ -13,6 +13,7 @@ import axios from 'axios';
 import { Formik } from 'formik';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Images from '../constants/Images';
+import {Popup} from 'react-native-popup-confirm-toast';
 export default class LoginScreen extends Component {
   constructor(props) {
     super(props);
@@ -72,7 +73,7 @@ export default class LoginScreen extends Component {
                   email      : get_email
                 };
 
-                this.props.navigation.replace('OTPScreen',dataToSend)
+                this.props.navigation.navigate('OTPScreen',dataToSend)
               }
               // check if account exist
               else if(response.data['Message'] == 'no account'){                
@@ -101,7 +102,17 @@ export default class LoginScreen extends Component {
               this.setState({isLoading:false})
             });
         }else{
-          alert('No internet connection');
+          Popup.show({
+            type: 'danger',
+            title: 'Message',
+            textBody: 'No Internet Connection.Please check your internet connection.',
+            buttonText: 'Retry',
+            okButtonStyle: styles.confirmButton,
+            okButtonTextStyle: styles.confirmButtonText,
+            callback: () => {  
+              Popup.hide();
+            },
+          });
         }
       });
      
@@ -194,7 +205,7 @@ export default class LoginScreen extends Component {
           >
             Login
           </Button>  
-          <Animatable.Text style={styles.forgot_password_txt} animation="slideInLeft" onPress={()=>this.props.navigation.navigate('ForgotPasswordScreen')} >Forgot Password?</Animatable.Text>            
+          <Animatable.Text style={styles.forgot_password_txt} animation="slideInLeft" onPress={()=>this.props.navigation.navigate('ForgotPasswordScreen')} >Forgot your password?</Animatable.Text>            
         </View>
         )}
         </Formik>
@@ -282,5 +293,14 @@ const styles = StyleSheet.create({
     color:Colors.blue_green,
     top:(Layout.height/100) * 46,
     left:(Layout.width / 100) * 5,
-  }
+  },
+  confirmButton:{
+    backgroundColor:'white',
+    color:Colors.green,
+    borderColor:Colors.green,
+    borderWidth:1
+  },
+  confirmButtonText:{  
+    color:Colors.green,    
+  },
 });

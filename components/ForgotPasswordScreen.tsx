@@ -102,7 +102,17 @@ export default class ForgotPasswordScreen extends Component {
               this.setState({isLoading:false})
             });
         }else{
-          alert('No internet connection');
+          Popup.show({
+            type: 'danger',
+            title: 'Message',
+            textBody: 'No Internet Connection.Please check your internet connection.',
+            buttonText: 'Retry',
+            okButtonStyle: styles.confirmButton,
+            okButtonTextStyle: styles.confirmButtonText,
+            callback: () => {  
+              Popup.hide();
+            },
+          });
         }
       });
 
