@@ -171,6 +171,7 @@ export default class HomeScreen extends Component {
 
     this.fetchData();
     let full_name = await AsyncStorage.getItem('full_name');
+    
     let first_name = full_name?.split(' ')[0];
     this.setState({merchant_name:first_name})
 
@@ -179,8 +180,32 @@ export default class HomeScreen extends Component {
   emptyComponent = () =>(    
     this.state.refreshing ? 
     // card placeholder loader
-    <SkeletonPlaceholder>
-      <View style={{ flexDirection: "row"}}>                
+    <SkeletonPlaceholder highlightColor={Colors.blue_green} >
+      <View style={{ flexDirection: "row",marginTop:20}}>                
+          <View style={{ marginLeft: 20 }}>
+            <View style={{ flexDirection: "row"}}>
+              <View style={{ width: 60, height: 60, borderRadius: 50 }} />  
+              <View style={{  width: (Layout.width  / 100) * 40, height: 20, borderRadius: 4,top:20 ,left:5}}/>
+            </View>            
+            
+            <View style={{marginTop: 6, width: (Layout.width  / 100) * 90, height:  (Layout.height  / 100) * 10, borderRadius: 4 }} />
+            <View style={{ marginTop: 6, width: (Layout.width  / 100) * 30, height: 20, borderRadius: 4 }}/>
+          </View>
+      </View>
+
+      <View style={{ flexDirection: "row",marginTop:20}}>                
+          <View style={{ marginLeft: 20 }}>
+            <View style={{ flexDirection: "row"}}>
+              <View style={{ width: 60, height: 60, borderRadius: 50 }} />  
+              <View style={{  width: (Layout.width  / 100) * 40, height: 20, borderRadius: 4,top:20 ,left:5}}/>
+            </View>            
+            
+            <View style={{marginTop: 6, width: (Layout.width  / 100) * 90, height:  (Layout.height  / 100) * 10, borderRadius: 4 }} />
+            <View style={{ marginTop: 6, width: (Layout.width  / 100) * 30, height: 20, borderRadius: 4 }}/>
+          </View>
+      </View>
+
+      <View style={{ flexDirection: "row",marginTop:20}}>                
           <View style={{ marginLeft: 20 }}>
             <View style={{ flexDirection: "row"}}>
               <View style={{ width: 60, height: 60, borderRadius: 50 }} />  
@@ -197,7 +222,7 @@ export default class HomeScreen extends Component {
     )
   
 
-     // got to summary 
+   // go to summary screen
    goToSummary = (item) =>{  
     
     NetInfo.fetch().then(async (response: any) => {
@@ -403,9 +428,7 @@ const styles = StyleSheet.create({
   logo:{
     width:(Layout.width / 100) *  90,
     height:(Layout.height / 100) * 30,
-    alignSelf:'center',
-    
-    
+    alignSelf:'center',        
   },
   card_cover:{    
     width:  100,
@@ -438,7 +461,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   recent_title:{
-    top:(Layout.height/100) * 20,
+    top:(Layout.height/100) * 15,
     left:10,
     fontFamily:'Gotham_bold',
     color:Colors.header_text

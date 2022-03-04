@@ -17,8 +17,8 @@ const ipAddress_socket = 'http://172.17.150.58';
 
 
 // prod server
-// const ipAddress = 'https://dts.da.gov.ph';
-// const ipAddress_socket = 'wss://dts.da.gov.ph';
+// const ipAddress = 'https://imp-app.da.gov.ph';
+// const ipAddress_socket = 'wss://imp-app.da.gov.ph';
 
 
 export {ipAddress_socket,ipAddress};

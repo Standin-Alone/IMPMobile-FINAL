@@ -7,6 +7,7 @@ import LoginScreen from '../components/LoginScreen';
 import ForgotPasswordScreen from '../components/ForgotPasswordScreen';
 import OTPScreen from '../components/OTPScreen';
 import BottomTabNavigator from '../navigation/BottomTabNavigator';
+
 import FarmerProfileScreen from '../components/FarmerProfileScreen';
 import AuthenticationScreen from '../components/AuthenticationScreen';
 import CommodityScreen from '../components/transactions/CommodityScreen';
@@ -15,6 +16,7 @@ import ViewCartScreen from '../components/transactions/ViewCartScreen';
 import AttachmentScreen from '../components/transactions/AttachmentScreen';
 import ReviewTransactionScreen from '../components/transactions/ReviewTransactionScreen';
 import SummaryScreen from '../components/SummaryScreen';
+import PayoutSummaryScreen from '../components/PayoutSummaryScreen';
 import { createSharedElementStackNavigator } from 'react-navigation-shared-element';
 import SocketConnection from '../constants/SocketConnection';
 import PushNotification from "react-native-push-notification";
@@ -22,6 +24,8 @@ import PushNotification from "react-native-push-notification";
 import {firebase} from '@react-native-firebase/firestore';
 
 import Firebase from '../constants/Firebase';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
+
 
 const Stack  = createSharedElementStackNavigator();
 
@@ -154,7 +158,7 @@ function MyStack(){
     
     return(
         <Root>
-            <Stack.Navigator initialRouteName='AuthenticationScreen'>            
+            <Stack.Navigator initialRouteName='AuthenticationScreen' >            
                 <Stack.Screen component={AuthenticationScreen} name='AuthenticationScreen' options={{headerShown:false,headerTransparent:true}}/>
                 <Stack.Screen component={LoginScreen} name='LoginScreen' options={{headerShown:false,headerTransparent:true}}/>
                 <Stack.Screen component={ForgotPasswordScreen} name='ForgotPasswordScreen' options={{headerTransparent:true,headerTitle:'Change Password'}}/>
@@ -195,7 +199,8 @@ function MyStack(){
                 <Stack.Screen component={ViewCartScreen} name='ViewCartScreen'/>
                 <Stack.Screen component={AttachmentScreen} name='AttachmentScreen' options={{headerTransparent:true,headerTitle:"Attachments",headerTitleStyle:{fontFamily:'Gotham_bold'}}} />
                 <Stack.Screen component={SummaryScreen} name='SummaryScreen' options={{headerTransparent:true,headerTitle:"More Info",headerTitleStyle:{fontFamily:'Gotham_bold'}}} />
-                <Stack.Screen component={ReviewTransactionScreen} name='ReviewTransactionScreen' options={{headerShown:false,headerTransparent:true}}/>                
+                <Stack.Screen component={ReviewTransactionScreen} name='ReviewTransactionScreen' options={{headerShown:false,headerTransparent:true}}/>    
+                <Stack.Screen component={PayoutSummaryScreen} name='PayoutSummaryScreen' options={{headerTransparent:true,headerTitle:"Batch Summary",headerTitleStyle:{fontFamily:'Gotham_bold'}}}/>                
                 <Stack.Screen component={BottomTabNavigator} name='Root' options={{headerShown:false,headerTransparent:true}}/>
             </Stack.Navigator>
         </Root>

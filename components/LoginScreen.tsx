@@ -25,7 +25,7 @@ export default class LoginScreen extends Component {
         error:false,
         error_message:'',
         validation : Yup.object({
-          username: Yup.string().required("Please enter username").email("Username must be valid email."),
+          username: Yup.string().required("Please enter username"),
           password: Yup.string().required("Please enter password")      
         })
 
@@ -64,16 +64,26 @@ export default class LoginScreen extends Component {
                 let get_email       = response.data["email"];
                 let get_supplier_id = response.data["supplier_id"];
                 let get_full_name   = response.data["full_name"];
+                let get_programs    = response.data["programs"];
+                
+                let clean_programs:any = [];
+
+                get_programs.map((program)=>{
+                  console.warn(program.program_id);
+                  clean_programs.push(program.program_id);
+                })
+                
 
 
                 let dataToSend = {
                   user_id    : get_user_id,
                   supplier_id: get_supplier_id,
                   full_name  : get_full_name,
-                  email      : get_email
+                  email      : get_email,
+                  programs   : clean_programs,
                 };
 
-                this.props.navigation.navigate('OTPScreen',dataToSend)
+                this.props.navigation.replace('OTPScreen',dataToSend)
               }
               // check if account exist
               else if(response.data['Message'] == 'no account'){                

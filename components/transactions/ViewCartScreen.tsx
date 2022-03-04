@@ -637,7 +637,7 @@ const styles = StyleSheet.create({
     fontFamily: "Gotham_light",
     fontSize: 25,
     fontWeight: "bold",
-    right:(Layout.width / 100) * 8
+    right:(Layout.width / 100) * 7
   },
   remaining_balance: {
     color: Colors.blue_green,

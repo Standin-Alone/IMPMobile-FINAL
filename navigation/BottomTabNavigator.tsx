@@ -7,12 +7,13 @@ import { StyleSheet,Pressable } from 'react-native';
 import { Root, Popup } from 'react-native-popup-confirm-toast';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import FontAwesome  from 'react-native-vector-icons/FontAwesome';
-
-
+import { FontAwesomeIcon} from '@fortawesome/react-native-fontawesome'
+import { faMoneyBillWaveAlt} from '@fortawesome/free-solid-svg-icons'
 
 
 import HomeScreen from '../components/HomeScreen';
 import QRCodeScreen from '../components/QRCodeScreen';
+import PayoutScreen from '../components/PayoutScreen';
 
 
 export default function BottomTabNavigator() {
@@ -44,7 +45,8 @@ export default function BottomTabNavigator() {
           }}
           // - You can add the style below to show content screen under the tab-bar
           // - It will makes the "transparent tab bar" effect.
-          bottomBarContainerStyle={{            
+          bottomBarContainerStyle={{     
+                   
             position: 'absolute',           
             bottom: 0,
             left: 0,
@@ -104,6 +106,7 @@ export default function BottomTabNavigator() {
     
   <Tabs.Screen  options={({navigation})=>({
       tabBarIcon: ()=> <Icon name="qrcode" size={40}  color={'white'}/>,
+      tabBarLabel:'Scan',
       headerTitle:'Scan QR Code',
       headerTransparent:true,
       headerTitleStyle:styles.bottomTitle,
@@ -142,7 +145,53 @@ export default function BottomTabNavigator() {
       )
     })}  
     
-     name="qrcode" component={QRCodeScreen} />
+     name="QRCode" component={QRCodeScreen} />
+
+
+    <Tabs.Screen  options={({navigation})=>({
+      tabBarIcon: ()=> <FontAwesomeIcon icon={faMoneyBillWaveAlt} size={40} color={Colors.light}  transform="fa-fade"  />,
+      tabBarLabel:'Payout',
+      headerTitle:'Payout Monitoring',
+      headerTransparent:true,
+      headerTitleStyle:styles.bottomTitle,
+      headerTintColor:Colors.green,
+      headerRight: () => (            
+        <Pressable
+          onPress={  () => {                    
+                Popup.show({
+                  type: 'confirm',
+                  title: 'Warning',
+                  textBody: 'Do you want to sign out?',
+                  
+                  buttonText: 'Sign Out',
+                  confirmText:'Cancel',                                 
+                  callback: () => {
+                    Popup.hide()
+                    AsyncStorage.clear();
+                    navigation.replace('AuthenticationScreen');
+                    
+                  },
+                  okButtonStyle:styles.confirmButton,
+                  okButtonTextStyle: styles.confirmButtonText
+                
+                })
+          }}
+          style={({ pressed }) => ({
+            opacity: pressed ? 0.5 : 1,
+          })}>
+          <FontAwesome
+            name="sign-out"
+            size={25}
+            color={Colors.green}
+            style={{ marginRight: 15 }}
+          />
+        </Pressable>
+      ),
+      
+    })}  
+    
+     name="Payout" component={PayoutScreen} />
+
 
 
       

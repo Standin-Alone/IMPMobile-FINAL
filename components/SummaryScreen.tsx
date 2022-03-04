@@ -138,11 +138,11 @@ export default class SummaryScreen extends Component {
             return  this.convertedDate(value.transac_date)  ==  this.convertedDate(item.transac_date)  &&  item.transac_by_fullname == value.transac_by_fullname  ? (
                 <View>
                   <List.Item
-                    title={value.item_name + " (" + value.quantity + " " + value.unit_measure  +")"}
+                    title={(item.item_category != '' ? item.item_category : item.name)  + " (" + value.quantity + " " + value.unit_measure  +")"}
                     titleStyle={{ fontFamily: "calibri-light" }}
-                    description={ 
-                      "₱" + value.amount + " per " + value.unit_measure 
-                    }
+                    // description={ 
+                    //   "₱" + value.total_amount 
+                    // }
 
                     
                     right={() => (

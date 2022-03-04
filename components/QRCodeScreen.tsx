@@ -29,63 +29,25 @@ export default class QRCodeScreen extends Component{
        
     }
 
-    // check version
-    check_version = ()=>{ 
-
-      let is_usable = false;
-      axios.get(ipConfig.ipAddress + '/check_utility/' + DeviceInfo.getVersion()).then(async response => {
-        if (response.data['maintenance'] == '1') {
-
-          Popup.show({
-            type: 'danger',
-            title: 'Error!',
-            textBody:
-              'Sorry for the inconvenience. The mobile application is on maintenance. Please try again later.',
-            buttonText: 'Ok',
-            okButtonStyle: styles.confirmButton,
-            okButtonTextStyle: styles.confirmButtonText,
-            callback: () => {
-              BackHandler.exitApp();
-              Popup.hide();
-            },
-          });
-          
-
-        }else if( response.data['active'] == '0') {
-            Popup.show({
-              type: 'danger',
-              title: 'Error!',
-              textBody:
-                'The mobile application has new update. please download the new mobile application in voucher management platform website.',
-              buttonText: 'Ok',
-              okButtonStyle: styles.confirmButton,
-              okButtonTextStyle: styles.confirmButtonText,
-              callback: () => {
-                BackHandler.exitApp();
-                Popup.hide();
-              },
-            });
-        }else{
-
-          is_usable = true;
-        }
-
-      }).catch(err => console.warn(err.response));
-
-      return is_usable;
-    }
+ 
 
 
     handleBarCodeRead = async (scanResult)=>{
       const get_user_id = await AsyncStorage.getItem("user_id");
       const get_supplier_id = await AsyncStorage.getItem("supplier_id");
       const get_full_name = await AsyncStorage.getItem("full_name");
-      
-        
-      let form = { reference_num: scanResult.data,supplier_id:get_supplier_id };
+      let get_programs = await AsyncStorage.getItem("programs");
+
+      let clean_programs = JSON.parse(get_programs);
+      // payload
+      let form = { 
+            reference_num: scanResult.data,
+            supplier_id:get_supplier_id,
+            programs:clean_programs
+            };
       
 
-
+            
 
       if(this.state.isBarcodeRead){   
 
@@ -134,14 +96,14 @@ export default class QRCodeScreen extends Component{
               });
             }else{
               
-            // scan voucher start here
+            // START SCANNING AXIOS HERE
             axios
               .post(
                 ipConfig.ipAddress + "/get_voucher_info",
                 form
               )
               .then( (response) => {
-                  console.warn(response.data)
+                    console.warn(response.data["Message"] )
                 if (response.data["Message"] == "true") {
                   // navigation.navigate('ClaimVoucher',response.data[0]['data']);
                   // setScanned(false);
@@ -260,6 +222,22 @@ export default class QRCodeScreen extends Component{
                     },              
                   })
                                 
+                }else if(response.data["Message"] == "invalid program.") {
+                  
+                    
+                  Popup.show({
+                    type: 'danger',              
+                    title: 'Message',
+                    textBody: "You are not registered in this program.",                
+                    buttonText:'Ok',
+                    okButtonStyle:styles.confirmButton,
+                    okButtonTextStyle: styles.confirmButtonText,
+                    callback: () => {    
+                      this.setState({isBarcodeRead:true,show_spinner:false});              
+                      Popup.hide()                                    
+                    },              
+                  })
+                                
                 }             
                 else {
                     
@@ -280,7 +258,7 @@ export default class QRCodeScreen extends Component{
                 }
               })
               .catch((error) => {
-                console.warn(error.response);                           
+                
                 Popup.show({
                   type: 'danger',              
                   title: 'Message',
@@ -289,6 +267,7 @@ export default class QRCodeScreen extends Component{
                   okButtonStyle:styles.confirmButton,
                   okButtonTextStyle: styles.confirmButtonText,
                   callback: () => {    
+                    console.warn(error.response.data);                           
                     this.setState({isBarcodeRead:true,show_spinner:false});              
                     Popup.hide()                                    
                   },              
@@ -306,9 +285,10 @@ export default class QRCodeScreen extends Component{
             okButtonStyle: styles.confirmButton,
             okButtonTextStyle: styles.confirmButtonText,
             callback: () => {  
+              this.setState({isBarcodeRead:true,show_spinner:false});              
               Popup.hide();
                           
-              this.setState({isBarcodeRead:true,show_spinner:false});              
+              
              
             },
           });

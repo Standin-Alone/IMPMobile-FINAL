@@ -202,7 +202,7 @@ export default class AttachmentScreen extends Component {
 // right content of swipeable
 // delete item function
 rightContent = (delete_index : any,item : any) => (
-  <View style={{ top:(Layout.height / 100) * 5}}>
+  <View style={{ top:(Layout.height / 100) * 10}}>
     <Icon
       name="trash"
       family="entypo"
@@ -210,7 +210,6 @@ rightContent = (delete_index : any,item : any) => (
       size={50}
       onPress={() => {
 
-        
         let new_data = this.state.attachments;
 
         new_data.map((item_result)=>{
@@ -220,20 +219,8 @@ rightContent = (delete_index : any,item : any) => (
           }
         });
 
-
         this.setState({attachments:new_data})
-        
-        
-        
-        
-      
-        
-      
-
-        
-     
-
-        
+    
       }}
     />
 
@@ -244,7 +231,7 @@ rightContent = (delete_index : any,item : any) => (
  renderItem = (item, index) => {
     return (
 
-           // condition for other documents
+    // condition for other documents
     item.name == 'Other Documents' ?
 
     (     
@@ -273,7 +260,7 @@ rightContent = (delete_index : any,item : any) => (
     
         <View>
           {index == 0 &&
-            <Text style={styles.title}> <FontAwesomeIcon name="info-circle" color={Colors.blue_green} size={25}/> {item.name}</Text>
+            <Text style={styles.title}> <FontAwesomeIcon name="info-circle" color={Colors.blue_green} size={25}/> {item.name}  <Text style={[styles.title,{color:Colors.danger}]}>*</Text></Text>
           }
 
           <Swipeable renderRightActions={() => this.rightContent(index,item_other_documents)}>             
@@ -322,7 +309,7 @@ rightContent = (delete_index : any,item : any) => (
     
     item.file == null ? (
       <View>
-        <Text style={styles.title}> <FontAwesomeIcon name="info-circle" color={Colors.blue_green} size={25}/> {item.name} <Text style={[styles.title,{color:Colors.danger}]}>*</Text></Text>
+        <Text style={styles.title}> <FontAwesomeIcon name="info-circle" color={Colors.blue_green} size={25}/> {item.name}<Text style={[styles.title,{color:Colors.danger}]}>*</Text></Text>
         <Button
           
           style={styles.card_none}
@@ -336,7 +323,10 @@ rightContent = (delete_index : any,item : any) => (
           <Text style={styles.card_text}>Press to add picture</Text>
         </Button>
       </View>
-    ) : 
+    )
+    // end condition for other documents
+    
+    : 
  
     
         
@@ -454,7 +444,7 @@ rightContent = (delete_index : any,item : any) => (
       </View>
     ) : (
       <View>
-        <Text style={styles.title}><FontAwesomeIcon name="info-circle" color={Colors.blue_green} size={25}/>{item.name}</Text>
+        <Text style={styles.title}><FontAwesomeIcon name="info-circle" color={Colors.blue_green} size={25}/> {item.name} <Text style={[styles.title,{color:Colors.danger}]}>*</Text></Text>
         <Card
           elevation={10}
           style={styles.card}

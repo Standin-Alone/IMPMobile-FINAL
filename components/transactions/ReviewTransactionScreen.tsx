@@ -55,7 +55,7 @@ export default class ReviewTransactionScreen extends Component {
     
       <Card elevation={5} style={styles.card}>
         <Card.Title
-          title={item.name + " (" + item.quantity + item.unit_measure + ")"}
+          title={(item.item_category != '' ? item.item_category : item.name)  + " (" + item.quantity + item.unit_measure + ")"}
           left={() => (
             <Image
               source={{ uri: "data:Image/jpeg;base64," + item.image }}
@@ -181,6 +181,7 @@ export default class ReviewTransactionScreen extends Component {
     let self = this;
     let formData = new FormData();
     let voucher_info = {
+      voucher_id          : this.state.params.voucher_info.voucher_id,
       reference_no        : this.state.params.voucher_info.reference_no,
       rsbsa_no            : this.state.params.voucher_info.rsbsa_no,
       supplier_id         : this.state.params.supplier_id,
@@ -261,7 +262,7 @@ export default class ReviewTransactionScreen extends Component {
             .post(ipConfig.ipAddress+ "/submit-voucher", formData)
             .then((response) => {       
               
-                
+              console.warn(response.data[0].Message)
               if(response.data == 'success'){
                 this.setState({show_spinner:false});
                 Popup.show({
@@ -322,7 +323,7 @@ export default class ReviewTransactionScreen extends Component {
             })
             .catch(function (error) {   
               self.setState({show_spinner:false});
-              console.warn(error.response.data)                                                    
+              console.warn(error.response)                                                    
             });  
           },2000)
             
