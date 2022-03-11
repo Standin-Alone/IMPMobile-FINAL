@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View,Text, StyleSheet,FlatList,Image} from 'react-native';
+import {View,Text, StyleSheet,FlatList,Image, BackHandler} from 'react-native';
 import Colors from '../constants/Colors';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import Layout from '../constants/Layout';
@@ -19,6 +19,7 @@ import Button from 'apsl-react-native-button';
 import Moment from 'react-moment';
 import NumberFormat from 'react-number-format';
 import {Popup } from 'react-native-popup-confirm-toast';
+import BackgroundTimer from 'react-native-background-timer';
 import Spinner from 'react-native-spinkit';
 export default class FarmerProfileScreen extends Component {
   constructor(props) {
@@ -31,8 +32,23 @@ export default class FarmerProfileScreen extends Component {
 
   }
 
+  goBack = () =>{
+    BackgroundTimer.clearTimeout(this.state.params.timer);
+    this.props.navigation.goBack();
+    return true;
+  }
+  
   componentDidUpdate() {
-      
+
+
+   BackHandler.addEventListener('hardwareBackPress',this.goBack);   
+    
+   
+
+  }
+
+  componentWillUnmount() {
+    BackHandler.removeEventListener('hardwareBackPress',this.goBack)
   }
 
   // render recent claiming
@@ -63,10 +79,12 @@ export default class FarmerProfileScreen extends Component {
 
   
   handleGoBack = () => {
-    this.props.navigation.reset({
-      index: 0,
-      routes: [{name: 'Root'}],
-    })
+    BackgroundTimer.clearTimeout(this.state.params.timer);
+    // this.props.navigation.reset({
+    //   index: 0,
+    //   routes: [{name: 'Root'}],
+    // })
+    this.props.navigation.goBack();
   }
 
   returnCart = (new_cart)=>{
@@ -90,7 +108,7 @@ export default class FarmerProfileScreen extends Component {
             reference_no:this.state.params.data[0].reference_no
         }
 
-        if(response.isConnected){
+        if(response.isConnected && response.isInternetReachable){
           
         // check if voucher has draft transaction
         axios.post(ipConfig.ipAddress+'/check-draft-transaction',data).then((response)=>{              
@@ -101,7 +119,7 @@ export default class FarmerProfileScreen extends Component {
                                 
             if(result['draft_cart'].length != 0){
 
-
+              console.warn(this.state.params.program_items)
          
 
               // push  draft cart
@@ -157,6 +175,17 @@ export default class FarmerProfileScreen extends Component {
           console.warn(err)})
 
         }else{
+          Popup.show({
+            type: 'danger',
+            title: 'Message',
+            textBody: 'No Internet Connection.Please check your internet connection.',
+            buttonText: 'Retry',
+            okButtonStyle: styles.confirmButton,
+            okButtonTextStyle: styles.confirmButtonText,
+            callback: () => {  
+              Popup.hide();
+            },
+          });
           this.setState({show_spinner:false});
         }
         
@@ -346,6 +375,15 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.5)',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  confirmButton:{
+    backgroundColor:'white',
+    color:Colors.green,
+    borderColor:Colors.green,
+    borderWidth:1
+  },
+  confirmButtonText:{  
+    color:Colors.green,    
   }
   
 });

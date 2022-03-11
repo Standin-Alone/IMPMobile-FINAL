@@ -39,7 +39,7 @@ export default class ForgotPasswordScreen extends Component {
         // axios post here
     
         NetInfo.fetch().then(async (response)=>{
-          if(response.isConnected){
+          if(response.isConnected && response.isInternetReachable){
             
             axios.post(ipConfig.ipAddress+'/form_reset_password_link/sending_request',data).then((response)=>{              
 
@@ -105,7 +105,7 @@ export default class ForgotPasswordScreen extends Component {
           Popup.show({
             type: 'danger',
             title: 'Message',
-            textBody: 'No Internet Connection.Please check your internet connection.',
+            textBody: 'No internet connection.Please check your internet connectivity.',
             buttonText: 'Retry',
             okButtonStyle: styles.confirmButton,
             okButtonTextStyle: styles.confirmButtonText,

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View,Text, StyleSheet,FlatList,Modal,Image} from 'react-native';
+import {View,Text, StyleSheet,FlatList,Modal,Image,InteractionManager} from 'react-native';
 import {Fumi} from 'react-native-textinput-effects';
 import Colors from '../constants/Colors';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
@@ -19,6 +19,7 @@ import moment from 'moment';
 import {  Popup} from 'react-native-popup-confirm-toast';
 import Images from '../constants/Images';
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
+import Spinner from 'react-native-spinkit';
 const KEYS_TO_FILTERS = ["reference_no", "fullname"];
 export default class HomeScreen extends Component {
   constructor(props) {
@@ -34,7 +35,8 @@ export default class HomeScreen extends Component {
         refreshing:false,
         isShowImage:false,
         imageURI:null,
-        currentPage:0
+        currentPage:0,
+        show_spinner:false
     };
 
   }
@@ -47,19 +49,34 @@ export default class HomeScreen extends Component {
     
     this.setState({refreshing:true});
     NetInfo.fetch().then(async (response: any) => {
-      if (response.isConnected) {
+
+      if (response.isConnected && response.isInternetReachable) {
        
       const  result = await axios.get(
         ipConfig.ipAddress+ "/get-scanned-vouchers/"+supplier_id+"/"+0,         
         ).catch((error)=>error.response.data.message);
+     
         if (result.status == 200) {            
           this.setState({vouchers_list:result.data,refreshing:false,currentPage:0})
                     
         }
+
         this.setState({refreshing:false});
       } else {
-        // Alert.alert("Message", "No Internet Connection.");
+
+        Popup.show({
+          type: 'danger',
+          title: 'Message',
+          textBody: 'No Internet Connection.Please check your internet connection.',
+          buttonText: 'Retry',
+          okButtonStyle: styles.confirmButton,
+          okButtonTextStyle: styles.confirmButtonText,
+          callback: () => {  
+            Popup.hide();                                               
+          },
+        });
         this.setState({refreshing:false});
+        
       }
 
     
@@ -78,7 +95,7 @@ export default class HomeScreen extends Component {
     this.setState({refreshing:true});
     const supplier_id = await AsyncStorage.getItem("supplier_id");
     NetInfo.fetch().then((response: any) => {
-      if (response.isConnected) {
+      if (response.isConnected && response.isInternetReachable) {
         axios
           .get(
             ipConfig.ipAddress+ "/get-scanned-vouchers/"+supplier_id+"/"+addPage,    
@@ -106,7 +123,7 @@ export default class HomeScreen extends Component {
         Popup.show({
           type: 'danger',
           title: 'Message',
-          textBody: 'No Internet Connection.Please check your internet connection.',
+          textBody: 'No internet connection.Please check your internet connectivity.',
           buttonText: 'Okay',
           okButtonStyle: styles.confirmButton,
           okButtonTextStyle: styles.confirmButtonText,
@@ -128,7 +145,7 @@ export default class HomeScreen extends Component {
     this.setState({refreshing:true});
         
     NetInfo.fetch().then((response: any) => {
-      if (response.isConnected) {
+      if (response.isConnected && response.isInternetReachable) {
         axios
           .get(
             ipConfig.ipAddress+ "/get-scanned-vouchers/"+supplier_id+"/"+page
@@ -152,12 +169,13 @@ export default class HomeScreen extends Component {
         Popup.show({
           type: 'danger',              
           title: 'Message',
-          textBody: "No internet connection.",                
+          textBody: "No internet connection.Please check your internet connectivity.",                
           buttonText:'Ok',
           okButtonStyle:styles.confirmButton,
           okButtonTextStyle: styles.confirmButtonText,
           callback: () => {                
-            Popup.hide()                                    
+            Popup.hide()   
+            this.setState({refreshing:false});                                 
           },              
         })
    
@@ -224,14 +242,14 @@ export default class HomeScreen extends Component {
 
    // go to summary screen
    goToSummary = (item) =>{  
-    
+    this.setState({show_spinner:true})
     NetInfo.fetch().then(async (response: any) => {
       
-      if (response.isConnected) {
-        
+      if (response.isConnected && response.isInternetReachable) {
+
         axios.get(ipConfig.ipAddress + "/get-transaction-history/"+item.reference_no).then((response)=>{                    
           // push to summary screen 
-          
+          this.setState({show_spinner:false})
           this.props.navigation.push('SummaryScreen',{transactions:response.data,fullname:item.fullname,current_balance:item.current_balance,voucher_info:item});
         }).catch(err=>{          
           console.warn(err.response)          
@@ -320,7 +338,7 @@ export default class HomeScreen extends Component {
             backgroundColor:this.state.selected_filter == item ? Colors.blue_green : Colors.light}]}      
       onPress= {()=>this.filterButtonFunction(item)}
     >
-      {item}
+      {item + ' (' + this.state.vouchers_list.filter((voucher_items)=>moment().format('YYYY-MM-DD') == moment(voucher_items.transac_date).format('YYYY-MM-DD') ).length + ')' }
     </Button>
   )
   render() {
@@ -331,9 +349,18 @@ export default class HomeScreen extends Component {
 
     return (
       <View style={styles.container}>        
-        
+        {this.state.show_spinner && (
+          <View style={styles.loading}>
+            <Spinner
+              isVisible={this.state.show_spinner}
+              size={100}
+              type={'Wave'}
+              color={Colors.light_green}
+            />
+          </View>
+        )}
         <Animatable.Text style={styles.greetings} animation="fadeInDownBig" adjustsFontSizeToFit>Hello Merchant {this.state.merchant_name}</Animatable.Text>        
-        <Animatable.Text style={styles.question} animation="fadeInDownBig" adjustsFontSizeToFit>What voucher transaction do you want to search?</Animatable.Text>        
+        <Animatable.Text style={styles.question} animation="fadeInDownBig" adjustsFontSizeToFit>Find voucher information here.</Animatable.Text>        
         <Fumi
             label={'Search by reference number'}
             labelStyle={styles.search_label}            
@@ -521,5 +548,16 @@ const styles = StyleSheet.create({
   search_label:{
     fontFamily:'Gotham_light',
     fontWeight:'bold'
-  }
+  },  
+  loading: {
+    zIndex:1,
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });

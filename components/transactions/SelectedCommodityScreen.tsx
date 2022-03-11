@@ -2,15 +2,12 @@ import React, {Component} from 'react';
 import {View, Text, StyleSheet, Image} from 'react-native';
 import Colors from '../../constants/Colors';
 
-import { FontAwesomeIcon} from '@fortawesome/react-native-fontawesome'
-import { faPesoSign } from '@fortawesome/free-solid-svg-icons'
+
 import Layout from '../../constants/Layout';
 import * as Animatable from 'react-native-animatable';
 import * as Yup from 'yup';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import NetInfo from "@react-native-community/netinfo";
-import * as ipConfig from '../../ipconfig';
-import axios from 'axios';
+
 import RNPickerSelect from 'react-native-picker-select';
 import Button from 'apsl-react-native-button';
 import NumberFormat from 'react-number-format';
@@ -20,6 +17,7 @@ import {Popup} from 'react-native-popup-confirm-toast';
 import {SharedElement} from 'react-navigation-shared-element';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import FakeCurrencyInput from 'react-native-currency-input';
+import {Picker} from '@react-native-picker/picker';
 
 export default class SelectedCommodityScreen extends Component {
   constructor(props) {
@@ -38,44 +36,16 @@ export default class SelectedCommodityScreen extends Component {
       categories:[]
     };
   }
-
-  componentDidMount() {
-
-
-    let categories = [
-      {label: 'Complete (14-14-14)', value: 'Complete (14-14-14)'},
-      {label: 'Complete (16-16-16)', value: 'Complete (16-16-16)'},
-      {label: 'Urea - Prilled (46-0-0)', value: 'Urea - Prilled (46-0-0)'},
-      {label: 'Urea - Granular (46-0-0)', value: 'Urea - Granular (46-0-0)'},
-      {label: 'Ammonium Sulfate (21-0-0)', value: 'Ammonium Sulfate (21-0-0)'},
-      {label: 'Ammonium Phosphate (16-20-0)', value: 'Ammonium Phosphate (16-20-0)'},
-      {label: 'Muriate of Potash (0-0-60)', value: 'Muriate of Potash (0-0-60)'},
-      {label: 'Other grades', value: 'Other grades'},
-    ];  
-
-    let index = categories.length - 1;
-    while (index >= 0) {
-      if (this.state.params.categories.indexOf(categories[index].label) > (-1)) {
-        categories.splice(index, 1);
-      }
-      index -= 1;
-    }
-
-
-    this.setState({categories:categories})
-    
-  }
-
-
-
-
+  
   //  add to cart button
   addToCart = async (price, ) => {
-    
+  
     if ((price != 0.00  || price != 0 ) &&
         this.state.fertilizer_category != ''
-        && price != null          
+        && price != null    && this.state.params.item.has_category== '1'      
       ) {
+
+           
       let data = {
         sub_id: this.state.params.item.sub_id,
         image: this.state.params.item.base64,
@@ -112,19 +82,42 @@ export default class SelectedCommodityScreen extends Component {
 
 
 
-    } else if (isNaN(price)) {
+    }else if ((price != 0.00  || price != 0 ) &&  this.state.params.item.has_category == '0'    ){
+      
+      let data = {
+        sub_id: this.state.params.item.sub_id,
+        image: this.state.params.item.base64,
+        name: this.state.params.item.item_name,
+        unit_measure: this.state.params.item.unit_measure,
+        ceiling_amount: this.state.params.item.ceiling_amount,
+        total_amount: this.state.total_amount,
+        quantity: this.state.quantity,
+        price: this.state.amount,
+        reference_no: this.state.params.voucher_info.reference_no,
+        item_category: this.state.fertilizer_category,
+        supplier_id: await AsyncStorage.getItem('supplier_id')
+      };
+
+      
+
+
       Popup.show({
-        type: 'danger',
-        title: 'Error!',
-        textBody: 'Please enter your total amount of commodity.',
-        buttonText: 'Ok',
+        type: 'success',
+        title: 'Success!',
+        textBody: 'Successfully added to your cart.',
+        buttonText: 'Okay',
         okButtonStyle: styles.confirmButton,
         okButtonTextStyle: styles.confirmButtonText,
         callback: () => {
           Popup.hide();
+          this.props.route.params.my_cart({cart: data});
+          this.props.navigation.goBack();
         },
       });
-    } else if (price == 0 || price == null) {
+
+
+      
+    } else if (price == 0 || price == null || isNaN(price)) {
       Popup.show({
         type: 'danger',
         title: 'Error!',
@@ -134,6 +127,7 @@ export default class SelectedCommodityScreen extends Component {
         okButtonTextStyle: styles.confirmButtonText,
         callback: () => {
           Popup.hide();
+          this.setState({error:true,focus_amount:false})
         },
       });
     }else if (this.state.fertilizer_category == '' && this.state.params.item.has_category == '1'){
@@ -151,6 +145,69 @@ export default class SelectedCommodityScreen extends Component {
       });
     }
   };
+
+
+  componentDidMount() {
+
+
+    this.props.navigation.setOptions({
+      headerTitle:'Commodity',
+      headerTransparent:true,
+      transitionSpec:{
+                    open:{animation:'timing',config:{duration:500}},
+                    close:{animation:'timing',config:{duration:500}}
+                },
+      cardStyleInterpolator:({current:{progress}})=>{
+          return {
+              cardStyle:{
+                  opacity:progress
+              }
+          }
+      },                                            
+      headerRight:()=>(
+        <Button
+        textStyle={styles.add_to_cart_txt}
+        style={styles.add_to_cart_btn}
+        activityIndicatorColor={Colors.light}
+        activeOpacity={100}
+        disabledStyle={{opacity: 1}}        
+        onPress = { ()=> this.addToCart(
+          this.state.total_amount              
+        )}
+        >
+         Done
+      </Button>
+      )
+
+    });
+
+    let categories = [
+      {label: 'Complete (14-14-14)', value: 'Complete (14-14-14)'},
+      {label: 'Complete (16-16-16)', value: 'Complete (16-16-16)'},
+      {label: 'Urea - Prilled (46-0-0)', value: 'Urea - Prilled (46-0-0)'},
+      {label: 'Urea - Granular (46-0-0)', value: 'Urea - Granular (46-0-0)'},
+      {label: 'Ammonium Sulfate (21-0-0)', value: 'Ammonium Sulfate (21-0-0)'},
+      {label: 'Ammonium Phosphate (16-20-0)', value: 'Ammonium Phosphate (16-20-0)'},
+      {label: 'Muriate of Potash (0-0-60)', value: 'Muriate of Potash (0-0-60)'},
+      {label: 'Other grades', value: 'Other grades'},
+    ];  
+
+    let index = categories.length - 1;
+    while (index >= 0) {
+      if (this.state.params.categories.indexOf(categories[index].label) > (-1)) {
+        categories.splice(index, 1);
+      }
+      index -= 1;
+    }
+
+
+    this.setState({categories:categories})
+    
+  }
+
+
+
+
 
   //quantity function
   handleQuantity = value => {
@@ -200,6 +257,7 @@ export default class SelectedCommodityScreen extends Component {
 
   // render amount text box
   renderAmountText = (values) => {
+    console.warn(values)
     return (
       <Fumi
         label={'Enter total amount of commodity'}
@@ -224,7 +282,6 @@ export default class SelectedCommodityScreen extends Component {
         onBlur={() => this.setState({focus_amount: false})}
         onChangeText={value => { 
           
-     
           
           this.setState({total_amount: Number(value)
             .toFixed(2)
@@ -297,10 +354,16 @@ export default class SelectedCommodityScreen extends Component {
       
       <FakeCurrencyInput
             value={this.state.total_amount}
-            onChangeValue={(value)=>this.setState({total_amount:value})}
+            onChangeValue={(value)=>{
+              this.setState({total_amount:value})                        
+            }}
+
+            onFocus={()=>this.setState({focus_amount:true})}
+            onBlur={()=>this.setState({focus_amount:false})}
             prefix="₱"
             delimiter=","
             separator="."
+            minValue={0}
             precision={2}          
             style={[
               styles.amount,
@@ -325,20 +388,16 @@ export default class SelectedCommodityScreen extends Component {
           </Animatable.Text>
           
           <RNPickerSelect
-              onValueChange={value =>{               
-                
-                this.setState({fertilizer_category:value})
-              
+              onValueChange={value =>{                               
+                this.setState({fertilizer_category:value})              
               }}
-            
+                              
+         
               value={this.state.fertilizer_category}
-              style = {pickerStyle}
-              
-          
+              style = {pickerStyle}                        
               placeholder={{
                 label: 'Select fertilizer category...',
-                value: '',
-                
+                value: '',                
               }}
               items={this.state.categories}
             />
@@ -371,7 +430,7 @@ export default class SelectedCommodityScreen extends Component {
               /> */}
 
 
-        <View style={{flex: 1}}>
+        {/* <View style={{flex: 1}}>
           <View
             style={{
               position: 'absolute',
@@ -393,7 +452,7 @@ export default class SelectedCommodityScreen extends Component {
               Add to Cart
             </Button>
           </View>
-        </View>
+        </View> */}
 
       </View>
     );
@@ -430,15 +489,17 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   add_to_cart_txt: {
-    color: Colors.light,
+    color: Colors.light_green,
     fontFamily: 'Gotham_bold',
+    fontSize:16
   },
 
   add_to_cart_btn: {
-    width: (Layout.width / 100) * 90,
-    left: (Layout.width / 100) * 5,
-    borderColor: Colors.green,
-    backgroundColor: Colors.green,
+    top: (Layout.width / 100) * 1,    
+    width: (Layout.width / 100) * 20,    
+    left: (Layout.width / 100) * 30,
+    borderColor: Colors.light,
+    
   },
   amount: {
     width: (Layout.width / 100) * 90,

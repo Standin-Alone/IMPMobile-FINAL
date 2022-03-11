@@ -107,7 +107,7 @@ export default class ViewCartScreen extends Component {
             // check internet connection                            
             NetInfo.fetch().then((response)=>{
 
-              if(response.isConnected){
+              if(response.isConnected && response.isInternetReachable){
 
               let payload = {
                   cart:[item]
@@ -121,10 +121,25 @@ export default class ViewCartScreen extends Component {
                   this.props.navigation.goBack();                  
                   
 
-              }).catch(err=>console.warn(err));
+              }).catch(err=>{
+                console.warn(err) 
+                this.setState({show_spinner:false});
+              });
 
               }else{
-                
+                Popup.show({
+                  type: 'danger',
+                  title: 'Error!',
+                  textBody: 'No internet connection. Please check your internet connectivity.',
+                  buttonText: 'Ok',
+                  okButtonStyle: styles.confirmButton,
+                  okButtonTextStyle: styles.confirmButtonText,
+                  callback: () => {
+                    
+                    Popup.hide();                    
+                  },
+                });
+                this.setState({show_spinner:false});
               }
             });
           }else{
@@ -288,14 +303,14 @@ handleCheckOut = ()=>{
   // check internet connection
   NetInfo.fetch().then((response)=>{
         
-  if(response.isConnected){
+  if(response.isConnected && response.isInternetReachable){
 
   if (count_error == 0 ){
     // THIS CONDITION IS FOR ONE TIME TRANSACTION ONLY
       
     let total_float = parseFloat(this.state.total);
     let available_balance_float = parseFloat(this.state.params.available_balance);
-    
+    // condition for other program that has one time transaction
     if((total_float >= available_balance_float) && dataToSend.voucher_info.one_time_transaction == '1'   && this.state.data.some(item => item.quantity != 0) ){
       
       let data = {
@@ -330,6 +345,26 @@ handleCheckOut = ()=>{
           this.setState({show_spinner:false});
         },
       });
+    }
+    // condition for cash and food
+    else if ((total_float >= available_balance_float) && dataToSend.voucher_info.one_time_transaction == '0'   && this.state.data.some(item => item.quantity != 0) ){
+        let data = {
+          cart:this.state.data
+        }
+          
+        // update cart
+        axios.post(ipConfig.ipAddress+'/checkout-update-cart',data).then((response)=>{              
+          let result = response.data['message'];
+          if(result == 'true'){
+            this.props.navigation.navigate('AttachmentScreen',dataToSend);
+          }else{
+            
+          }
+          this.setState({show_spinner:false});
+        }).catch(err=>{
+          console.warn(err)
+          this.setState({show_spinner:false});
+        });
     }else{      
 
       
@@ -350,11 +385,11 @@ handleCheckOut = ()=>{
   } 
 
   }else{
-
+    this.setState({show_spinner:false}); 
     Popup.show({
       type: 'danger',
       title: 'Message',
-      textBody: 'No Internet Connection.Please check your internet connection.',
+      textBody: 'No internet connection.Please check your internet connectivity.',
       buttonText: 'Okay',
       okButtonStyle: styles.confirmButton,
       okButtonTextStyle: styles.confirmButtonText,

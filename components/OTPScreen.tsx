@@ -57,7 +57,7 @@ export default class OTPScreen extends Component {
       
       NetInfo.fetch().then(async (response)=>{
         
-        if(response.isConnected){
+        if(response.isConnected && response.isInternetReachable){
           axios.post(ipConfig.ipAddress+'/validate-otp',data).then( async (response)=>{
             
             this.setState({error:false})
@@ -68,7 +68,12 @@ export default class OTPScreen extends Component {
               
               AsyncStorage.setItem("programs", JSON.stringify(this.state.params.programs));
               // firebase.messaging().subscribeToTopic(this.state.params.user_id.toLocaleString());
-              this.props.navigation.replace("Root",{full_name:this.state.params.full_name});                                            
+              this.props.navigation.reset({
+                index: 0,
+                routes: [{name: 'Root',params:{full_name:this.state.params.full_name}}],
+              })
+              
+              
                        
               this.setState({isLoading:false});
             } else if(response.data == 'expired') {
@@ -89,7 +94,7 @@ export default class OTPScreen extends Component {
         Popup.show({
           type: 'danger',
           title: 'Message',
-          textBody: 'No Internet Connection.Please check your internet connection.',
+          textBody: 'No internet connection.Please check your internet connectivity.',
           buttonText: 'Retry',
           okButtonStyle: styles.confirmButton,
           okButtonTextStyle: styles.confirmButtonText,

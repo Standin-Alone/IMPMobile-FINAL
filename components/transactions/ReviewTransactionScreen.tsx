@@ -23,7 +23,7 @@ import Spinner from 'react-native-spinkit';
 import {  Popup} from 'react-native-popup-confirm-toast';
 import Carousel from 'react-native-snap-carousel';
 import DeviceInfo from 'react-native-device-info';
-
+import BackgroundTimer from 'react-native-background-timer';
 export default class ReviewTransactionScreen extends Component {
   constructor(props) {
     super(props);
@@ -200,7 +200,10 @@ export default class ReviewTransactionScreen extends Component {
     formData.append("attachments", JSON.stringify(this.state.params.attachments));
 
     
-
+    // check if internet connection is back again
+    NetInfo.fetch().then((state)=>{ 
+     
+      if(state.isConnected && state.isInternetReachable){
       // check imp mobile application version
       axios.get(ipConfig.ipAddress + '/check_utility/' + DeviceInfo.getVersion()).then(async response => {
         // close app if  maintenenace
@@ -275,7 +278,7 @@ export default class ReviewTransactionScreen extends Component {
                   callback: () => {    
                                 
                     Popup.hide()                 
-                                                
+                    BackgroundTimer.clearTimeout();         
                     this.props.navigation.reset({
                       index: 0,
                       routes: [{ name: 'Root' }]
@@ -335,7 +338,25 @@ export default class ReviewTransactionScreen extends Component {
       })
     }
 
-    }).catch(err => console.warn(err.response));
+    }).catch(err => { 
+          console.warn(err.response)  
+          self.setState({show_spinner:false});
+    });
+
+  }else{
+    Popup.show({
+      type: 'danger',
+      title: 'Message',
+      textBody: 'No internet connection. Please check your internet connectivity.',
+      buttonText: 'Okay',
+      okButtonStyle: styles.confirmButton,
+      okButtonTextStyle: styles.confirmButtonText,
+      callback: () => {  
+        Popup.hide();
+      },
+    });
+  }
+  });
   }
 
   

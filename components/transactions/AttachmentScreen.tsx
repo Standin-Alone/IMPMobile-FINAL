@@ -55,19 +55,20 @@ export default class AttachmentScreen extends Component {
 
 
   // show image
-   showImage = (uri: any) => {
-    this.setState({showImage:true,imageURI:uri});
-    
+  showImage = (uri: any) => {
+      this.setState({showImage:true,imageURI:uri});
+      
   };
 
 
 
   rotateImage = async (uri) =>{
-  const rotated_image = await   ImageResizer.createResizedImage('data:image/JPEG,'+uri, 1920, 1080, 'JPEG', 50, 90, RNFS.DocumentDirectoryPath);
-  const convert_rotated_image_to_base64 = await RNFS.readFile(rotated_image.uri,'base64');
- 
-  return convert_rotated_image_to_base64;
-}
+
+    const rotated_image                   = await   ImageResizer.createResizedImage('data:image/JPEG,'+uri, 1920, 1080, 'JPEG', 50, 90, RNFS.DocumentDirectoryPath);
+    const convert_rotated_image_to_base64 = await RNFS.readFile(rotated_image.uri,'base64');
+  
+    return convert_rotated_image_to_base64;
+  }
 
 
 
@@ -153,7 +154,7 @@ export default class AttachmentScreen extends Component {
               this.setState({show_spinner:false});
             }
           } else{
-
+            this.setState({show_spinner:false});
             Popup.show({
               type: 'warning',              
               title: 'Message',
@@ -179,7 +180,7 @@ export default class AttachmentScreen extends Component {
 
     
     }else{
-    
+      this.setState({show_spinner:false});
       Popup.show({
         type: 'warning',              
         title: 'Message',

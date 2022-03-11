@@ -162,36 +162,17 @@ function MyStack(){
                 <Stack.Screen component={AuthenticationScreen} name='AuthenticationScreen' options={{headerShown:false,headerTransparent:true}}/>
                 <Stack.Screen component={LoginScreen} name='LoginScreen' options={{headerShown:false,headerTransparent:true}}/>
                 <Stack.Screen component={ForgotPasswordScreen} name='ForgotPasswordScreen' options={{headerTransparent:true,headerTitle:'Change Password'}}/>
-                <Stack.Screen component={OTPScreen} name='OTPScreen' options={{headerShown:false,headerTransparent:true}}/>
-                <Stack.Screen component={FarmerProfileScreen} name='FarmerProfileScreen' options={{headerShown:false,headerTransparent:true}}/>
-                <Stack.Screen component={SelectedCommodityScreen} name='SelectedCommodityScreen' options={{headerTitle:'Commodity',headerTransparent:true,
-                transitionSpec:{
-                    open:{animation:'timing',config:{duration:500}},
-                    close:{animation:'timing',config:{duration:500}}
-                },
-                cardStyleInterpolator:({current:{progress}})=>{
-                    return {
-                        cardStyle:{
-                            opacity:progress
-                        }
-                    }
-                }               
-                
-                }}
-                
-
-                
-                sharedElements={(route, otherRoute, showing) => {
-
-                    if(otherRoute.name == 'CommodityScreen' && showing){
-                        const { item } = route.params;                    
-                        return [{   id: item.item_id,                                                }];
-                    }
-                    
-                  }}
-                  
+                <Stack.Screen component={OTPScreen} name='OTPScreen' options={{headerShown:true,headerTransparent:true,headerTitle:'Verify OTP'}}/>
+                <Stack.Screen component={FarmerProfileScreen} name='FarmerProfileScreen' options={{headerShown:false,headerTransparent:true,cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS}}/>
+                <Stack.Screen component={SelectedCommodityScreen} name='SelectedCommodityScreen'             
+                    sharedElements={(route, otherRoute, showing) => {
+                        if(otherRoute.name == 'CommodityScreen' && showing){
+                            const { item } = route.params;                    
+                            return [{   id: item.item_id,                                                }];
+                        }                        
+                    }}                    
                 />
-                <Stack.Screen component={CommodityScreen} name='CommodityScreen' options={{headerTransparent:true,headerTitle:"Commodities",headerTitleStyle:{fontFamily:'Gotham_bold'}}} 
+                <Stack.Screen component={CommodityScreen} name='CommodityScreen' options={{headerTransparent:true,headerTitle:"Commodities",headerTitleStyle:{fontFamily:'Gotham_bold'},cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS}} 
                                
               
                   
@@ -200,7 +181,7 @@ function MyStack(){
                 <Stack.Screen component={AttachmentScreen} name='AttachmentScreen' options={{headerTransparent:true,headerTitle:"Attachments",headerTitleStyle:{fontFamily:'Gotham_bold'}}} />
                 <Stack.Screen component={SummaryScreen} name='SummaryScreen' options={{headerTransparent:true,headerTitle:"More Info",headerTitleStyle:{fontFamily:'Gotham_bold'}}} />
                 <Stack.Screen component={ReviewTransactionScreen} name='ReviewTransactionScreen' options={{headerShown:false,headerTransparent:true}}/>    
-                <Stack.Screen component={PayoutSummaryScreen} name='PayoutSummaryScreen' options={{headerTransparent:true,headerTitle:"Batch Summary",headerTitleStyle:{fontFamily:'Gotham_bold'}}}/>                
+                <Stack.Screen component={PayoutSummaryScreen} name='PayoutSummaryScreen' options={{headerTransparent:true,headerTitle:"Payout Summary",headerTitleStyle:{fontFamily:'Gotham_bold',color:'white'}, headerTintColor: 'white'}}/>                
                 <Stack.Screen component={BottomTabNavigator} name='Root' options={{headerShown:false,headerTransparent:true}}/>
             </Stack.Navigator>
         </Root>

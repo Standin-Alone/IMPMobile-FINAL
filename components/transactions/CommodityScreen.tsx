@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View,Text, StyleSheet,FlatList,Image,Animated} from 'react-native';
+import {View,Text, StyleSheet,FlatList,Image,BackHandler} from 'react-native';
 import Colors from '../../constants/Colors';
 import Images from '../../constants/Images';
 import Layout from '../../constants/Layout';
@@ -35,14 +35,15 @@ export default class CommodityScreen extends Component {
   }
 
 
-  componentDidMount(): void {
-
+  componentDidMount() {
+    console.warn(this.state.params.hasOwnProperty('cart'))
     if(this.state.params.hasOwnProperty('cart')){
       this.setState({cart:this.state.params.cart});    
       console.warn('meron')
     }
 
     this.setState({data:this.state.params.program_items});
+    
   }
 
   // commodity that has been added  to the cart
@@ -212,13 +213,13 @@ export default class CommodityScreen extends Component {
           cart:this.state.cart
       }
       
-
+      console.warn(data.cart);
       // check internet connection
       NetInfo.fetch().then((response)=>{
               
-      if(response.isConnected){
+      if(response.isConnected && response.isInternetReachable){
         
-      // save to cart as draft
+      // SAVE TO CART AS DRAFT
       axios.post(ipConfig.ipAddress+'/save-to-cart',data).then((response)=>{              
         this.setState({show_spinner:false});
         let result = response.data;
@@ -245,6 +246,7 @@ export default class CommodityScreen extends Component {
         
 
         }else{  
+          console.warn(response.data)
           Popup.show({
             type: 'danger',
             title: 'Error!',
@@ -345,9 +347,6 @@ export default class CommodityScreen extends Component {
       {/*  Go to View Cart Screen */}
       <View style={{flex: 1}}>
         <View style={{position: 'absolute', left: 0, right: 0, bottom: 0}}>
-
-
-          
         <Button
             textStyle={styles.next_txt}
             style={styles.next_btn}
@@ -355,39 +354,28 @@ export default class CommodityScreen extends Component {
             isLoading={this.state.isLoading}
             disabledStyle={{opacity: 1}} 
             onPress = {this.handleViewCart}
-               
-
-
-            
           > 
-
           <NumberFormat 
-              value={(this.state.cart.map((prev) => {
-                                                sum += prev.total_amount;
-                                                return sum;
-                                          }) == 0 ? "0.00": parseFloat(sum))} 
+              // value={(this.state.cart.map((prev) => {
+              //                                   sum += prev.total_amount;
+              //                                   return sum;
+              //                             }) == 0 ? "0.00": parseFloat(sum))} 
+            value={this.state.cart.reduce((prev, current) => prev + parseFloat(current.total_amount), 0)} 
             displayType={'text'} 
             thousandSeparator={true} 
             prefix={'₱'}
             decimalScale={2}
             renderText={(value)=>(
               <Text  numberOfLines={2} style={styles.next_txt} >                
-                {'● '+ this.state.cart.length + ' '+(this.state.cart.length > 1 ? 'items' : 'item')+' ● ' + value }
+                {'● '+ this.state.cart.length + ' '+(this.state.cart.length > 1 ? 'items' : 'item')+' ● ' + (value == '₱0' ? '₱0.00' : value) }
               </Text>
             )}
           />
-
-
-
- 
           </Button>  
-
-
-     
         </View>
       </View>
         
-        
+    
       </View>
     );
   }

@@ -30,7 +30,7 @@ export default class SummaryScreen extends Component {
   }
 
   componentDidUpdate() {
-    
+      
   }
 
    convertedDate = (raw_date) => {
@@ -49,12 +49,13 @@ export default class SummaryScreen extends Component {
     return moment(convert_date).format("MMMM DD YYYY");
   };
   render() {
+    
     const transactionFilterByDate = this.state.transactions.filter(
       (item, index) =>
       this.state.transactions.findIndex(
           (obj) =>
             obj.transac_by_fullname === item.transac_by_fullname &&
-            this.convertedDate(obj.transac_date) === this.convertedDate(item.transac_date)
+            obj.transaction_id === item.transaction_id
         ) === index
     );
 
@@ -138,7 +139,7 @@ export default class SummaryScreen extends Component {
             return  this.convertedDate(value.transac_date)  ==  this.convertedDate(item.transac_date)  &&  item.transac_by_fullname == value.transac_by_fullname  ? (
                 <View>
                   <List.Item
-                    title={(item.item_category != '' ? item.item_category : item.name)  + " (" + value.quantity + " " + value.unit_measure  +")"}
+                    title={(value.item_category != '' ? value.item_category : value.item_name)  + " (" + value.quantity + " " + value.unit_measure  +")"}
                     titleStyle={{ fontFamily: "calibri-light" }}
                     // description={ 
                     //   "₱" + value.total_amount 

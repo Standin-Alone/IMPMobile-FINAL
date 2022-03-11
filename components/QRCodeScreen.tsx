@@ -15,6 +15,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { RNCamera } from 'react-native-camera';
 import Spinner from 'react-native-spinkit';
 import DeviceInfo from 'react-native-device-info';
+import BackgroundTimer from 'react-native-background-timer';
 export default class QRCodeScreen extends Component{
     constructor(props) {        
         super(props);
@@ -31,7 +32,12 @@ export default class QRCodeScreen extends Component{
 
  
 
+    componentDidMount(){
 
+      this.props.navigation.addListener('focus',()=>{
+        this.setState({isBarcodeRead:true,show_spinner:false});       
+      })
+    }
     handleBarCodeRead = async (scanResult)=>{
       const get_user_id = await AsyncStorage.getItem("user_id");
       const get_supplier_id = await AsyncStorage.getItem("supplier_id");
@@ -103,8 +109,10 @@ export default class QRCodeScreen extends Component{
                 form
               )
               .then( (response) => {
-                    console.warn(response.data["Message"] )
+                    console.warn(response.data)
                 if (response.data["Message"] == "true") {
+
+                
                   // navigation.navigate('ClaimVoucher',response.data[0]['data']);
                   // setScanned(false);
                   // setIsShow(false);
@@ -121,18 +129,40 @@ export default class QRCodeScreen extends Component{
                         buttonText:'Ok',
                         okButtonStyle:styles.confirmButton,
                         okButtonTextStyle: styles.confirmButtonText,
-                        callback: () => {    
-                          
+                        callback: () => {     
+
+                        // start timer when scanned
+                        let timer =  BackgroundTimer.setTimeout((res) => { 
+                                        Popup.show({
+                                          type: 'danger',              
+                                          title: 'Message',
+                                          textBody: "Voucher processing has ended.",                
+                                          buttonText:'Ok',
+                                          okButtonStyle:styles.confirmButton,
+                                          okButtonTextStyle: styles.confirmButtonText,
+                                          callback: () => {    
+                                            Popup.hide()       
+                                            BackgroundTimer.clearTimeout(this)                             
+                                            this.props.navigation.reset({
+                                              index: 0,
+                                              routes: [{ name: 'Root' }]
+                                            });                                
+                                          },              
+                                        })                                        
+                                      }, 
+                                    1000000
+                                    );
+
                           Popup.hide()            
-                          this.props.navigation.replace("FarmerProfileScreen",{data:response.data["data"],
+                          this.props.navigation.navigate("FarmerProfileScreen",{data:response.data["data"],
                             program_items:response.data["program_items"],
                             history:response.data["history"],
                             supplier_id:get_supplier_id,
                             full_name:get_full_name,
                             user_id:get_user_id,                          
-                          
+                            timer:timer
                           });
-                          this.setState({isBarcodeRead:true,show_spinner:false});              
+                          
                                                   
                         },              
                       })
@@ -191,11 +221,11 @@ export default class QRCodeScreen extends Component{
                 }
                 else if(response.data["Message"] == "on-going process") {
                   
-                    
+                  this.setState({show_spinner:false});              
                   Popup.show({
                     type: 'danger',              
                     title: 'Message',
-                    textBody: "The voucher process is currently on-going.",                
+                    textBody: "The voucher process is currently on-going. You have "+response.data["Minutes"]+" "+(response.data["Minutes"] == 1 ? 'minute' : 'minutes')+"  left before you can scan.",                
                     buttonText:'Ok',
                     okButtonStyle:styles.confirmButton,
                     okButtonTextStyle: styles.confirmButtonText,
@@ -258,7 +288,7 @@ export default class QRCodeScreen extends Component{
                 }
               })
               .catch((error) => {
-                
+                console.warn(error); 
                 Popup.show({
                   type: 'danger',              
                   title: 'Message',

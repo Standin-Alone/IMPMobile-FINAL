@@ -1,8 +1,6 @@
 import React, {Component} from 'react';
-import {View,Text, StyleSheet,FlatList,Modal,Image,RefreshControl,Pressable} from 'react-native';
-import {Fumi} from 'react-native-textinput-effects';
+import {View,Text, StyleSheet,FlatList,PixelRatio,Image,RefreshControl,Pressable,Animated } from 'react-native';
 import Colors from '../constants/Colors';
-import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import Layout from '../constants/Layout';
 import Button from 'apsl-react-native-button';
 import * as Animatable from 'react-native-animatable';
@@ -13,16 +11,23 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Card } from 'react-native-paper';
-import { createFilter } from "react-native-search-filter";
 import Moment from 'react-moment';
-import ImageViewer from "react-native-image-zoom-viewer";
-import moment from 'moment';
 import {  Popup} from 'react-native-popup-confirm-toast';
 import Images from '../constants/Images';
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
-import {RectButton} from "react-native-gesture-handler";
 import Swipeable from "react-native-gesture-handler/Swipeable";
+import LinearGradient from 'react-native-linear-gradient';
+import { FontAwesomeIcon}  from '@fortawesome/react-native-fontawesome';
+import {faWallet} from '@fortawesome/free-solid-svg-icons';
+import NumberFormat from 'react-number-format';
+import Spinner from 'react-native-spinkit';
 
+const normalize = (size)=>{
+  const newSize = size * Layout.scale;
+  
+    return Math.round(PixelRatio.roundToNearestPixel(newSize)) - 2
+ 
+}
 export default class PayoutScreen extends Component {
   constructor(props) {
     super(props);
@@ -31,9 +36,12 @@ export default class PayoutScreen extends Component {
       selected_filter:'All',
       current_page   :0,      
       payout_list    :[],
+      total_paid_payout:0.00,
       payout_list_for_filter:[],
-      refreshing     :false
+      refreshing     :false,
+      show_spinner:false
     };
+    
 
   }
   
@@ -44,18 +52,27 @@ export default class PayoutScreen extends Component {
         
     this.setState({refreshing:true,selected_filter:'All'});
     NetInfo.fetch().then(async (response: any) => {
+
       const supplier_id = await AsyncStorage.getItem("supplier_id");    
-      if (response.isConnected) {            
+      console.warn(supplier_id)
+      if (response.isConnected && response.isInternetReachable) {            
       const  result = await axios.get(
         ipConfig.ipAddress+ "/get-payout-list/"+supplier_id+"/"+0,         
         ).catch((error)=>error.response.data.message);
         
+        
         // if status is 200
         if (result.status == 200) {        
           
-          this.setState({payout_list:result.data,refreshing:false,payout_list_for_filter:result.data})                    
+          this.setState({
+                  payout_list:result.data.get_batch_payout,
+                  refreshing:false,
+                  payout_list_for_filter:result.data,
+                  total_paid_payout:result.data.total_paid_payout})                    
           
         }
+
+        
 
         this.setState({refreshing:false});
       } else {
@@ -89,7 +106,8 @@ export default class PayoutScreen extends Component {
 
   // filter button function
   filterButtonFunction = (item)=>{
-    
+  
+
     if(item == 'All'){
 
       this.setState({selected_filter:item})
@@ -109,11 +127,11 @@ export default class PayoutScreen extends Component {
       let get_pending_payout = this.state.payout_list_for_filter ? this.state.payout_list.filter((payout_items)=>
             payout_items.dbp_batch_id != null && payout_items.payout_endorse_approve == '1'
           ): [];
-
-      this.setState({selected_filter:item,payout_list_for_filter:get_pending_payout})
+      
+      this.setState({selected_filter:item,payout_list_for_filter:get_pending_payout});
     }
   } 
-
+    
 
    // render filter button
    renderFilterButtons  = (item) =>(
@@ -129,24 +147,33 @@ export default class PayoutScreen extends Component {
   )
   
   // swipeable right button
-  right_buttons = (batch_info) =>(
-    <View style={{ left:(Layout.width / 100) * 10,top:(Layout.height/ 100) * 2,paddingLeft:20}}>
+  right_buttons = (batch_info) =>{
+      
+    
+    return (
+    <Animated.View style={{ left:(Layout.width / 100) * 7,top:(Layout.height/ 100) * 2}}>
       <Pressable
-          onPress  = {() => { 
-                  
-            this.props.navigation.navigate('PayoutSummaryScreen',{batch_info:batch_info})
+          onPress  = {() => {   
+            
+            
+            this.props.navigation.navigate('PayoutSummaryScreen',{batch_info:batch_info,status:batch_info.dbp_batch_id == '' ?
+            'Pending'
+            : batch_info.payout_endorse_approve == '1' ?
+            'Approve'
+            :
+            'Pending', })
           }}
-          style    = {({ pressed }) => ({
-                        opacity: pressed ? 0.5 : 1,
-                      })}>
+          style={styles.eye}
+          >
             <Icon
               name     = "eye"        
               color    = {Colors.dark_blue}
-              size     = {30}              
+              size     = {30} 
+              style    = {{top:(Layout.height / 100) * 2}}             
             />
         </Pressable>        
-    </View>
-  )
+    </Animated.View>
+  )}
 
   // render payout item
   render_payout_item = (item,index)=>(
@@ -181,7 +208,7 @@ export default class PayoutScreen extends Component {
               right      =  {
                               ()=>(
                                 <View>  
-                                  <Text style={
+                                  <Text style = {
                                                 {
                                                   backgroundColor: item.dbp_batch_id == '' ?
                                                                     Colors.warning
@@ -225,11 +252,11 @@ export default class PayoutScreen extends Component {
                                     {"\t"}                             
                                     {
                                       item.dbp_batch_id == null ?
-                                      'Pending' 
+                                      ' Pending' 
                                       : item.payout_endorse_approve == '1' ?
-                                      'Approved'
+                                      ' Approved'
                                       :
-                                      'Pending'     
+                                      ' Pending'     
                                     }
                                   </Text>
                                 </View>
@@ -263,12 +290,50 @@ export default class PayoutScreen extends Component {
       :
       <Image source={Images.no_data_bg} style={styles.logo}  resizeMode={'cover'}/>        
     )};
-
+    
+   
+    
   render() {
 
 
     return (
       <View style={styles.container}>        
+        {this.state.show_spinner && (
+          <View style={styles.loading}>
+            <Spinner
+              isVisible={this.state.show_spinner}
+              size={100}
+              type={'Wave'}
+              color={Colors.light_green}
+            />
+          </View>
+        )}
+
+        {/* TOTAL PAID PAYOUT CARD START */}
+        <LinearGradient colors={['#A9F99E', Colors.green, Colors.blue_green]} style={styles.card_balance}>
+            <FontAwesomeIcon icon={faWallet} size={100} color={Colors.muted} style={styles.wallet} transform="fa-fade"  />       
+            <Text style={styles.payout_title} adjustsFontSizeToFit numberOfLines={2}>
+                Total Paid Payout
+            </Text>
+            <View style={{width:(Layout.width / 100) * 70,bottom:(Layout.width / 100) * 25}}>
+            <NumberFormat
+                  value={this.state.total_paid_payout}
+                  displayType={"text"}
+                  decimalScale={2}
+                  thousandSeparator={true}   
+                  fixedDecimalScale={true}    
+                  prefix={'₱'}         
+                  renderText={(values) => (
+                    <Text style={styles.payout_amount} adjustsFontSizeToFit allowFontScaling={false}>
+                      {values}
+                      
+                  </Text>
+                  )}
+              />
+           </View>
+            
+        </LinearGradient>
+
         <FlatList       
           horizontal
           data       = {this.state.filter_buttons}                             
@@ -277,8 +342,7 @@ export default class PayoutScreen extends Component {
         />   
         
         {/*Payout List*/}
-        <FlatList                 
-       
+        <FlatList                        
           refreshControl        = {
                                     <RefreshControl
                                       onRefresh  = {this.fetch_data}
@@ -291,9 +355,6 @@ export default class PayoutScreen extends Component {
           ListEmptyComponent    = {this.render_payout_empty}
           contentContainerStyle = {{flexGrow:0,paddingBottom:90}}
           style                 = {styles.payout_flatlist}          
-          
-          
-          
         />               
       </View>
     );
@@ -340,10 +401,10 @@ const styles = StyleSheet.create({
     fontStyle:'italic'  
   },
   payout_flatlist:{    
-    top:(Layout.height/100) * 10,
+    top:(Layout.height/100) * 12,
     left:(Layout.width/100) * 3,   
     width:(Layout.width/100) * 100,   
-    height:(Layout.height/100) * 60,    
+    height:(Layout.height/100) * 90,    
     backgroundColor:Colors.light,
     flexGrow:0,    
   },
@@ -359,5 +420,53 @@ const styles = StyleSheet.create({
   view_button:{
     backgroundColor:'red',
     left:(Layout.width/100) * 20,
+  },
+  card_balance:{
+    top:(Layout.height/100) * 10,
+    height:(Layout.height / 100 ) * 20,
+    width:(Layout.width / 100 )  * 90,
+    left:(Layout.width / 100 )  * 5,
+    borderRadius:20,
+    marginBottom: (Layout.height / 100 ) * 2,
+    overflow:'hidden'
+
+  },
+  payout_title:{
+    position:'absolute',
+    fontFamily:'Gotham_bold',
+    color:Colors.dark_blue,
+    fontSize:16,
+    top:(Layout.height/100) * 6,
+    left:(Layout.width/100) * 5
+  },
+  payout_amount:{
+    position:'absolute',
+    fontFamily:'Gotham_bold',
+    color:Colors.light,
+    fontSize:normalize(20),
+    top:(Layout.height/100) * 10,
+    left:(Layout.width/100) * 5
+  },
+  wallet:
+  { 
+    top:(Layout.height / 100) *  5,
+    left:(Layout.width/100) * 60,
+    opacity:0.8    
+  },
+  loading: {
+    zIndex:1,
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  eye:{
+      width:(Layout.width / 100) * 10,
+      height:(Layout.height / 100) * 10,
+      bottom:(Layout.height / 100) * 2      
   }
 });

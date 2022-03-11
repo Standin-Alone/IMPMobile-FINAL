@@ -12,6 +12,8 @@ dark_blue:'#22577A',
 danger:'#D9534F',
 fade:'#b4c0d3',
 header_text:'#545a64',
-warning: '#FF9B05',
+warning: '#FF9B05', 
+label : '#E6EDED',
+muted:'#6c757d'
 
 }
