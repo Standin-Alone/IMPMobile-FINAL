@@ -275,6 +275,7 @@ export default class PayoutScreen extends Component {
     this.state.refreshing ? 
     // card placeholder loader
       <SkeletonPlaceholder highlightColor = {Colors.blue_green} >
+        
         <View style = {{ flexDirection: "row",marginTop:20}}>  
             <View style  = {{ marginLeft: 20 }}>            
               <View style = {{marginTop: 6, width: (Layout.width  / 100) * 85, height:  (Layout.height  / 100) * 10, borderRadius: 4 }} />            
@@ -283,7 +284,18 @@ export default class PayoutScreen extends Component {
 
         <View style = {{ flexDirection: "row",marginTop:20}}>                
             <View style = {{ marginLeft: 20 }}>            
-              <View style = {{marginTop: 6, width: (Layout.width  / 100) * 85, height:  (Layout.height  / 100) * 10, borderRadius: 4 }} />            
+              <View style = {{marginTop: 6, width: (Layout.width  / 100) * 70, height:  (Layout.height  / 100) * 10, borderRadius: 4 }} />            
+            </View>
+        </View>    
+
+        <View style = {{ flexDirection: "row",marginTop:20}}>                
+            <View style = {{ marginLeft: 20 }}>            
+              <View style = {{marginTop: 6, width: (Layout.width  / 100) * 60, height:  (Layout.height  / 100) * 10, borderRadius: 4 }} />            
+            </View>
+        </View>    
+        <View style = {{ flexDirection: "row",marginTop:20}}>                
+            <View style = {{ marginLeft: 20 }}>            
+              <View style = {{marginTop: 6, width: (Layout.width  / 100) * 40, height:  (Layout.height  / 100) * 10, borderRadius: 4 }} />            
             </View>
         </View>    
       </SkeletonPlaceholder> 
