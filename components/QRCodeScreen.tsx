@@ -60,7 +60,7 @@ export default class QRCodeScreen extends Component{
         this.setState({show_spinner:true});
       // check internet connection
       NetInfo.fetch().then((response: any) => {
-        if (response.isConnected) {
+        if (response.isConnected && response.isInternetReachable) {
           this.setState({isBarcodeRead:false});
         
           // check imp mobile application version
@@ -109,7 +109,7 @@ export default class QRCodeScreen extends Component{
                 form
               )
               .then( (response) => {
-                    console.warn(response.data)
+                    
                 if (response.data["Message"] == "true") {
 
                 
@@ -288,7 +288,7 @@ export default class QRCodeScreen extends Component{
                 }
               })
               .catch((error) => {
-                console.warn(error); 
+                console.warn(error.response.data); 
                 Popup.show({
                   type: 'danger',              
                   title: 'Message',

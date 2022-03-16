@@ -1,6 +1,6 @@
 import  React,{Component} from 'react';
 import { CardStyleInterpolators, createStackNavigator } from '@react-navigation/stack';
-
+import { LogBox } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { Root } from 'react-native-popup-confirm-toast';
 import LoginScreen from '../components/LoginScreen';
@@ -18,6 +18,7 @@ import ReviewTransactionScreen from '../components/transactions/ReviewTransactio
 import SummaryScreen from '../components/SummaryScreen';
 import PayoutSummaryScreen from '../components/PayoutSummaryScreen';
 import { createSharedElementStackNavigator } from 'react-navigation-shared-element';
+
 import SocketConnection from '../constants/SocketConnection';
 import PushNotification from "react-native-push-notification";
 
@@ -26,7 +27,7 @@ import {firebase} from '@react-native-firebase/firestore';
 import Firebase from '../constants/Firebase';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 
-
+// LogBox.ignoreAllLogs();
 const Stack  = createSharedElementStackNavigator();
 
 
@@ -177,10 +178,10 @@ function MyStack(){
               
                   
                 />
-                <Stack.Screen component={ViewCartScreen} name='ViewCartScreen'/>
-                <Stack.Screen component={AttachmentScreen} name='AttachmentScreen' options={{headerTransparent:true,headerTitle:"Attachments",headerTitleStyle:{fontFamily:'Gotham_bold'}}} />
+                <Stack.Screen component={ViewCartScreen} name='ViewCartScreen' options={{cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS}}/>
+                <Stack.Screen component={AttachmentScreen} name='AttachmentScreen' options={{headerTransparent:true,headerTitle:"Attachments",headerTitleStyle:{fontFamily:'Gotham_bold'},cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS}} />
                 <Stack.Screen component={SummaryScreen} name='SummaryScreen' options={{headerTransparent:true,headerTitle:"More Info",headerTitleStyle:{fontFamily:'Gotham_bold'}}} />
-                <Stack.Screen component={ReviewTransactionScreen} name='ReviewTransactionScreen' options={{headerShown:false,headerTransparent:true}}/>    
+                <Stack.Screen component={ReviewTransactionScreen} name='ReviewTransactionScreen' options={{headerShown:false,headerTransparent:true,cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS}}/>    
                 <Stack.Screen component={PayoutSummaryScreen} name='PayoutSummaryScreen' options={{headerTransparent:true,headerTitle:"Payout Summary",headerTitleStyle:{fontFamily:'Gotham_bold',color:'white'}, headerTintColor: 'white'}}/>                
                 <Stack.Screen component={BottomTabNavigator} name='Root' options={{headerShown:false,headerTransparent:true}}/>
             </Stack.Navigator>

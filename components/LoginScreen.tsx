@@ -16,6 +16,7 @@ import Images from '../constants/Images';
 import {Popup} from 'react-native-popup-confirm-toast';
 import { FontAwesomeIcon as FAI}  from '@fortawesome/react-native-fontawesome'
 import { faEyeSlash,faEye} from '@fortawesome/free-solid-svg-icons'
+import LinearGradient from 'react-native-linear-gradient';
 export default class LoginScreen extends Component {
   constructor(props) {
     super(props);
@@ -71,8 +72,7 @@ export default class LoginScreen extends Component {
                 
                 let clean_programs:any = [];
 
-                get_programs.map((program)=>{
-                  console.warn(program.program_id);
+                get_programs.map((program)=>{                  
                   clean_programs.push(program.program_id);
                 })
                 
@@ -231,7 +231,7 @@ export default class LoginScreen extends Component {
                     <Text style={styles.error}>{this.state.error_message}</Text> 
                   }
           </Animatable.View>
-
+          
           <Button
             textStyle={styles.login_txt}
             style={styles.login_btn}

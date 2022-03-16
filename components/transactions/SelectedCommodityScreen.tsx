@@ -71,7 +71,7 @@ export default class SelectedCommodityScreen extends Component {
         okButtonStyle: styles.confirmButton,
         okButtonTextStyle: styles.confirmButtonText,
         callback: () => {
-          Popup.hide();
+          Popup.hide();          
           this.props.route.params.my_cart({cart: data});
           this.props.navigation.goBack();
         },
@@ -110,6 +110,7 @@ export default class SelectedCommodityScreen extends Component {
         okButtonTextStyle: styles.confirmButtonText,
         callback: () => {
           Popup.hide();
+          console.warn(data);
           this.props.route.params.my_cart({cart: data});
           this.props.navigation.goBack();
         },

@@ -52,7 +52,7 @@ export default class OTPScreen extends Component {
       
   }
         
-      this.setState({isLoading:true,error:false})
+      this.setState({isLoading:true,error:false,focus_otp_txt:'false'})
       // axios post here
       
       NetInfo.fetch().then(async (response)=>{
@@ -77,10 +77,10 @@ export default class OTPScreen extends Component {
                        
               this.setState({isLoading:false});
             } else if(response.data == 'expired') {
-              this.setState({isLoading:false,error:true,error_message:'Your otp has been expired. Please resend new OTP.'})
+              this.setState({isLoading:false,error:true,error_message:'Your otp has been expired. Please resend new OTP.',focus_otp_txt:false})
               // resetForm();
             }else {
-              this.setState({isLoading:false,error:true,error_message:'Incorrect OTP.'})
+              this.setState({isLoading:false,error:true,error_message:'Incorrect OTP.',focus_otp_txt:false})
               // resetForm();
             }
 
@@ -100,6 +100,7 @@ export default class OTPScreen extends Component {
           okButtonTextStyle: styles.confirmButtonText,
           callback: () => {  
             Popup.hide();
+            this.setState({isLoading:false,focus_otp_txt:false})
           },
         });
       }
@@ -118,11 +119,11 @@ export default class OTPScreen extends Component {
       email:this.state.params.email,      
     } 
           
-      this.setState({isResendLoading:true,error:false})
+      this.setState({isResendLoading:true,error:false,focus_otp_txt:false})
       // axios post here
 
       NetInfo.fetch().then(async (response)=>{
-        if(response.isConnected){
+        if(response.isConnected && response.isInternetReachable){
           axios.post(ipConfig.ipAddress+'/resend-otp',data).then((response)=>{
                          
             if(response.data['Message'] == 'true'){
@@ -144,8 +145,8 @@ export default class OTPScreen extends Component {
               );
               this.setState({isResendLoading:false,error:false})
             }else{
-             
-              this.setState({isResendLoading:false,error:true})
+              
+              this.setState({isResendLoading:false,error:true,focus_otp_txt:false})
             } 
           }).catch((err)=>{
             console.warn(err.response);
@@ -163,7 +164,7 @@ export default class OTPScreen extends Component {
           callback: () => {  
             Popup.hide();
                         
-            
+            this.setState({isResendLoading:false,focus_otp_txt:false})
            
           },
         });
@@ -173,6 +174,7 @@ export default class OTPScreen extends Component {
   }
 
 
+ 
   render() {
     const navigation = this.props.navigation;
     return (
@@ -193,12 +195,13 @@ export default class OTPScreen extends Component {
           onSubmit= {(values,{resetForm})=>this.handleVerifyOTP(values,resetForm)} 
           // validateOnChange={false}           
         >
-          {({ values, handleChange, errors, touched, handleSubmit }) =>(
+          {({ values, handleChange, errors, touched, handleSubmit,setFieldValue }) =>(
 
         <View>
           {/* username textbox */}
-          <Animatable.View animation="slideInLeft" >
+          <Animatable.View animation="slideInLeft"  >
               <Fumi
+              autoFocus={true}
               label={'Enter your One Time Pin here...'}
               iconClass={FontAwesomeIcon}
               iconName={'key'}
@@ -331,6 +334,7 @@ const styles = StyleSheet.create({
     borderRadius:5, 
     width: Layout.width - 40,
     marginBottom:20,
+    left: (Layout.width / 100) * 5,
     top: (Layout.height / 100) * 42,
     
   },

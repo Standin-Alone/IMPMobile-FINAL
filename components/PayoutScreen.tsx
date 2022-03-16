@@ -151,11 +151,11 @@ export default class PayoutScreen extends Component {
       
     
     return (
-    <Animated.View style={{ left:(Layout.width / 100) * 7,top:(Layout.height/ 100) * 2}}>
+    <Animated.View style={{ left:(Layout.width / 100) * 7,zIndex:1}}>
       <Pressable
           onPress  = {() => {   
             
-            
+              
             this.props.navigation.navigate('PayoutSummaryScreen',{batch_info:batch_info,status:batch_info.dbp_batch_id == '' ?
             'Pending'
             : batch_info.payout_endorse_approve == '1' ?
@@ -477,8 +477,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   eye:{
+      zIndex:1,
+      left:(Layout.width / 100) * 1,
+      
+      right:(Layout.width / 100) * 2,
       width:(Layout.width / 100) * 10,
       height:(Layout.height / 100) * 10,
-      bottom:(Layout.height / 100) * 2      
+      bottom:(Layout.height / 100) * 2,
+      top:(Layout.height / 100) * 1,
+      paddingLeft: (Layout.width / 100) * 2,
+      
   }
 });

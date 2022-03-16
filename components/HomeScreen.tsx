@@ -334,7 +334,7 @@ export default class HomeScreen extends Component {
     <Button
       textStyle={{color:this.state.selected_filter == item ? Colors.light : Colors.fade,fontFamily:'Gotham_light',fontWeight:'bold'}}
       style= {[styles.filter_button_style,{
-            borderColor: this.state.selected_filter == item ? Colors.blue_green : Colors.light,
+            borderColor: this.state.selected_filter == item ? Colors.blue_green : Colors.fade,
             backgroundColor:this.state.selected_filter == item ? Colors.blue_green : Colors.light}]}      
       onPress= {()=>this.filterButtonFunction(item)}
     >
@@ -359,7 +359,7 @@ export default class HomeScreen extends Component {
             />
           </View>
         )}
-        <Animatable.Text style={styles.greetings} animation="fadeInDownBig" adjustsFontSizeToFit>Hello Merchant {this.state.merchant_name}</Animatable.Text>        
+        <Animatable.Text style={styles.greetings} animation="fadeInDownBig" adjustsFontSizeToFit>Hello Merchant <Text style={[styles.greetings,{textTransform:'capitalize'}]}>{this.state.merchant_name}</Text></Animatable.Text>        
         <Animatable.Text style={styles.question} animation="fadeInDownBig" adjustsFontSizeToFit>Find voucher information here.</Animatable.Text>        
         <Fumi
             label={'Search by reference number'}

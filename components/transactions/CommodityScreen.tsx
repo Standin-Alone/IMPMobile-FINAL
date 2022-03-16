@@ -38,11 +38,14 @@ export default class CommodityScreen extends Component {
   componentDidMount() {
     console.warn(this.state.params.hasOwnProperty('cart'))
     if(this.state.params.hasOwnProperty('cart')){
-      this.setState({cart:this.state.params.cart});    
-      console.warn('meron')
+      this.setState({cart:this.state.params.cart,
+      });    
+      
     }
 
-    this.setState({data:this.state.params.program_items});
+    this.setState({data:this.state.params.program_items,
+    
+    });
     
   }
 
@@ -60,6 +63,8 @@ export default class CommodityScreen extends Component {
 
   gotoSelectedCommodityScreen = (item) =>{
 
+
+    
 
     let categories = [
       {label: 'Complete (14-14-14)', value: 'Complete (14-14-14)'},
@@ -203,9 +208,10 @@ export default class CommodityScreen extends Component {
 
 
  // go to view cart screen
- handleViewCart = () => {
+ handleViewCart = async () => {
 
   this.setState({show_spinner:true});
+  
   if(this.state.cart.length !=0){
       
 
@@ -231,7 +237,7 @@ export default class CommodityScreen extends Component {
 
           
               this.props.navigation.navigate("ViewCartScreen", {
-                cart: this.state.cart,
+                cart: data.cart,
                 available_balance: this.state.params.data[0].Available_Balance,
                 voucher_info:this.state.params.data,
                 supplier_id: this.state.params.supplier_id,

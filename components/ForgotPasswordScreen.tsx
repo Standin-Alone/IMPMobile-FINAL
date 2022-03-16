@@ -20,7 +20,8 @@ export default class ForgotPasswordScreen extends Component {
     this.state = {
       email:'',
       focus_email_txt:false,
-      isLoading:false
+      isLoading:false,
+      error:false
     };
 
 
@@ -40,9 +41,16 @@ export default class ForgotPasswordScreen extends Component {
     
         NetInfo.fetch().then(async (response)=>{
           if(response.isConnected && response.isInternetReachable){
-            
+
+            if(data.email == ''){
+              this.setState({isLoading:false,error:true});
+              return 1;
+            }
+            this.setState({isLoading:false,error:false});
             axios.post(ipConfig.ipAddress+'/form_reset_password_link/sending_request',data).then((response)=>{              
 
+
+              
               
               if(response.data.success == 'true'){
 
@@ -84,7 +92,7 @@ export default class ForgotPasswordScreen extends Component {
               } 
 
             }).catch((err)=>{
-              console.warn(err.response.data.message);
+              console.warn(err.toJSON());
 
               Popup.show({
                 type: 'danger',              
@@ -94,7 +102,7 @@ export default class ForgotPasswordScreen extends Component {
                 okButtonStyle:styles.confirmButton,
                 okButtonTextStyle: styles.confirmButtonText,
                 callback: () => {    
-                               
+                  this.setState({isLoading:false,error:true})                
                   Popup.hide()                 
                                                                    
                 },              
@@ -144,13 +152,12 @@ export default class ForgotPasswordScreen extends Component {
                 onChangeText={(value)=>this.setState({email:value})}
                 keyboardType="email-address"
               />
-              
+              {/* display error password here */}
+              {this.state.error  &&
+                    <Text style={[styles.warning,{ top: (Layout.height / 100) * 41}]}><Icon name="exclamation-triangle" size={20}/>Please enter your email.</Text> 
+                }
           </Animatable.View>
         
-     
-     
-         
-      
         <View style={styles.forgot_password_container}>
           <Button
             textStyle={styles.forgot_txt}
@@ -205,6 +212,13 @@ const styles = StyleSheet.create({
     left: (Layout.width / 100) * 5,
     borderColor: Colors.green,
     backgroundColor: Colors.green,    
+  },
+  warning:{ 
+    color: Colors.danger,
+    borderRadius:5, 
+    width: Layout.width - 40,        
+    fontFamily:'Gotham_light',
+    left: (Layout.width / 100) * 5,
   },
   error:{ 
     color: Colors.light,

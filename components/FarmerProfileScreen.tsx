@@ -118,8 +118,7 @@ export default class FarmerProfileScreen extends Component {
           if(result['message'] == 'true'){
                                 
             if(result['draft_cart'].length != 0){
-
-              console.warn(this.state.params.program_items)
+              
          
 
               // push  draft cart
@@ -150,8 +149,7 @@ export default class FarmerProfileScreen extends Component {
                   voucher_info:this.state.params.data,
                   supplier_id: this.state.params.supplier_id,
                   full_name: this.state.params.full_name,
-                  user_id: this.state.params.user_id,
-                  program_data :this.state.params.program_items,
+                  user_id: this.state.params.user_id,                  
                   program_items :this.state.params.program_items,
                   return_cart:this.returnCart.bind(this),             
                   data:this.state.params.data,
@@ -308,9 +306,9 @@ const styles = StyleSheet.create({
   full_name:{
     alignSelf:'center',    
     fontFamily:'Gotham_bold',
-    fontSize:16,
+    fontSize:20,
     top:(Layout.height / 100) * 10,
-    color:Colors.light_green
+    color:Colors.header_text
   },
   location:{    
     alignSelf:'center',    

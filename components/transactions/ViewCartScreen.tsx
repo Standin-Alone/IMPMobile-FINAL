@@ -28,11 +28,11 @@ export default class ViewCartScreen extends Component {
         new_data:[],
         show_spinner:false,
         show_edit_modal:false,
-        edit_total_amount_value:0
+        edit_total_amount_value:0,
+        refreshing:false
     };
 
-    console.warn(this.props.route.params);
-    
+       
     this.props.navigation.setOptions( ()=>({
       headerTransparent:true,
       headerTitle:"My Cart",
@@ -58,9 +58,14 @@ export default class ViewCartScreen extends Component {
   }
 
   
- 
+  async refreshCart(nextProps){
+  
+    await this.setState({data:nextProps.route.params.cart,total:  Number(nextProps.route.params.cart.reduce((prev, current) => prev + parseFloat(current.total_amount), 0)).toFixed(2)});       
+        
+ }
 
-  componentDidMount(): void {
+  componentDidMount() {
+    
     // header options
       this.props.navigation.setOptions({
         headerTransparent:true,
@@ -70,8 +75,8 @@ export default class ViewCartScreen extends Component {
           // go to selected commodity screen
           
           <Pressable          
-          onPress={  () => {                                      
-                            
+          onPress={  () => {                  
+            
             this.props.navigation.navigate('CommodityScreen',this.state.params);
           }}
           style={({ pressed }) => ({
@@ -82,7 +87,13 @@ export default class ViewCartScreen extends Component {
         </Pressable>
         ),
   })
-    this.setState({data:this.state.params.cart,total:  Number(this.state.params.cart.reduce((prev, current) => prev + parseFloat(current.total_amount), 0)).toFixed(2)});    
+
+  this.setState({data:this.state.params.cart,total:  Number(this.state.params.cart.reduce((prev, current) => prev + parseFloat(current.total_amount), 0)).toFixed(2)});    
+           
+  }
+
+  componentWillReceiveProps(nextProps){
+    this.refreshCart(nextProps)
   }
 
  
@@ -95,11 +106,14 @@ export default class ViewCartScreen extends Component {
         color={Colors.danger}
         size={50}
         onPress={() => {
+
+          
           let new_data = this.state.data;
+          console.warn(delete_index);
           // remove delete 
           new_data.splice(delete_index, delete_index + 1);
           
-          this.setState({new_data:new_data});
+          this.setState({new_data:new_data,total:Number(new_data.reduce((prev, current) => prev + parseFloat(current.total_amount), 0)).toFixed(2)});
           this.setState({show_spinner:true});
 
           if(new_data.length  == 0){
@@ -237,6 +251,7 @@ export default class ViewCartScreen extends Component {
             <Image
               source={{ uri: "data:Image/jpeg;base64," + item.image }}
               style={styles.commodity_image}
+              resizeMode={'contain'}
             />
           )}
           subtitle={       
@@ -323,7 +338,7 @@ handleCheckOut = ()=>{
           if(result == 'true'){
             this.props.navigation.navigate('AttachmentScreen',dataToSend);
           }else{
-            
+            console.warn(response.data);
           }
           this.setState({show_spinner:false});
         }).catch(err=>{
@@ -355,10 +370,9 @@ handleCheckOut = ()=>{
         // update cart
         axios.post(ipConfig.ipAddress+'/checkout-update-cart',data).then((response)=>{              
           let result = response.data['message'];
+          
           if(result == 'true'){
             this.props.navigation.navigate('AttachmentScreen',dataToSend);
-          }else{
-            
           }
           this.setState({show_spinner:false});
         }).catch(err=>{
@@ -424,6 +438,7 @@ handleCheckOut = ()=>{
         {/* Items Flatlist */}
         <FlatList
           nestedScrollEnabled
+          refreshing={this.state.refreshing}
           data={this.state.data}
           extraData={this.state.new_data}
           style={styles.flat_list}
@@ -488,9 +503,8 @@ handleCheckOut = ()=>{
         
 
       <View style={{flex: 1}}>
-        <View style={{position: 'absolute', left: 0, right: 0, bottom: 0}}>
-        {/* Cart Summary Details */}
-        <Card style={styles.cart_details} elevation={10}>
+         {/* Cart Summary Details */}
+         <Card style={styles.cart_details} elevation={1}>
         <Card.Title title={" Details"} titleStyle={styles.details_title} left={()=><FontAwesomeIcon icon={faInfoCircle} size={25} color={Colors.blue_green}  transform="fa-fade"  />       }/>
         <Card.Content>
           <View style={{ flexDirection: "row", marginBottom: 20 }}>
@@ -542,7 +556,7 @@ handleCheckOut = ()=>{
             </View>
           </View>
 
-          <View style={{ flexDirection: "row", marginBottom: 20 }}>
+          <View style={{ flexDirection: "row", marginBottom: 10 }}>
             <View style={{ flex: 1 }}>
               <Text style={styles.detail_info_title} adjustsFontSizeToFit>Remaining Balance:</Text>
             </View>
@@ -587,6 +601,8 @@ handleCheckOut = ()=>{
 
         </Card.Content>
       </Card>
+        <View style={{position: 'absolute', left: 0, right: 0, bottom: 0}}>
+       
 
           
         <Button
@@ -642,18 +658,19 @@ const styles = StyleSheet.create({
   },
   commodity_image: {
     top: (Layout.height / 100 ) * 2,
-    right:20,
-    height: 60,
-    width: 60,
-    overflow: "hidden",    
+    right: (Layout.width / 100) * 1,
+    height:  (Layout.height / 100) * 15,
+    width:  (Layout.width / 100) * 15,    
     borderBottomWidth: 1,
   },
   cart_details: {
-    height: (Layout.height / 100) * 33,
+    top: (Layout.height / 100 ) * 6,
+    height: (Layout.height / 100) * 40,
     marginHorizontal: (Layout.width / 100) * 2,    
     borderRadius: 20,
     borderWidth:1,
-    bottom: (Layout.height / 100 ) * 2,        
+    flex:0.7,
+    bottom: (Layout.height / 100 ) * 1,        
   },
   detail_info_title: {
     color: "#9E9FA0",
@@ -718,7 +735,8 @@ const styles = StyleSheet.create({
     color:Colors.green,    
   },  
   loading: {
-    zIndex:1,
+    zIndex:2,
+    elevation:2,
     position: 'absolute',
     left: 0,
     right: 0,
