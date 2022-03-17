@@ -269,7 +269,8 @@ export default class ReviewTransactionScreen extends Component {
                   okButtonStyle:styles.confirmButton,
                   okButtonTextStyle: styles.confirmButtonText,
                   callback: () => {    
-                    this.setState({show_spinner:false});              
+                    this.setState({show_spinner:false});    
+                    BackgroundTimer.clearTimeout();                   
                     Popup.hide()      
 
                     this.props.navigation.reset({

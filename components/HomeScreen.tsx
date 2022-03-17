@@ -45,7 +45,7 @@ export default class HomeScreen extends Component {
 
   fetchData = async () => {
     const supplier_id = await AsyncStorage.getItem("supplier_id");
-    console.warn(supplier_id);
+    
     const currentPage = 1;
     
     this.setState({refreshing:true});
@@ -56,7 +56,7 @@ export default class HomeScreen extends Component {
       const  result = await axios.get(
         ipConfig.ipAddress+ "/get-scanned-vouchers/"+supplier_id+"/"+0,         
         ).catch((error)=>error.response.data.message);
-        console.warn(result);
+        
         if (result.status == 200) {            
           this.setState({vouchers_list:result.data,refreshing:false,currentPage:0})
                     

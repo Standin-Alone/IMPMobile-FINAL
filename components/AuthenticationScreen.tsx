@@ -208,6 +208,8 @@ export default class AuthenticationScreen extends React.Component {
 
   render() {
     return (
+
+      <>
       <ImageBackground
         // style={styles.container}
         source      = {Images.splash_screen}
@@ -229,6 +231,7 @@ export default class AuthenticationScreen extends React.Component {
        
             
       </ImageBackground>
+      </>
     );
   }
 }

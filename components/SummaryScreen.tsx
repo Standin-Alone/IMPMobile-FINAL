@@ -249,7 +249,7 @@ const styles = StyleSheet.create({
     elevation:2
   },
   farmer_details:{
-    
+    overflow:'scroll',
     flex:0,
     left:10,
     top:(Layout.height / 100) * 1,
