@@ -150,7 +150,7 @@ export default class QRCodeScreen extends Component{
                                           },              
                                         })                                        
                                       }, 
-                                    1000000
+                                      response.data["time_limit"]
                                     );
 
                           Popup.hide()            

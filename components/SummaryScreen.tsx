@@ -87,7 +87,7 @@ export default class SummaryScreen extends Component {
                     <Text style={{justifyContent:'flex-start',fontFamily:'Gotham_bold'}}>Name:</Text>
                     </View>
                     <View style={{flex:1}}>
-                    <Text style={{justifyContent:'flex-end',right:60}}> {this.state.params.fullname}</Text>
+                    <Text style={{justifyContent:'flex-end',right:(Layout.width  /100 )* 25}}> {this.state.params.fullname}</Text>
                     </View>
                 </View>
 
@@ -96,7 +96,10 @@ export default class SummaryScreen extends Component {
                     <Text style={{justifyContent:'flex-start',fontFamily:'Gotham_bold'}}>Address:</Text>
                     </View>
                     <View style={{flex:1}}>
-                    <Text style={{justifyContent:'flex-end',right:60}}>{this.state.params.voucher_info.address}  </Text>
+                    <Text style={{justifyContent:'flex-end',right:(Layout.width  /100 )* 10}}>{this.state.params.voucher_info.address}  </Text>
+                    </View>
+                    <View style={{flex:1}}>
+                      <Animatable.Image source={Images.more_info} style={[styles.more_info_pic,{justifyContent:'flex-end'}]}  resizeMode={'contain'} animation="slideInRight" delay={500}/>  
                     </View>
                 </View>
                 
@@ -108,13 +111,15 @@ export default class SummaryScreen extends Component {
                     </View>
                     <View style={{flex:1}}>
                     <Text style={{justifyContent:'flex-end',right:60}}>{this.state.params.voucher_info.program_title} </Text>
+
+                    
                     </View>
                 </View>
            
 
             </View>
 
-                <Animatable.Image source={Images.more_info} style={styles.more_info_pic}  resizeMode={'contain'} animation="slideInRight" delay={500}/>  
+                
         </View>
           
         {/* list of previous transaction component */}
@@ -128,6 +133,7 @@ export default class SummaryScreen extends Component {
             title={moment(item.transac_date).format("MMMM DD, YYYY")}
             id={index+1}
             description={"transacted by " + item.transac_by_fullname}
+            descriptionStyle={{textTransform:'capitalize'}}
             expanded={true}
             titleStyle={{ color: Colors.base }}
             left={(props) => (
@@ -208,7 +214,7 @@ const styles = StyleSheet.create({
   info_card:{
       left:10,
       top:(Layout.height / 100) * 15,
-      height:(Layout.height / 100) *25,
+      flex:0.3,
       width:(Layout.width / 100) *95,
       backgroundColor:'white',
       borderWidth:1,
@@ -236,16 +242,18 @@ const styles = StyleSheet.create({
 
     },
   more_info_pic:{
-    bottom:(Layout.height / 100) * 15,
-    left:(Layout.width / 100) *60,
+    bottom:(Layout.height / 100) * 9,
+    // left:(Layout.width / 100) *60,    
     height:(Layout.height / 100) *30,
     width:(Layout.width / 100) *30,
+    elevation:2
   },
   farmer_details:{
-      
+    
+    flex:0,
     left:10,
     top:(Layout.height / 100) * 1,
-    width:(Layout.width / 100) * 70,      
+    width:(Layout.width / 100) * 90,      
   },
   remaining_balance_label:{
         left:10,

@@ -6,7 +6,7 @@ const login_bg = require('../assets/images/login-bg.jpg');
 const forgot_password_bg = require('../assets/images/forgot-password-bg.png');
 const otp_bg = require('../assets/images/otp-bg.jpg');
 const no_data_bg = require('../assets/images/no-data-bg.jpg');
-const more_info = require('../assets/images/more-info.jpg');
+const more_info = require('../assets/images/more-info-no-bg.png');
 
 const avatar_logo = require('../assets/images/avatar.jpg');
 const imp_bg = require('../assets/images/IMP.jpg');
