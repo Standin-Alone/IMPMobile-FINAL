@@ -79,7 +79,7 @@ export default class FarmerProfileScreen extends Component {
 
   
   handleGoBack = () => {
-    BackgroundTimer.clearTimeout(this.state.params.timer);
+    BackgroundTimer.clearTimeout(this.state.params.time);
     // this.props.navigation.reset({
     //   index: 0,
     //   routes: [{name: 'Root'}],
@@ -141,7 +141,7 @@ export default class FarmerProfileScreen extends Component {
                 )
               )
                   
-
+              
               // continue the last transaction to view cart screen
               this.props.navigation.navigate("ViewCartScreen", {
                   cart: cart,
@@ -153,6 +153,7 @@ export default class FarmerProfileScreen extends Component {
                   program_items :this.state.params.program_items,
                   return_cart:this.returnCart.bind(this),             
                   data:this.state.params.data,
+                  time:this.state.params.time
               });
                             
             }else{

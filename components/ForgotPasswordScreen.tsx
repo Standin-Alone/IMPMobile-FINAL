@@ -13,6 +13,7 @@ import axios from 'axios';
 import { Formik } from 'formik';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Images from '../constants/Images';
+import Spinner from 'react-native-spinkit';
 import { Popup } from 'react-native-popup-confirm-toast';
 export default class ForgotPasswordScreen extends Component {
   constructor(props) {
@@ -21,7 +22,8 @@ export default class ForgotPasswordScreen extends Component {
       email:'',
       focus_email_txt:false,
       isLoading:false,
-      error:false
+      error:false,
+      show_spinner:false
     };
 
 
@@ -30,12 +32,13 @@ export default class ForgotPasswordScreen extends Component {
   }
 
   handleSendResetPasswordLink = ()=>{
-    Keyboard.dismiss();
+    this.setState({isLoading:true,error:false});
+
         let data = {
             email:this.state.email,           
         }
         
-        this.setState({isLoading:true,error:false});
+        
         
         // axios post here
     
@@ -46,13 +49,12 @@ export default class ForgotPasswordScreen extends Component {
               this.setState({isLoading:false,error:true});
               return 1;
             }
-            this.setState({isLoading:false,error:false});
+
+            
             axios.post(ipConfig.ipAddress+'/form_reset_password_link/sending_request',data).then((response)=>{              
 
-
-              
-              
-              if(response.data.success == 'true'){
+                            
+              if(response.data.success == true){
 
                 Popup.show({
                   type: 'success',              
@@ -62,7 +64,7 @@ export default class ForgotPasswordScreen extends Component {
                   okButtonStyle:styles.confirmButton,
                   okButtonTextStyle: styles.confirmButtonText,
                   callback: () => {    
-                                 
+                    this.setState({email:'',isLoading:false});
                     Popup.hide()                 
                                                  
                     this.props.navigation.replace('LoginScreen')    
@@ -130,7 +132,16 @@ export default class ForgotPasswordScreen extends Component {
     const navigation = this.props.navigation;
     return (
       <View style={styles.container}>
-        
+           {this.state.show_spinner && (
+          <View style={styles.loading}>
+            <Spinner
+              isVisible={this.state.show_spinner}
+              size={100}
+              type={'Wave'}
+              color={Colors.light_green}
+            />
+          </View>
+        )}
         <Animatable.Image source={Images.forgot_password_bg} style={styles.logo}  resizeMode={'contain'} animation="fadeInDownBig" delay={500}/>  
         
         <Animatable.View animation="slideInLeft" >
@@ -240,4 +251,15 @@ const styles = StyleSheet.create({
   confirmButtonText:{  
     color:Colors.green,    
   },
+  loading: {
+    zIndex:1,
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  }
 });

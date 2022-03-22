@@ -80,50 +80,55 @@ export default class SummaryScreen extends Component {
                 </View>
         </View>
         <View style={styles.info_card}>
-            <View style={styles.farmer_details}>
+            
+                <View style={{flexDirection:"row",top:20}}>
+                <ScrollView style={styles.farmer_details} showsVerticalScrollIndicator={false}>
+                  <View style={{flex:1}}>
+                    <View style={{flexDirection:"row"}}>
+                        <View style={{flex:0.5}}>
+                        <Text style={{justifyContent:'flex-start',fontFamily:'Gotham_bold'}}>Name:</Text>
+                        </View>
+                        <View style={{flex:1}}>
+                        <Text style={{justifyContent:'flex-end'}}> {this.state.params.fullname}</Text>
+                        </View>
+                        
+                    </View>
 
-                <View style={{flexDirection:"row"}}>
-                    <View style={{flex:1}}>
-                    <Text style={{justifyContent:'flex-start',fontFamily:'Gotham_bold'}}>Name:</Text>
+                    <View style={{flexDirection:"row"}}>
+                        <View style={{flex:0.5}}>
+                        <Text style={{justifyContent:'flex-start',fontFamily:'Gotham_bold'}}>Address:</Text>
+                        </View>
+                        <View style={{flex:1}}>
+                        <Text style={{justifyContent:'flex-end'}}>{this.state.params.voucher_info.address}  </Text>
+                        </View>                     
                     </View>
-                    <View style={{flex:1}}>
-                    <Text style={{justifyContent:'flex-end',right:(Layout.width  /100 )* 25}}> {this.state.params.fullname}</Text>
-                    </View>
-                </View>
-
-                <View style={{flexDirection:"row"}}>
-                    <View style={{flex:1}}>
-                    <Text style={{justifyContent:'flex-start',fontFamily:'Gotham_bold'}}>Address:</Text>
-                    </View>
-                    <View style={{flex:1}}>
-                    <Text style={{justifyContent:'flex-end',right:(Layout.width  /100 )* 10}}>{this.state.params.voucher_info.address}  </Text>
-                    </View>
-                    <View style={{flex:1}}>
-                      <Animatable.Image source={Images.more_info} style={[styles.more_info_pic,{justifyContent:'flex-end'}]}  resizeMode={'contain'} animation="slideInRight" delay={500}/>  
-                    </View>
-                </View>
-                
-          
-
-                <View style={{flexDirection:"row"}}>
-                    <View style={{flex:1}}>
-                    <Text style={{justifyContent:'flex-start',fontFamily:'Gotham_bold'}} numberOfLines={2}> Program: </Text>
-                    </View>
-                    <View style={{flex:1}}>
-                    <Text style={{justifyContent:'flex-end',right:60}}>{this.state.params.voucher_info.program_title} </Text>
-
                     
-                    </View>
+              
+
+                    <View style={{flexDirection:"row"}}>
+                        <View style={{flex:0.5}}>
+                        <Text style={{justifyContent:'flex-start',fontFamily:'Gotham_bold'}} numberOfLines={2}> Program: </Text>
+                        </View>
+                        <View style={{flex:1}}>
+                        <Text style={{justifyContent:'flex-end'}}>{this.state.params.voucher_info.program_title} </Text>                  
+                        </View>                    
+                    </View>                                                        
+                  </View>
+                  </ScrollView> 
+                  <View style={{flex:0.5}}>
+                    <Animatable.Image source={Images.more_info} style={[styles.more_info_pic,{justifyContent:'flex-end'}]}  resizeMode={'contain'} animation="slideInRight" delay={500}/>  
+                  </View>
                 </View>
            
 
-            </View>
-
-                
+                        
         </View>
           
         {/* list of previous transaction component */}
-        <ScrollView style={styles.transaction_card}>
+
+        <View style={styles.transaction_card}>
+        <ScrollView >
+        
         <List.AccordionGroup >
         {transactionFilterByDate.map((item,index) => {
           let sum = 0;
@@ -158,7 +163,7 @@ export default class SummaryScreen extends Component {
                         value={ value.total_amount}
                         displayType={"text"}
                         decimalScale={2}
-                        thousandSeparator={true}                
+                        thousandSeparator={true}               
                         renderText={(values) => (
                           <Text style={{ top: 10 }}>
                             {"₱" + values}
@@ -200,6 +205,8 @@ export default class SummaryScreen extends Component {
         )})}
       </List.AccordionGroup>
         </ScrollView>
+
+      </View>
      
       </View>
     );
@@ -218,7 +225,10 @@ const styles = StyleSheet.create({
       width:(Layout.width / 100) *95,
       backgroundColor:'white',
       borderWidth:1,
-      borderColor:Colors.fade
+      overflow:'hidden',
+      flexShrink:1,
+      borderColor:Colors.fade,
+      elevation:5
   },
   remaining_balance_card:{
     left:10,
@@ -227,33 +237,39 @@ const styles = StyleSheet.create({
     width:(Layout.width / 100) *95,
     backgroundColor:'white',
     borderWidth:1,
-    borderColor:Colors.fade
+    borderColor:Colors.fade,
+    elevation:5
     },
   transaction_card:{
-    left:10,
+    // left:10,
+    // top:(Layout.height / 100) * 18,
+    // height:(Layout.height / 100) *  27,
+    // width:(Layout.width / 100) *95,
+ 
+    // flexGrow:0,
+    // paddingBottom:200,
+    flex:0.3,
     top:(Layout.height / 100) * 18,
-    height:(Layout.height / 100) *  27,
     width:(Layout.width / 100) *95,
+    left:10,
     backgroundColor:'white',
-    flexGrow:0,
-    paddingBottom:200,
     borderWidth:1,
-    borderColor:Colors.fade
+    borderColor:Colors.fade,
+    elevation:5
 
     },
   more_info_pic:{
     bottom:(Layout.height / 100) * 9,
-    // left:(Layout.width / 100) *60,    
+    // left:(Layout.width / 100) *60,        
     height:(Layout.height / 100) *30,
     width:(Layout.width / 100) *30,
     elevation:2
   },
   farmer_details:{
-    overflow:'scroll',
-    flex:0,
+    
+    
     left:10,
-    top:(Layout.height / 100) * 1,
-    width:(Layout.width / 100) * 90,      
+    
   },
   remaining_balance_label:{
         left:10,

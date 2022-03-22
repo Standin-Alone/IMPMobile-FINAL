@@ -8,7 +8,9 @@ import { Root, Popup } from 'react-native-popup-confirm-toast';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import FontAwesome  from 'react-native-vector-icons/FontAwesome';
 import { FontAwesomeIcon} from '@fortawesome/react-native-fontawesome'
-import { faMoneyBillWaveAlt} from '@fortawesome/free-solid-svg-icons'
+import { faMoneyBillWaveAlt,faUserCircle} from '@fortawesome/free-solid-svg-icons'
+
+
 
 
 import HomeScreen from '../components/HomeScreen';
@@ -66,6 +68,23 @@ export default function BottomTabNavigator() {
       headerTitleStyle:styles.bottomTitle,
       headerTintColor:Colors.green,
       tabBarIcon: ()=> <Icon name="home" size={40} color={'white'}/>,
+      headerLeft: () => (            
+        <Pressable
+          onPress={  () => {                    
+              navigation.navigate('ProfileScreen');
+                    
+          }}
+          style={({ pressed }) => ({
+            opacity: pressed ? 0.5 : 1,
+          })}>
+          <FontAwesomeIcon
+            icon={faUserCircle}
+            size={25}
+            color={Colors.green}
+            style={{left:5 }}
+          />
+        </Pressable>
+      ),
       headerRight: () => (            
         <Pressable
           onPress={  () => {                    

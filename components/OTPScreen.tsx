@@ -65,7 +65,8 @@ export default class OTPScreen extends Component {
               AsyncStorage.setItem("user_id", this.state.params.user_id.toLocaleString());
               AsyncStorage.setItem("supplier_id", this.state.params.supplier_id.toLocaleString());
               AsyncStorage.setItem("full_name", this.state.params.full_name);
-              
+              AsyncStorage.setItem("region_code", this.state.params.region_code);
+              AsyncStorage.setItem("region_name", this.state.params.region);              
               AsyncStorage.setItem("programs", JSON.stringify(this.state.params.programs));
               // firebase.messaging().subscribeToTopic(this.state.params.user_id.toLocaleString());
               this.props.navigation.reset({

@@ -19,6 +19,7 @@ import * as ipConfig from '../ipconfig';
 import DeviceInfo from 'react-native-device-info';
 import {Popup} from 'react-native-popup-confirm-toast';
 import Geolocation from '@react-native-community/geolocation';
+import FastImage from 'react-native-fast-image';
 import Swipeable from "react-native-gesture-handler/Swipeable";
 import { stat } from 'react-native-fs';
 let subscribe;
@@ -210,7 +211,7 @@ export default class AuthenticationScreen extends React.Component {
     return (
 
       <>
-      <ImageBackground
+      <FastImage
         // style={styles.container}
         source      = {Images.splash_screen}
         style       = {styles.container}
@@ -230,7 +231,7 @@ export default class AuthenticationScreen extends React.Component {
     
        
             
-      </ImageBackground>
+      </FastImage>
       </>
     );
   }

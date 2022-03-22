@@ -19,6 +19,7 @@ import SummaryScreen from '../components/SummaryScreen';
 import PayoutSummaryScreen from '../components/PayoutSummaryScreen';
 import { createSharedElementStackNavigator } from 'react-navigation-shared-element';
 
+import ProfileScreen from '../components/ProfileScreen';
 import SocketConnection from '../constants/SocketConnection';
 import PushNotification from "react-native-push-notification";
 
@@ -161,9 +162,9 @@ function MyStack(){
         <Root>
             <Stack.Navigator initialRouteName='AuthenticationScreen' >            
                 <Stack.Screen component={AuthenticationScreen} name='AuthenticationScreen' options={{headerShown:false,headerTransparent:true}}/>
-                <Stack.Screen component={LoginScreen} name='LoginScreen' options={{headerShown:false,headerTransparent:true}}/>
-                <Stack.Screen component={ForgotPasswordScreen} name='ForgotPasswordScreen' options={{headerTransparent:true,headerTitle:'Change Password'}}/>
-                <Stack.Screen component={OTPScreen} name='OTPScreen' options={{headerShown:true,headerTransparent:true,headerTitle:'Verify OTP'}}/>
+                <Stack.Screen component={LoginScreen} name='LoginScreen' options={{headerShown:false,headerTransparent:true,cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS}}/>
+                <Stack.Screen component={ForgotPasswordScreen} name='ForgotPasswordScreen' options={{headerTransparent:true,headerTitle:'Change Password',cardStyleInterpolator:CardStyleInterpolators.forRevealFromBottomAndroid}}/>
+                <Stack.Screen component={OTPScreen} name='OTPScreen' options={{headerShown:true,headerTransparent:true,headerTitle:'Verify OTP',cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS}}/>
                 <Stack.Screen component={FarmerProfileScreen} name='FarmerProfileScreen' options={{headerShown:false,headerTransparent:true,cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS}}/>
                 <Stack.Screen component={SelectedCommodityScreen} name='SelectedCommodityScreen'             
                     sharedElements={(route, otherRoute, showing) => {
@@ -181,6 +182,7 @@ function MyStack(){
                 <Stack.Screen component={ViewCartScreen} name='ViewCartScreen' options={{cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS}}/>
                 <Stack.Screen component={AttachmentScreen} name='AttachmentScreen' options={{headerTransparent:true,headerTitle:"Attachments",headerTitleStyle:{fontFamily:'Gotham_bold'},cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS}} />
                 <Stack.Screen component={SummaryScreen} name='SummaryScreen' options={{headerTransparent:true,headerTitle:"More Info",headerTitleStyle:{fontFamily:'Gotham_bold'}}} />
+                <Stack.Screen component={ProfileScreen} name='ProfileScreen' options={{headerTransparent:true,headerTitle:"Profile",headerTitleStyle:{fontFamily:'Gotham_bold'},cardStyleInterpolator:CardStyleInterpolators.forRevealFromBottomAndroid}} />
                 <Stack.Screen component={ReviewTransactionScreen} name='ReviewTransactionScreen' options={{headerShown:false,headerTransparent:true,cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS}}/>    
                 <Stack.Screen component={PayoutSummaryScreen} name='PayoutSummaryScreen' options={{headerTransparent:true,headerTitle:"Payout Summary",headerTitleStyle:{fontFamily:'Gotham_bold',color:'white'}, headerTintColor: 'white'}}/>                
                 <Stack.Screen component={BottomTabNavigator} name='Root' options={{headerShown:false,headerTransparent:true}}/>

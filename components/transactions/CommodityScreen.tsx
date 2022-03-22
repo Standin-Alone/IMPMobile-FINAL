@@ -101,7 +101,8 @@ export default class CommodityScreen extends Component {
       item:item,
       voucher_info:this.state.params.data[0],      
       my_cart : this.myCart.bind(this),
-      categories: cart_categories
+      categories: cart_categories,
+      time:this.state.params.time
       
     })
 
@@ -219,7 +220,7 @@ export default class CommodityScreen extends Component {
           cart:this.state.cart
       }
       
-      console.warn(data.cart);
+      
       // check internet connection
       NetInfo.fetch().then((response)=>{
               
@@ -245,6 +246,7 @@ export default class CommodityScreen extends Component {
                 user_id: this.state.params.user_id,
                 return_cart : this.returnCart.bind(this),
                 data:this.state.params.data,
+                time:this.state.params.time
                 
             });
         

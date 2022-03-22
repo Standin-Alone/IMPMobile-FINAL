@@ -497,9 +497,9 @@ rightContent = (delete_index : any,item : any) => (
   // go to next screen Review Transaction
   handleGoToReview = ()=>{
     
-    
+    console.warn(this.state.params.time);
     Geolocation.getCurrentPosition(async (geo_response)=>{
-
+     
 
     if(geo_response){
     let parameters = {
@@ -511,7 +511,8 @@ rightContent = (delete_index : any,item : any) => (
       user_id: this.state.params.user_id,
       attachments:this.state.attachments,
       latitude:geo_response.coords.latitude,
-      longitude:geo_response.coords.longitude
+      longitude:geo_response.coords.longitude,
+      time:this.state.params.time
     }
 
     let check_null = 0 ;

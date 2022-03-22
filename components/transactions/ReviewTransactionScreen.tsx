@@ -250,7 +250,8 @@ export default class ReviewTransactionScreen extends Component {
                   callback: () => {    
                                 
                     Popup.hide()                 
-                    BackgroundTimer.clearTimeout();         
+                    console.warn(this.state.params.timer);
+                    BackgroundTimer.clearTimeout(this.state.params.timer);         
                     this.props.navigation.reset({
                       index: 0,
                       routes: [{ name: 'Root' }]
@@ -270,7 +271,8 @@ export default class ReviewTransactionScreen extends Component {
                   okButtonTextStyle: styles.confirmButtonText,
                   callback: () => {    
                     this.setState({show_spinner:false});    
-                    BackgroundTimer.clearTimeout();                   
+                    
+                    BackgroundTimer.clearTimeout(this.state.params.timer);                          
                     Popup.hide()      
 
                     this.props.navigation.reset({

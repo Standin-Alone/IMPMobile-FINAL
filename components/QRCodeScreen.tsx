@@ -130,7 +130,7 @@ export default class QRCodeScreen extends Component{
                         okButtonStyle:styles.confirmButton,
                         okButtonTextStyle: styles.confirmButtonText,
                         callback: () => {     
-
+                     
                         // start timer when scanned
                         let timer =  BackgroundTimer.setTimeout((res) => { 
                                         Popup.show({
@@ -152,6 +152,7 @@ export default class QRCodeScreen extends Component{
                                       }, 
                                       response.data["time_limit"]
                                     );
+                                  console.warn(response.data["time_limit"]);
 
                           Popup.hide()            
                           this.props.navigation.navigate("FarmerProfileScreen",{data:response.data["data"],
@@ -160,7 +161,7 @@ export default class QRCodeScreen extends Component{
                             supplier_id:get_supplier_id,
                             full_name:get_full_name,
                             user_id:get_user_id,                          
-                            timer:timer
+                            time:timer
                           });
                           
                                                   

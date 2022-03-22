@@ -299,6 +299,8 @@ export default class ViewCartScreen extends Component {
 
 // check out button
 handleCheckOut = ()=>{
+
+  
   this.setState({show_spinner:true});
   let dataToSend = {
     voucher_info: this.state.params.voucher_info[0],
@@ -306,7 +308,8 @@ handleCheckOut = ()=>{
     total_amount:this.state.total,
     supplier_id: this.state.params.supplier_id,
     full_name: this.state.params.full_name,
-    user_id: this.state.params.user_id
+    user_id: this.state.params.user_id,
+    time:this.state.params.time
   }
 
 

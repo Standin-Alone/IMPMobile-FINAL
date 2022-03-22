@@ -36,7 +36,8 @@ export default class HomeScreen extends Component {
         isShowImage:false,
         imageURI:null,
         currentPage:0,
-        show_spinner:false
+        show_spinner:false,
+        total_vouchers:0
     };
     
   }
@@ -58,8 +59,12 @@ export default class HomeScreen extends Component {
         ).catch((error)=>error.response.data.message);
         
         if (result.status == 200) {            
-          this.setState({vouchers_list:result.data,refreshing:false,currentPage:0})
-                    
+          this.setState({
+                vouchers_list:result.data['scanned_vouchers'],
+                refreshing:false,
+                currentPage:0,
+                total_vouchers:result.data['total_vouchers']
+              })                    
         }
         
         this.setState({refreshing:false});
@@ -105,14 +110,15 @@ export default class HomeScreen extends Component {
             
             if (response.status == 200) {  
 
-              if(response.data.length){                
-                let new_data = response.data;                                   
+              if(response.data['scanned_vouchers'].length){                
+                console.warn(response.data['scanned_vouchers'].length)
+                let new_data = response.data['scanned_vouchers'];                                   
                 this.setState({vouchers_list: [...new Set(this.state.vouchers_list),...new_data]});              
               } 
             }
 
                    
-            this.setState({refreshing:false});
+            this.setState({refreshing:false,total_vouchers:response.data['total_vouchers']});
            
           })
           .catch((error) => {
@@ -154,7 +160,7 @@ export default class HomeScreen extends Component {
           .then((response) => {
             if (response.status == 200) {
 
-              this.setState({vouchers_list:response.data,currentPage:0})
+              this.setState({vouchers_list:response.data['scanned_vouchers'],currentPage:0,total_vouchers:result.data['total_vouchers']})
               this.setState({refreshing:false});
 
             }
@@ -272,8 +278,17 @@ export default class HomeScreen extends Component {
 
   // show image
   showImage = (uri: any) => {
+
+    let image_array = [];
+    uri.map((item)=>{
+      
+      image_array.push({
+        url:'data:image/jpeg;base64,'+item
+      })
+    })
+
     
-    this.setState({isShowImage:true,imageURI:uri})    
+    this.setState({isShowImage:true,imageURI:image_array})    
   };
 
   
@@ -295,12 +310,25 @@ export default class HomeScreen extends Component {
       onPress   = {()=>this.showImage(item.base64)}
     >
         <Card.Title        
-        title    = {item.reference_no}
-        subtitle = {<View><Text><Icon name="clock-o" family="fontawesome" color={Colors.base} size={15} /> <Moment element={Text}    style    = {{color:Colors.muted}}  fromNow>{item.transac_date}</Moment></Text></View>}        
+        title    = {item.fullname}
+        titleStyle = {{ fontFamily:'Gotham_bold',fontSize:15 }}
+        subtitle = {(<View><Text>                 
+          <Icon name="clock-o" family="fontawesome" color={Colors.base} size={15} />   
+          {'\t'}{'\t'}  
+
+            { !moment(item.transac_date).isSame( moment().startOf('day'), 'day') ? 
+                moment(item.transac_date).format('MMMM DD, YYYY, h:mm a')   : 
+
+              (
+                <Moment element={Text}    style    = {{color:Colors.muted}}  fromNow>{item.transac_date}</Moment>
+              )          
+          }          
+          </Text></View>)}        
         left     = {this.leftComponent}
         right    = {()=>this.rightComponent(item)}
       />
-      <Card.Cover source={{uri:'data:image/jpeg;base64,'+item.base64}}          
+      
+      <Card.Cover source={{uri:'data:image/jpeg;base64,'+item.base64[0]}}          
           resizeMode='cover'
           resizeMethod='resize'
         style={{height:(Layout.height/100) * 30}}
@@ -337,7 +365,7 @@ export default class HomeScreen extends Component {
             backgroundColor:this.state.selected_filter == item ? Colors.blue_green : Colors.light}]}      
       onPress= {()=>this.filterButtonFunction(item)}
     >
-      {item + ' (' + this.state.vouchers_list.filter((voucher_items)=>moment().format('YYYY-MM-DD') == moment(voucher_items.transac_date).format('YYYY-MM-DD') ).length + ')' }
+      {item + ' (' + (item == 'Today' ? this.state.vouchers_list.filter((voucher_items)=> moment().format('YYYY-MM-DD') == moment(voucher_items.transac_date).format('YYYY-MM-DD') ).length :this.state.total_vouchers ) + ')' }
     </Button>
   )
   render() {
@@ -408,20 +436,15 @@ export default class HomeScreen extends Component {
           
           onEndReachedThreshold={0.1} // so when you are at 5 pixel from the bottom react run onEndReached function
           onEndReached={async ({distanceFromEnd}) => {     
-          
-              
+                        
              if (distanceFromEnd > 0 ) 
               { 
 
                 await this.setState((prevState) => ({currentPage:prevState.currentPage + 2}));
                 await this.loadMore();
               }
-              
-            
-        
+
           }}
-
-
         />
 
         <Modal
@@ -431,7 +454,7 @@ export default class HomeScreen extends Component {
           animationType="fade"
         >
           <ImageViewer
-            imageUrls={[{ url: "data:image/jpeg;base64," + this.state.imageURI }]}
+            imageUrls={this.state.imageURI}
             index={0}
           />
         </Modal>
@@ -461,15 +484,16 @@ const styles = StyleSheet.create({
     height: 100
   },
   voucher_flatlist:{
-    top:(Layout.height/100) * 16,
+    top:(Layout.height/100) * 8,
     width:(Layout.width/100) * 100,   
-    height:(Layout.height/100) * 60,    
+    height:(Layout.height/100) * 70,    
     backgroundColor:Colors.light,
     flexGrow:0,    
   },
   card: {
     flex: 1,
-    borderRadius: 5,        
+    borderRadius: 5,            
+    borderColor:Colors.fade,
     top:10,
     width:(Layout.width/100) * 100,         
     backgroundColor:Colors.light,
@@ -487,7 +511,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   recent_title:{
-    top:(Layout.height/100) * 15,
+    top:(Layout.height/100) * 8,
     left:10,
     fontFamily:'Gotham_bold',
     color:Colors.header_text
@@ -500,19 +524,19 @@ const styles = StyleSheet.create({
   },
   greetings:{
     fontFamily:'Gotham_bold',
-    top:(Layout.height/100) * 5,
+    top:(Layout.height/100) * 2,
     color:Colors.blue_green,    
-    left:10,
-    fontSize:22,      
+    left:(Layout.width/100) * 8,
+    fontSize:18,      
   },
   question:{
     fontFamily:"Gotham_light",
     fontSize:12,
-    top:(Layout.height/100) * 8,
+    top:(Layout.height/100) * 4,
     left:(Layout.width / 100) * 3,
   },
   search_text_input:{
-    top:(Layout.height/100) * 10,    
+    top:(Layout.height/100) * 5,    
     borderWidth:1,
     left:(Layout.width / 100) * 3,
     width:(Layout.width / 100) * 95,
@@ -532,7 +556,7 @@ const styles = StyleSheet.create({
   },
   flatlist_filter_buttons:{
     flexGrow:0,     
-    top:(Layout.height/100) * 12,
+    top:(Layout.height/100) * 6,
     height:(Layout.height/100) * 5,
   },
   confirmButton:{
