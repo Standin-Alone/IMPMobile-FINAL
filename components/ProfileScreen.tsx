@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {View,Text, StyleSheet,ScrollView,Image} from 'react-native';
 import { FontAwesomeIcon}  from '@fortawesome/react-native-fontawesome';
-import {faUserCircle,faMailBulk,faBuilding} from '@fortawesome/free-solid-svg-icons';
+import {faUserCircle,faMailBulk,faBuilding, faSignOut} from '@fortawesome/free-solid-svg-icons';
 import Colors from '../constants/Colors';
 
 import Layout from '../constants/Layout';
@@ -24,7 +24,9 @@ export default class ProfileScreen extends Component {
     this.state = {          
         full_name: '',
         region_name: '',
-        isLoading:false
+        isLoading:false,
+        company_name:'',
+        email:''
     };
 
   }
@@ -33,6 +35,8 @@ export default class ProfileScreen extends Component {
 
     this.setState({full_name:await AsyncStorage.getItem('full_name')});
     this.setState({region_name:await AsyncStorage.getItem('region_name')});
+    this.setState({company_name:await AsyncStorage.getItem('company_name')});
+    this.setState({email:await AsyncStorage.getItem('email')});
       
   }
 
@@ -50,9 +54,9 @@ export default class ProfileScreen extends Component {
         
     
     <View style={styles.profile_info}>
-        <List.Item title="Email"  left={()=><FontAwesomeIcon  icon={faMailBulk} size={30}/>} titleStyle={styles.list_title_style} description={"sample@gmail.com"}  descriptionStyle={styles.list_desc_style}/>
+        <List.Item title="Email"  left={()=><FontAwesomeIcon  icon={faMailBulk} size={30}/>} titleStyle={styles.list_title_style} description={this.state.email}  descriptionStyle={styles.list_desc_style}/>
         <Divider/>
-        <List.Item title="Company"  left={()=><FontAwesomeIcon  icon={faBuilding} size={30}/>}  titleStyle={styles.list_title_style}  description={"Ricing Golden stars"} descriptionStyle={styles.list_desc_style}/>
+        <List.Item title="Company"  left={()=><FontAwesomeIcon  icon={faBuilding} size={30}/>}  titleStyle={styles.list_title_style}  description={this.state.company_name} descriptionStyle={styles.list_desc_style}/>
     </View>          
     
       <View style={{flex: 1}}>
@@ -83,7 +87,7 @@ export default class ProfileScreen extends Component {
                   })
             }}
             >                    
-            <FontAwesomeIcon  icon={faMailBulk} size={30} color={Colors.light}/>
+            <FontAwesomeIcon  icon={faSignOut} size={30} color={Colors.light} style={{left:(Layout.width / 100) * 30}}/>
               Logout
           </Button>
         </View>
@@ -120,7 +124,7 @@ const styles = StyleSheet.create({
     top:(Layout.height / 100) * 20,
     paddingVertical:(Layout.height / 100) * 2,
     paddingHorizontal:(Layout.width / 100) * 2,
-    borderRadius:20
+    borderRadius:15
   },
   list_title_style:{
     fontFamily:'Gotham_bold',

@@ -70,6 +70,7 @@ export default class LoginScreen extends Component {
                 let get_full_name   = response.data["full_name"];
                 let get_region      = response.data["region_name"];
                 let get_region_code = response.data["region_code"];
+                let get_company_name = response.data["company_name"];
                 let get_programs    = response.data["programs"];
                 
                 let clean_programs:any = [];
@@ -87,7 +88,8 @@ export default class LoginScreen extends Component {
                   email         : get_email,
                   programs      : clean_programs,
                   region        : get_region,
-                  region_code   : get_region_code
+                  region_code   : get_region_code,
+                  company_name   : get_company_name
                 };
 
                 this.props.navigation.navigate('OTPScreen',dataToSend)
@@ -115,7 +117,7 @@ export default class LoginScreen extends Component {
 
               } 
             }).catch((err)=>{
-              console.warn(err);
+              console.warn(err.response);
               this.setState({isLoading:false})
             });
         }else{
