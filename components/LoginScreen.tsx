@@ -74,9 +74,11 @@ export default class LoginScreen extends Component {
                 let get_programs    = response.data["programs"];
                 
                 let clean_programs:any = [];
+                let clean_program_name:any = [];
 
                 get_programs.map((program)=>{                  
                   clean_programs.push(program.program_id);
+                  clean_program_name.push(program.shortname);
                 })
                 
 
@@ -87,6 +89,7 @@ export default class LoginScreen extends Component {
                   full_name     : get_full_name,
                   email         : get_email,
                   programs      : clean_programs,
+                  program_name  : clean_program_name,
                   region        : get_region,
                   region_code   : get_region_code,
                   company_name   : get_company_name

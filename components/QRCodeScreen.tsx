@@ -131,28 +131,7 @@ export default class QRCodeScreen extends Component{
                         okButtonTextStyle: styles.confirmButtonText,
                         callback: () => {     
                      
-                        // start timer when scanned
-                        let timer =  BackgroundTimer.setTimeout((res) => { 
-                                        Popup.show({
-                                          type: 'danger',              
-                                          title: 'Message',
-                                          textBody: "Voucher processing has ended.",                
-                                          buttonText:'Ok',
-                                          okButtonStyle:styles.confirmButton,
-                                          okButtonTextStyle: styles.confirmButtonText,
-                                          callback: () => {    
-                                            Popup.hide()       
-                                            BackgroundTimer.clearTimeout(this)                             
-                                            this.props.navigation.reset({
-                                              index: 0,
-                                              routes: [{ name: 'Root' }]
-                                            });                                
-                                          },              
-                                        })                                        
-                                      }, 
-                                      response.data["time_limit"]
-                                    );
-                                  console.warn(response.data["time_limit"]);
+                        // start timer when scanned                        
 
                           Popup.hide()            
                           this.props.navigation.navigate("FarmerProfileScreen",{data:response.data["data"],
@@ -161,7 +140,26 @@ export default class QRCodeScreen extends Component{
                             supplier_id:get_supplier_id,
                             full_name:get_full_name,
                             user_id:get_user_id,                          
-                            time:timer
+                            time: BackgroundTimer.setTimeout((res) => { 
+                              Popup.show({
+                                type: 'danger',              
+                                title: 'Message',
+                                textBody: "Voucher processing has ended.",                
+                                buttonText:'Ok',
+                                okButtonStyle:styles.confirmButton,
+                                okButtonTextStyle: styles.confirmButtonText,
+                                callback: () => {    
+                                  Popup.hide()       
+                                  BackgroundTimer.clearTimeout(this)                             
+                                  this.props.navigation.reset({
+                                    index: 0,
+                                    routes: [{ name: 'Root' }]
+                                  });                                
+                                },              
+                              })                                        
+                            }, 
+                            response.data["time_limit"]
+                          )
                           });
                           
                                                   

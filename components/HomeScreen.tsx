@@ -57,8 +57,9 @@ export default class HomeScreen extends Component {
       const  result = await axios.get(
         ipConfig.ipAddress+ "/get-scanned-vouchers/"+supplier_id+"/"+0,         
         ).catch((error)=>error.response.data.message);
-        
-        if (result.status == 200) {            
+        console.warn(result)    ;
+        if (result.status == 200) {   
+       
           this.setState({
                 vouchers_list:result.data['scanned_vouchers'],
                 refreshing:false,
@@ -158,6 +159,7 @@ export default class HomeScreen extends Component {
             ipConfig.ipAddress+ "/get-scanned-vouchers/"+supplier_id+"/"+page
           )
           .then((response) => {
+            console.warn(response)
             if (response.status == 200) {
 
               this.setState({vouchers_list:response.data['scanned_vouchers'],currentPage:0,total_vouchers:result.data['total_vouchers']})
