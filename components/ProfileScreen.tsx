@@ -78,8 +78,12 @@ export default class ProfileScreen extends Component {
                     confirmText:'Cancel',                                 
                     callback: () => {
                       Popup.hide()
-                      AsyncStorage.clear();
-                      this.props.navigation.replace('AuthenticationScreen');                      
+                      AsyncStorage.clear();                      
+                      this.props.navigation.reset({
+                        index: 0,
+                        routes: [{name: 'AuthenticationScreen'}],
+                      })
+                      
                     },
                     okButtonStyle:styles.confirmButton,
                     okButtonTextStyle: styles.confirmButtonText

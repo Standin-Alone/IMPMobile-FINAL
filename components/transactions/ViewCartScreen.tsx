@@ -127,7 +127,7 @@ export default class ViewCartScreen extends Component {
                   cart:[item]
               }
 
-              // save to cart as draft
+              // delete to cart as draft
               axios.post(ipConfig.ipAddress+'/delete-cart',payload).then((response)=>{              
                 
                   this.state.params.return_cart(new_data)
@@ -210,9 +210,10 @@ export default class ViewCartScreen extends Component {
       valueType="real"
       rounded
       iconStyle={{ color: "white" }}
-      containerStyle={{right:(Layout.width / 100) * 41,bottom:(Layout.height / 100) * 2,position:'absolute'}}
+      containerStyle={{right:(Layout.width / 100) * 41,bottom:(Layout.height / 100) * 1,position:'absolute'}}
+      
       rightButtonBackgroundColor={Colors.light_green}
-      leftButtonBackgroundColor={Colors.light_green}
+      leftButtonBackgroundColor={Colors.danger}
     />
   );
 
@@ -246,7 +247,7 @@ export default class ViewCartScreen extends Component {
     <Swipeable renderRightActions={() => this.rightContent(index,item)}>             
       <Card elevation={20} style={styles.card}>
         <Card.Title
-          title={(item.item_category != '' ? item.item_category : item.name) + " (" + item.unit_measure + ")"}          
+          title={(item.item_category != '' ? item.item_category : item.name) + " (" + item.unit_type + ")"}          
           left={() => (
             <Image
               source={{ uri: "data:Image/jpeg;base64," + item.image }}
@@ -281,7 +282,7 @@ export default class ViewCartScreen extends Component {
         {this.numericInput(item, index)}
 
         {/* edit price button */}
-        <Pressable          
+        {/* <Pressable          
           onPress={  () => {                        
               this.setState({show_edit_modal:true,edit_item:item,edit_index:index,edit_total_amount_value:item.total_amount});
           }}
@@ -290,7 +291,7 @@ export default class ViewCartScreen extends Component {
             
           })}>
           <FontAwesomeIcon icon={faEdit} size={20} color={Colors.dark_blue} style={{left:20}} transform="fa-fade"  />       
-        </Pressable>
+        </Pressable> */}
         </Card.Content>
       </Card>
     </Swipeable>
@@ -309,7 +310,8 @@ handleCheckOut = ()=>{
     supplier_id: this.state.params.supplier_id,
     full_name: this.state.params.full_name,
     user_id: this.state.params.user_id,
-    time:this.state.params.time
+    time:this.state.params.time,
+    cash_added : (this.state.params.available_balance - this.state.total) < 0 ? (this.state.total -this.state.params.available_balance  ) : 0.00
   }
 
 

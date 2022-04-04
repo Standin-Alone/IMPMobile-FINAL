@@ -10,7 +10,7 @@ import FontAwesome  from 'react-native-vector-icons/FontAwesome';
 import { FontAwesomeIcon} from '@fortawesome/react-native-fontawesome'
 import { faMoneyBillWaveAlt,faUserCircle} from '@fortawesome/free-solid-svg-icons'
 
-
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 
 import HomeScreen from '../components/HomeScreen';
@@ -98,7 +98,10 @@ export default function BottomTabNavigator() {
                   callback: () => {
                     Popup.hide()
                     AsyncStorage.clear();
-                    navigation.replace('AuthenticationScreen');
+                    navigation.reset({
+                      index: 0,
+                      routes: [{name: 'AuthenticationScreen'}],
+                    })
                     
                   },
                   okButtonStyle:styles.confirmButton,
@@ -124,7 +127,7 @@ export default function BottomTabNavigator() {
 
     
   <Tabs.Screen  options={({navigation})=>({
-      tabBarIcon: ()=> <Icon name="qrcode" size={40}  color={'white'}/>,
+      tabBarIcon: ()=> <MaterialCommunityIcons name="qrcode-scan" size={40}  color={'white'}/>,
       tabBarLabel:'Scan',
       headerTitle:'Scan QR Code',
       headerTransparent:true,
@@ -143,7 +146,10 @@ export default function BottomTabNavigator() {
                   callback: () => {
                     Popup.hide()
                     AsyncStorage.clear();
-                    navigation.replace('AuthenticationScreen');
+                     navigation.reset({
+                      index: 0,
+                      routes: [{name: 'AuthenticationScreen'}],
+                    })
                     
                   },
                   okButtonStyle:styles.confirmButton,
@@ -187,7 +193,10 @@ export default function BottomTabNavigator() {
                   callback: () => {
                     Popup.hide()
                     AsyncStorage.clear();
-                    navigation.replace('AuthenticationScreen');
+                    navigation.reset({
+                      index: 0,
+                      routes: [{name: 'AuthenticationScreen'}],
+                    })
                     
                   },
                   okButtonStyle:styles.confirmButton,

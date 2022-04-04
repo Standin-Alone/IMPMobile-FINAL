@@ -21,6 +21,13 @@ import NumberFormat from 'react-number-format';
 import {Popup } from 'react-native-popup-confirm-toast';
 import BackgroundTimer from 'react-native-background-timer';
 import Spinner from 'react-native-spinkit';
+import { constants } from 'fs';
+import {RNHoleView,RNHole} from 'react-native-hole-view';
+import DashedLine from 'react-native-dashed-line';
+
+
+const firstHole: RNHole = {x: 150, y: 390, width: 120, height: 120, borderRadius: 60};
+
 export default class FarmerProfileScreen extends Component {
   constructor(props) {
     super(props);
@@ -29,11 +36,11 @@ export default class FarmerProfileScreen extends Component {
         history:this.props.route.params.history,
         show_spinner:false
     };
-
+  console.warn(this.state.params.data)    
   }
 
   goBack = () =>{
-    BackgroundTimer.clearTimeout(this.state.params.timer);
+    BackgroundTimer.clearTimeout(this.state.params.time);
     this.props.navigation.goBack();
     return true;
   }
@@ -41,9 +48,7 @@ export default class FarmerProfileScreen extends Component {
   componentDidUpdate() {
 
 
-   BackHandler.addEventListener('hardwareBackPress',this.goBack);   
-    
-   
+   BackHandler.addEventListener('hardwareBackPress',this.goBack);          
 
   }
 
@@ -136,6 +141,8 @@ export default class FarmerProfileScreen extends Component {
                     price: item_cart.amount,
                     reference_no: this.state.params.data[0].reference_no,
                     item_category: item_cart.item_category,
+                    cash_added: item_cart.cash_added,
+                    unit_type: item_cart.unit_type,
                     supplier_id: data.supplier_id
                   }
                 )
@@ -151,6 +158,7 @@ export default class FarmerProfileScreen extends Component {
                   full_name: this.state.params.full_name,
                   user_id: this.state.params.user_id,                  
                   program_items :this.state.params.program_items,
+                  unit_types :this.state.params.unit_types,
                   return_cart:this.returnCart.bind(this),             
                   data:this.state.params.data,
                   time:this.state.params.time
@@ -221,15 +229,10 @@ export default class FarmerProfileScreen extends Component {
             />
           </View>
         )}
+
+
       <LinearGradient colors={['#A9F99E', Colors.green, Colors.blue_green]} style={styles.cover}>
-          <FontAwesomeIcon name="arrow-left" color={Colors.light} style={styles.go_back} size={30} onPress={this.handleGoBack}/>
-          {/* Current Balance */}
-          <NumberFormat value={this.state.params.data[0].Available_Balance} displayType={'text'} thousandSeparator={true} prefix={'₱'} 
-            renderText={(value)=>(
-              <Animatable.Text animation="slideInLeft" numberOfLines={2} style={styles.current_balance}>Current Balance: {value}
-              </Animatable.Text>
-            )}
-          />
+          <FontAwesomeIcon name="arrow-left" color={Colors.light} style={styles.go_back} size={30} onPress={this.handleGoBack}/>       
           {/* Farmer Image*/}
           <Animatable.Image animation="fadeInDownBig" source={Images.farmer} style={styles.logo} />            
       </LinearGradient>
@@ -239,12 +242,35 @@ export default class FarmerProfileScreen extends Component {
       {/* Full Name */}      
       <Animatable.Text animation="slideInLeft" numberOfLines={2} style={styles.full_name}>{this.state.params.data[0].first_name} {this.state.params.data[0].last_name}</Animatable.Text>        
       {/* Location */}      
+      
       <Animatable.Text animation="slideInLeft" delay={300}  numberOfLines={10}  style={styles.location}>
           <Ionicons name="location" color={Colors.blue_green}/>
                 Barangay {this.state.params.data[0].Barangay}, {this.state.params.data[0].Municipality}, {this.state.params.data[0].Province}, {this.state.params.data[0].Region}</Animatable.Text>
+                      
+      <View style={{ flexDirection:'row',top:(Layout.height /100) * 15 }}>            
+          <View style={{  left:20 }}>
+            <Text style={{ fontFamily:'Gotham_bold' }}>
+              Birthday:
+              
+
+            </Text>
+          </View>
+        <View style={{flex:1, alignItems:'flex-end',right:20 }}>
+          <Text  style={{ fontFamily:'Gotham_bold' }} >
+          
+             
+            <Moment element={Text} format={'MMMM DD, YYYY'}>{this.state.params.data[0].birthday}</Moment>
+            
+          </Text>
+        </View>            
+      </View>
 
 
-      <Animatable.Text animation="slideInLeft" numberOfLines={2} style={styles.history_title}><FontAwesomeIcon name="info-circle" color={Colors.blue_green} size={16}/> Recent Claiming</Animatable.Text>        
+
+
+      
+
+      {/* <Animatable.Text animation="slideInLeft" numberOfLines={2} style={styles.history_title}><FontAwesomeIcon name="info-circle" color={Colors.blue_green} size={16}/> Recent Claiming</Animatable.Text>        
    
       <FlatList
         horizontal
@@ -256,9 +282,58 @@ export default class FarmerProfileScreen extends Component {
         
         showsHorizontalScrollIndicator={false}  
             
-      />    
+      />     */}
+
+      <View>
+          <View style={{
+            borderStyle:'dashed',
+            borderColor:Colors.muted,
+            borderLeftWidth:1,
+            width:(Layout.width / 100) * 0, 
+            height:(Layout.height / 100) * 19,
+            top:(Layout.height / 100) * 20,
+            left:(Layout.width / 100) *70,
+            elevation:100,            
+            position:'absolute'}}/>
+      </View>
+
+      <NumberFormat value={this.state.params.data[0].Available_Balance} displayType={'text'} thousandSeparator={true} prefix={'P'}             
+      renderText={(value)=>(
+        <Animatable.Text numberOfLines={2} style={styles.current_balance}>{value}
+        </Animatable.Text>
+      )}
+      />
     
+
+    <Text style={styles.program}>
+      {this.state.params.data[0].shortname}
+    </Text>
       
+    <RNHoleView
+          style={{ 
+            borderWidth:1,
+            width:(Layout.width / 100) * 90, 
+            height:(Layout.height / 100) * 20,
+            top:(Layout.height / 100) * 20,
+            backgroundColor:Colors.light,
+            left:20,
+            elevation:  this.state.show_spinner ? 0: 30,
+            borderRadius:1000,                
+          }}
+          
+          holes={[      
+            {
+              x: 85* (Layout.width / 100 ),
+              y: 6 * (Layout.height / 100 ),
+              width: 16 * (Layout.width / 100 ) ,
+              height: 8 * (Layout.height / 100 ) ,
+              borderWidth:2,          
+              borderRadius: 100, 
+            }
+          ]}>
+    </RNHoleView>
+    
+          
       <View style={{flex: 1}}>
         <View style={{position: 'absolute', left: 0, right: 0, bottom: 0}}>
           <Button
@@ -284,7 +359,17 @@ export default class FarmerProfileScreen extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.light,
+    backgroundColor: Colors.primary_bg_color,
+  },
+  program:{
+
+    top:(Layout.height / 100) * 50,
+    elevation:100,
+    fontFamily:'Cash',
+    fontSize:Layout.scale * 25,    
+    position:'absolute',
+    width:(Layout.width / 100) * 10,
+    left:(Layout.width / 100) * 75,    
   },
   cover:{
     height:150,
@@ -319,13 +404,14 @@ const styles = StyleSheet.create({
     top:(Layout.height / 100) * 12,
   },
   current_balance:{
-    alignSelf:'center',    
-    top:(Layout.height / 100) * 5,
-    fontFamily:'Gotham_bold',
-    fontSize:15,
-    color:Colors.light,
+    
+    top:(Layout.height / 100) * 55,
+    elevation:100,
+    fontFamily:'Cash',
+    fontSize:Layout.scale * 30,
+    color:Colors.warning,    
     position:'absolute',
-    left: (Layout.width / 100) * 20,
+    left: (Layout.width / 100) * 10
   },
   history_title:{    
     fontFamily:'Gotham_bold',
@@ -366,6 +452,7 @@ const styles = StyleSheet.create({
   },  
   loading: {
     zIndex:1,
+    
     position: 'absolute',
     left: 0,
     right: 0,

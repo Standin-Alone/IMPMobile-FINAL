@@ -5,7 +5,9 @@ export default {
 
 dark:'#000000',
 light: '#ffffff',
+primary_bg_color: '#f5f5f5',
 light_green : '#80ED99',
+light_green_tint: '#BFF6CB',
 green: '#57CC99',
 blue_green:'#38A3A5',
 dark_blue:'#22577A',

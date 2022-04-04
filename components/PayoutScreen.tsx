@@ -32,7 +32,7 @@ export default class PayoutScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {          
-      filter_buttons :['All','Pending','Approve'],
+      filter_buttons :['All','Pending','Approve','Paid'],
       selected_filter:'All',
       current_page   :0,      
       payout_list    :[],
@@ -60,7 +60,7 @@ export default class PayoutScreen extends Component {
         ipConfig.ipAddress+ "/get-payout-list/"+supplier_id+"/"+0,         
         ).catch((error)=>error.response.data.message);
         
-        
+        console.warn(result)
         // if status is 200
         if (result.status == 200) {        
           
@@ -117,7 +117,7 @@ export default class PayoutScreen extends Component {
       
       // filter by today's date transactions
       let get_pending_payout = this.state.payout_list_for_filter ? this.state.payout_list.filter((payout_items)=>
-            payout_items.dbp_batch_id == undefined  && payout_items.dbp_batch_id == undefined
+            payout_items.application_number != undefined  && payout_items.issubmitted == 1 && payout_items.approved_by_approver == undefined
           ): [];
 
       this.setState({selected_filter:item,payout_list_for_filter:get_pending_payout})
@@ -125,7 +125,16 @@ export default class PayoutScreen extends Component {
       
       // filter by today's date transactions
       let get_pending_payout = this.state.payout_list_for_filter ? this.state.payout_list.filter((payout_items)=>
-            payout_items.dbp_batch_id != null && payout_items.payout_endorse_approve == '1'
+            payout_items.approved_by_approver != undefined && payout_items.iscomplete != '1'
+          ): [];
+      
+      this.setState({selected_filter:item,payout_list_for_filter:get_pending_payout});
+    }
+    else if (item == 'Paid'){
+      
+      // filter by today's date transactions
+      let get_pending_payout = this.state.payout_list_for_filter ? this.state.payout_list.filter((payout_items)=>
+            payout_items.iscomplete == '1'
           ): [];
       
       this.setState({selected_filter:item,payout_list_for_filter:get_pending_payout});
@@ -138,7 +147,7 @@ export default class PayoutScreen extends Component {
     <Button
       textStyle={{color:this.state.selected_filter == item ? Colors.light : Colors.fade,fontFamily:'Gotham_light',fontWeight:'bold'}}
       style= {[styles.filter_button_style,{
-            borderColor: this.state.selected_filter == item ? Colors.blue_green : Colors.light,
+            borderColor: this.state.selected_filter == item ? Colors.blue_green : Colors.fade,
             backgroundColor:this.state.selected_filter == item ? Colors.blue_green : Colors.light}]}      
       onPress= {()=>this.filterButtonFunction(item)}
     >
@@ -176,7 +185,9 @@ export default class PayoutScreen extends Component {
   )}
 
   // render payout item
-  render_payout_item = (item,index)=>(
+  render_payout_item = (item,index)=>{
+    console.warn(item.approved_by_approver)
+    return (
        
       <Animatable.View animation={"slideInLeft"} delay={index / 100}>
         <Swipeable renderRightActions={()=>this.right_buttons(item)}>       
@@ -210,10 +221,12 @@ export default class PayoutScreen extends Component {
                                 <View>  
                                   <Text style = {
                                                 {
-                                                  backgroundColor: item.dbp_batch_id == '' ?
+                                                  backgroundColor:
+                                                       item.approved_by_approver != undefined ?
+                                                          Colors.light_green
+                                                          :     item.issubmitted == 1 &&  item.application_number !=  undefined ?
                                                                     Colors.warning
-                                                                    : item.payout_endorse_approve == '1' ?
-                                                                    Colors.light_green
+                                                                    
                                                                     :
                                                                     Colors.warning,                                                                                                              
                                                   padding:10,
@@ -251,10 +264,13 @@ export default class PayoutScreen extends Component {
                                     
                                     {"\t"}                             
                                     {
-                                      item.dbp_batch_id == null ?
+                                      item.iscomplete == '1' ?
+                                      ' Paid':
+                                      item.approved_by_approver != undefined ?
+                                         ' Approved':
+                                      item.issubmitted == 1 &&  item.application_number !=  undefined ?
                                       ' Pending' 
-                                      : item.payout_endorse_approve == '1' ?
-                                      ' Approved'
+                                   
                                       :
                                       ' Pending'     
                                     }
@@ -267,7 +283,7 @@ export default class PayoutScreen extends Component {
         </Swipeable>
       </Animatable.View>
     
-  )
+  )}
 
   // render payout empty
   render_payout_empty = (item)=>{    

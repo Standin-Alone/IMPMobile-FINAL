@@ -24,6 +24,7 @@ import {  Popup} from 'react-native-popup-confirm-toast';
 import Carousel from 'react-native-snap-carousel';
 import DeviceInfo from 'react-native-device-info';
 import BackgroundTimer from 'react-native-background-timer';
+import { constants } from 'fs';
 export default class ReviewTransactionScreen extends Component {
   constructor(props) {
     super(props);
@@ -152,8 +153,9 @@ export default class ReviewTransactionScreen extends Component {
   handleGetTransact = () =>{
     let self = this;
     let formData = new FormData();
+    this.setState({show_spinner:true});  
     let voucher_info = {
-      voucher_id          : this.state.params.voucher_info.voucher_id,
+      voucher_id          : this.state.params.voucher_info.voucher_id,      
       reference_no        : this.state.params.voucher_info.reference_no,
       rsbsa_no            : this.state.params.voucher_info.rsbsa_no,
       supplier_id         : this.state.params.supplier_id,
@@ -165,19 +167,23 @@ export default class ReviewTransactionScreen extends Component {
       longitude           :this.state.params.longitude,
       program             : this.state.params.voucher_info.shortname,
       one_time_transaction:this.state.params.one_time_transaction,
+      cash_added          : this.state.params.cash_added,
+      
 
     };
     formData.append("voucher_info", JSON.stringify(voucher_info));
     formData.append("commodity", JSON.stringify(this.state.params.cart));
     formData.append("attachments", JSON.stringify(this.state.params.attachments));
 
-    
+
     // check if internet connection is back again
     NetInfo.fetch().then((state)=>{ 
      
       if(state.isConnected && state.isInternetReachable){
+
       // check imp mobile application version
       axios.get(ipConfig.ipAddress + '/check_utility/' + DeviceInfo.getVersion()).then(async response => {
+        
         // close app if  maintenenace
         if (response.data['maintenance'] == '1') {
 
@@ -250,8 +256,8 @@ export default class ReviewTransactionScreen extends Component {
                   callback: () => {    
                                 
                     Popup.hide()                 
-                    console.warn(this.state.params.timer);
-                    BackgroundTimer.clearTimeout(this.state.params.timer);         
+                                        
+                    BackgroundTimer.clearTimeout(this.state.params.time);         
                     this.props.navigation.reset({
                       index: 0,
                       routes: [{ name: 'Root' }]
@@ -484,10 +490,10 @@ const styles = StyleSheet.create({
     overflow:'scroll'
   },
   commodity_image: {
-    top: (Layout.height / 100 ) * 1,
-    right:20,
-    height: 60,
-    width: 60,
+    
+    width: (Layout.width / 100 ) * 10,
+    height: '100%',
+    justifyContent:'center',
     overflow: "hidden",    
     
   },

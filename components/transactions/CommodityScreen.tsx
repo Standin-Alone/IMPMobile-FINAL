@@ -36,7 +36,7 @@ export default class CommodityScreen extends Component {
 
 
   componentDidMount() {
-    console.warn(this.state.params.hasOwnProperty('cart'))
+    
     if(this.state.params.hasOwnProperty('cart')){
       this.setState({cart:this.state.params.cart,
       });    
@@ -99,10 +99,12 @@ export default class CommodityScreen extends Component {
 
     this.props.navigation.push('SelectedCommodityScreen',{
       item:item,
-      voucher_info:this.state.params.data[0],      
+      voucher_info:this.state.params.data[0],   
+      unit_types:this.state.params.unit_types,      
       my_cart : this.myCart.bind(this),
       categories: cart_categories,
-      time:this.state.params.time
+      time:this.state.params.time,
+      total_amount:this.state.cart.reduce((prev, current) => prev + parseFloat(current.total_amount), 0)
       
     })
 
@@ -335,9 +337,12 @@ export default class CommodityScreen extends Component {
         )}
 
       {/* COMMODITIES LIST */}      
+      
         <FlatList
           nestedScrollEnabled
-          data={this.state.data
+          data={
+            
+            this.state.cart.reduce((prev, current) => prev + parseFloat(current.total_amount), 0) >= this.state.params.data[0].amount_val ? []: this.state.data
 
             // this.state.data.filter((item) =>
         

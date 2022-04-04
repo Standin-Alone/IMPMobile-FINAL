@@ -261,7 +261,7 @@ rightContent = (delete_index : any,item : any) => (
     
         <View>
           {index == 0 &&
-            <Text style={styles.title}> <FontAwesomeIcon name="info-circle" color={Colors.blue_green} size={25}/> {item.name}  <Text style={[styles.title,{color:Colors.danger}]}>*</Text></Text>
+            <Text style={styles.title}> <FontAwesomeIcon name="info-circle" color={Colors.blue_green} size={25}/> {item.name}  </Text>
           }
 
           <Swipeable renderRightActions={() => this.rightContent(index,item_other_documents)}>             
@@ -512,7 +512,8 @@ rightContent = (delete_index : any,item : any) => (
       attachments:this.state.attachments,
       latitude:geo_response.coords.latitude,
       longitude:geo_response.coords.longitude,
-      time:this.state.params.time
+      time:this.state.params.time,
+      cash_added:this.state.params.cash_added
     }
 
     let check_null = 0 ;

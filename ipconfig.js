@@ -8,8 +8,8 @@
 
 
 // Office
-const ipAddress =  'http://172.17.150.65/evoucher/api';
-const ipAddress_socket = 'http://172.17.150.65';
+const ipAddress =  'http://172.17.150.188/evoucher/api';
+const ipAddress_socket = 'http://172.17.150.188';
 
 // dev server
 // const ipAddress = 'https://devsysadd.da.gov.ph/evoucher/api';

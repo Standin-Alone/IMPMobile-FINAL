@@ -56,10 +56,10 @@ export default class HomeScreen extends Component {
        
       const  result = await axios.get(
         ipConfig.ipAddress+ "/get-scanned-vouchers/"+supplier_id+"/"+0,         
-        ).catch((error)=>error.response.data.message);
-        console.warn(result)    ;
+        ).catch((error)=>console.warn(error.response.data));
+      console.warn(result.data['total_vouchers']);  
         if (result.status == 200) {   
-       
+          console.warn(result.data['total_vouchers']);
           this.setState({
                 vouchers_list:result.data['scanned_vouchers'],
                 refreshing:false,
@@ -79,7 +79,8 @@ export default class HomeScreen extends Component {
           okButtonStyle: styles.confirmButton,
           okButtonTextStyle: styles.confirmButtonText,
           callback: () => {  
-            Popup.hide();                                               
+            Popup.hide();    
+            this.setState({show_spinner:false})                                           
           },
         });
         this.setState({refreshing:false});
@@ -98,7 +99,7 @@ export default class HomeScreen extends Component {
       
     let addPage = this.state.currentPage;
 
-
+    
     this.setState({refreshing:true});
     const supplier_id = await AsyncStorage.getItem("supplier_id");
     NetInfo.fetch().then((response: any) => {
@@ -113,7 +114,8 @@ export default class HomeScreen extends Component {
 
               if(response.data['scanned_vouchers'].length){                
                 console.warn(response.data['scanned_vouchers'].length)
-                let new_data = response.data['scanned_vouchers'];                                   
+                let new_data = response.data['scanned_vouchers'];   
+                console.warn(new_data);                                
                 this.setState({vouchers_list: [...new Set(this.state.vouchers_list),...new_data]});              
               } 
             }
@@ -124,7 +126,7 @@ export default class HomeScreen extends Component {
           })
           .catch((error) => {
             
-            console.warn(error.response);
+            console.warn(error.response.data);
             this.setState({refreshing:false});
           });
       } else {
@@ -138,7 +140,7 @@ export default class HomeScreen extends Component {
           callback: () => {  
             Popup.hide();
                         
-            
+            this.setState({show_spinner:false})
            
           },
         });
@@ -159,10 +161,10 @@ export default class HomeScreen extends Component {
             ipConfig.ipAddress+ "/get-scanned-vouchers/"+supplier_id+"/"+page
           )
           .then((response) => {
-            console.warn(response)
+            console.warn(response.data)
             if (response.status == 200) {
 
-              this.setState({vouchers_list:response.data['scanned_vouchers'],currentPage:0,total_vouchers:result.data['total_vouchers']})
+              this.setState({vouchers_list:response.data['scanned_vouchers'],currentPage:0,total_vouchers:response.data['total_vouchers']})
               this.setState({refreshing:false});
 
             }
@@ -182,6 +184,7 @@ export default class HomeScreen extends Component {
           okButtonTextStyle: styles.confirmButtonText,
           callback: () => {                
             Popup.hide()   
+            this.setState({show_spinner:false})
             this.setState({refreshing:false});                                 
           },              
         })
@@ -271,7 +274,8 @@ export default class HomeScreen extends Component {
           okButtonStyle: styles.confirmButton,
           okButtonTextStyle: styles.confirmButtonText,
           callback: () => {  
-            Popup.hide();                                               
+            Popup.hide();    
+            this.setState({show_spinner:false})                                           
           },
         });
       }
@@ -364,7 +368,8 @@ export default class HomeScreen extends Component {
       textStyle={{color:this.state.selected_filter == item ? Colors.light : Colors.fade,fontFamily:'Gotham_light',fontWeight:'bold'}}
       style= {[styles.filter_button_style,{
             borderColor: this.state.selected_filter == item ? Colors.blue_green : Colors.fade,
-            backgroundColor:this.state.selected_filter == item ? Colors.blue_green : Colors.light}]}      
+            backgroundColor:this.state.selected_filter == item ? Colors.blue_green : Colors.light}
+          ]}      
       onPress= {()=>this.filterButtonFunction(item)}
     >
       {item + ' (' + (item == 'Today' ? this.state.vouchers_list.filter((voucher_items)=> moment().format('YYYY-MM-DD') == moment(voucher_items.transac_date).format('YYYY-MM-DD') ).length :this.state.total_vouchers ) + ')' }

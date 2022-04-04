@@ -136,6 +136,7 @@ export default class QRCodeScreen extends Component{
                           Popup.hide()            
                           this.props.navigation.navigate("FarmerProfileScreen",{data:response.data["data"],
                             program_items:response.data["program_items"],
+                            unit_types:response.data["unit_types"],
                             history:response.data["history"],
                             supplier_id:get_supplier_id,
                             full_name:get_full_name,

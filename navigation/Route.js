@@ -6,7 +6,7 @@ import { Root } from 'react-native-popup-confirm-toast';
 import LoginScreen from '../components/LoginScreen';
 import ForgotPasswordScreen from '../components/ForgotPasswordScreen';
 import OTPScreen from '../components/OTPScreen';
-import BottomTabNavigator from '../navigation/BottomTabNavigator';
+import BottomTabNavigator from './BottomTabNavigator';
 
 import FarmerProfileScreen from '../components/FarmerProfileScreen';
 import AuthenticationScreen from '../components/AuthenticationScreen';
