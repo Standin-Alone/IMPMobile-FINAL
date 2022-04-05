@@ -8,6 +8,7 @@ const otp_bg = require('../assets/images/otp-bg.jpg');
 const no_data_bg = require('../assets/images/no-data-bg.jpg');
 const more_info = require('../assets/images/more-info-no-bg.png');
 
+const profile_cover = require('../assets/images/profile-cover.jpg');
 const avatar_logo = require('../assets/images/avatar.jpg');
 const imp_bg = require('../assets/images/IMP.jpg');
 const qr_frame = require('../assets/images/qr-frame.png');
@@ -30,6 +31,7 @@ export default {
     forgot_password_bg,
     no_data_bg,
     imp_bg,
-    splash_screen
+    splash_screen,
+    profile_cover
     
 };

@@ -250,17 +250,12 @@ export default class FarmerProfileScreen extends Component {
       <View style={{ flexDirection:'row',top:(Layout.height /100) * 15 }}>            
           <View style={{  left:20 }}>
             <Text style={{ fontFamily:'Gotham_bold' }}>
-              Birthday:
-              
-
+              Birthday:              
             </Text>
           </View>
         <View style={{flex:1, alignItems:'flex-end',right:20 }}>
-          <Text  style={{ fontFamily:'Gotham_bold' }} >
-          
-             
-            <Moment element={Text} format={'MMMM DD, YYYY'}>{this.state.params.data[0].birthday}</Moment>
-            
+          <Text  style={{ fontFamily:'Gotham_bold' }} >                       
+            <Moment element={Text} format={'MMMM DD, YYYY'}>{this.state.params.data[0].birthday}</Moment>            
           </Text>
         </View>            
       </View>
@@ -426,7 +421,8 @@ const styles = StyleSheet.create({
   },
   
   next_btn:{    
-    
+    elevation:1,
+    zIndex:-1,
     width: (Layout.width / 100) * 90,
     left: (Layout.width / 100) * 5,
     borderColor: Colors.green,
@@ -451,8 +447,8 @@ const styles = StyleSheet.create({
     position:'absolute'
   },  
   loading: {
-    zIndex:1,
     
+    elevation:2,
     position: 'absolute',
     left: 0,
     right: 0,

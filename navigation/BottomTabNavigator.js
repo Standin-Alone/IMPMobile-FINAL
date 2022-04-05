@@ -63,7 +63,7 @@ export default function BottomTabNavigator() {
   
   
     <Tabs.Screen  options={({ navigation })=>({
-      title: '',
+      tabBarLabel: 'Home',            
       headerTransparent:true,
       headerTitleStyle:styles.bottomTitle,
       headerTintColor:Colors.green,
@@ -127,6 +127,7 @@ export default function BottomTabNavigator() {
 
     
   <Tabs.Screen  options={({navigation})=>({
+
       tabBarIcon: ()=> <MaterialCommunityIcons name="qrcode-scan" size={40}  color={'white'}/>,
       tabBarLabel:'Scan',
       headerTitle:'Scan QR Code',
