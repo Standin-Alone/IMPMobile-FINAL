@@ -451,7 +451,7 @@ const styles = StyleSheet.create({
   },
   add_to_cart_btn:{
     borderColor:'#ddd',
-    backgroundColor:Colors.light_green,
+    backgroundColor:Colors.green,
     width: (Layout.width / 100) * 40,
     right:10
   },

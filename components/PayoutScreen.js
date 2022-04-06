@@ -149,8 +149,8 @@ export default class PayoutScreen extends Component {
     <Button
       textStyle={{color:this.state.selected_filter == item ? Colors.light : Colors.fade,fontFamily:'Gotham_light',fontWeight:'bold'}}
       style= {[styles.filter_button_style,{
-            borderColor: this.state.selected_filter == item ? Colors.blue_green : Colors.fade,
-            backgroundColor:this.state.selected_filter == item ? Colors.blue_green : Colors.light}]}      
+            borderColor: this.state.selected_filter == item ? Colors.green : Colors.fade,
+            backgroundColor:this.state.selected_filter == item ? Colors.green : Colors.light}]}      
       onPress= {()=>this.filterButtonFunction(item)}
     >
       {item}
@@ -344,39 +344,41 @@ export default class PayoutScreen extends Component {
             />
           </View>
         )}
+        <View style={{ backgroundColor:Colors.light,height:(Layout.height / 100 ) * 38,elevation:2 }}>
+            {/* TOTAL PAID PAYOUT CARD START */}
+            <LinearGradient colors={['#A9F99E', Colors.green, Colors.blue_green]} style={styles.card_balance}>
+                <FontAwesomeIcon icon={faWallet} size={100} color={Colors.muted} style={styles.wallet} transform="fa-fade"  />       
+                <Text style={styles.payout_title} adjustsFontSizeToFit numberOfLines={2}>
+                    Total Paid Payout
+                </Text>
+                <View style={{width:(Layout.width / 100) * 70,bottom:(Layout.width / 100) * 25}}>
+                <NumberFormat
+                      value={this.state.total_paid_payout}
+                      displayType={"text"}
+                      decimalScale={2}
+                      thousandSeparator={true}   
+                      fixedDecimalScale={true}    
+                      prefix={'₱'}         
+                      renderText={(values) => (
+                        <Text style={styles.payout_amount} adjustsFontSizeToFit allowFontScaling={false}>
+                          {values}
+                          
+                      </Text>
+                      )}
+                  />
+              </View>
+                
+            </LinearGradient>
 
-        {/* TOTAL PAID PAYOUT CARD START */}
-        <LinearGradient colors={['#A9F99E', Colors.green, Colors.blue_green]} style={styles.card_balance}>
-            <FontAwesomeIcon icon={faWallet} size={100} color={Colors.muted} style={styles.wallet} transform="fa-fade"  />       
-            <Text style={styles.payout_title} adjustsFontSizeToFit numberOfLines={2}>
-                Total Paid Payout
-            </Text>
-            <View style={{width:(Layout.width / 100) * 70,bottom:(Layout.width / 100) * 25}}>
-            <NumberFormat
-                  value={this.state.total_paid_payout}
-                  displayType={"text"}
-                  decimalScale={2}
-                  thousandSeparator={true}   
-                  fixedDecimalScale={true}    
-                  prefix={'₱'}         
-                  renderText={(values) => (
-                    <Text style={styles.payout_amount} adjustsFontSizeToFit allowFontScaling={false}>
-                      {values}
-                      
-                  </Text>
-                  )}
-              />
-           </View>
-            
-        </LinearGradient>
+            <FlatList       
+              horizontal
+              data       = {this.state.filter_buttons}                             
+              renderItem = {({item,index})=>this.renderFilterButtons(item)}
+              style      = {styles.flatlist_filter_buttons}
+              showsHorizontalScrollIndicator={false}
+            />   
 
-        <FlatList       
-          horizontal
-          data       = {this.state.filter_buttons}                             
-          renderItem = {({item,index})=>this.renderFilterButtons(item)}
-          style      = {styles.flatlist_filter_buttons}
-          showsHorizontalScrollIndicator={false}
-        />   
+        </View>
         
         {/*Payout List*/}
         <FlatList                        
@@ -389,8 +391,8 @@ export default class PayoutScreen extends Component {
                                   }          
           data                  = {this.state.selected_filter == 'All' || this.state.selected_filter == '' ? this.state.payout_list : this.state.payout_list_for_filter}                                
           renderItem            = {({item,index})=>this.render_payout_item(item,index)}
-          ListEmptyComponent    = {this.render_payout_empty}
-          contentContainerStyle = {{flexGrow:0,paddingBottom:90}}
+          ListEmptyComponent    = {this.render_payout_empty}          
+          contentContainerStyle = {{flexGrow:0,paddingBottom:90,backgroundColor:'transparent'}}
           style                 = {styles.payout_flatlist}          
         />               
       </View>
@@ -401,12 +403,12 @@ export default class PayoutScreen extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.light,
+    backgroundColor: Colors.primary_bg_color,
   },
   logo:{
     width:(Layout.width / 100) *  90,
-    height:(Layout.height / 100) * 30,
-    left:20,
+    height:(Layout.height / 100) * 30,    
+    
     alignSelf:'center',        
   },
   flatlist_filter_buttons:{
@@ -438,11 +440,11 @@ const styles = StyleSheet.create({
     fontStyle:'italic'  
   },
   payout_flatlist:{    
-    top:(Layout.height/100) * 12,
+    top:(Layout.height/100) * 2,
     left:(Layout.width/100) * 3,   
     width:(Layout.width/100) * 100,   
     height:(Layout.height/100) * 90,    
-    backgroundColor:Colors.light,
+    backgroundColor:'transparent',
     flexGrow:0,    
   },
   confirmButton:{

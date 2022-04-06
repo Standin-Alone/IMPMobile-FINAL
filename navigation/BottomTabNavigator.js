@@ -7,6 +7,7 @@ import { StyleSheet,Pressable } from 'react-native';
 import { Root, Popup } from 'react-native-popup-confirm-toast';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import FontAwesome  from 'react-native-vector-icons/FontAwesome';
+import Ionicons  from 'react-native-vector-icons/Ionicons';
 import { FontAwesomeIcon} from '@fortawesome/react-native-fontawesome'
 import { faMoneyBillWaveAlt,faUserCircle} from '@fortawesome/free-solid-svg-icons'
 
@@ -24,10 +25,12 @@ export default function BottomTabNavigator() {
     <Tabs.Navigator
       // default configuration from React Navigation
       screenOptions={{
-        tabBarActiveBackgroundColor: Colors.green,
-        tabBarInactiveBackgroundColor: 'red',
+        tabBarActiveBackgroundColor: Colors.light,
+        tabBarInactiveBackgroundColor: 'white',
         tabBarActiveTintColor: Colors.green,
-        tabBarInactiveTintColor: "#222222",          
+        tabBarInactiveTintColor: "Blue",    
+        
+        
       }}
 
       
@@ -36,19 +39,25 @@ export default function BottomTabNavigator() {
         <BottomFabBar
           // Add Shadow for active tab bar button
           focusedButtonStyle={{
+            
             shadowColor: '#000',
             shadowOffset: {
               width: 0,
               height: 7,
             },
+            
             shadowOpacity: 0.41,
             shadowRadius: 9.11,
             elevation: 14,
           }}
           // - You can add the style below to show content screen under the tab-bar
           // - It will makes the "transparent tab bar" effect.
+          
+
+
           bottomBarContainerStyle={{     
-                   
+            
+
             position: 'absolute',           
             bottom: 0,
             left: 0,
@@ -63,11 +72,12 @@ export default function BottomTabNavigator() {
   
   
     <Tabs.Screen  options={({ navigation })=>({
-      tabBarLabel: 'Home',            
+      tabBarLabel:'home' ,
+      headerTitle:'',      
       headerTransparent:true,
       headerTitleStyle:styles.bottomTitle,
       headerTintColor:Colors.green,
-      tabBarIcon: ()=> <Icon name="home" size={40} color={'white'}/>,
+      tabBarIcon: ({focused})=> <Ionicons name="md-home-outline" size={40} color={focused ? Colors.light : Colors.green}/>,
       headerLeft: () => (            
         <Pressable
           onPress={  () => {                    
@@ -120,6 +130,8 @@ export default function BottomTabNavigator() {
           />
         </Pressable>
       )
+      
+      
     })}  
      name="Home" component={HomeScreen}/>
 
@@ -128,7 +140,7 @@ export default function BottomTabNavigator() {
     
   <Tabs.Screen  options={({navigation})=>({
 
-      tabBarIcon: ()=> <MaterialCommunityIcons name="qrcode-scan" size={40}  color={'white'}/>,
+      tabBarIcon: ({focused})=> <MaterialCommunityIcons name="qrcode-scan" size={40}  color={focused ? Colors.light : Colors.green}/>,
       tabBarLabel:'Scan',
       headerTitle:'Scan QR Code',
       headerTransparent:true,
@@ -175,7 +187,7 @@ export default function BottomTabNavigator() {
 
 
     <Tabs.Screen  options={({navigation})=>({
-      tabBarIcon: ()=> <FontAwesomeIcon icon={faMoneyBillWaveAlt} size={40} color={Colors.light}  transform="fa-fade"  />,
+      tabBarIcon: ({focused})=> <FontAwesomeIcon icon={faMoneyBillWaveAlt} size={40} color={focused ? Colors.light : Colors.green}  transform="fa-fade"  />,
       tabBarLabel:'Payout',
       headerTitle:'Payout Monitoring',
       headerTransparent:true,

@@ -38,7 +38,8 @@ export default class HomeScreen extends Component {
         imageURI:null,
         currentPage:0,
         show_spinner:false,
-        total_vouchers:0
+        total_vouchers:0,
+        showFooter:true
     };
     
   }
@@ -101,7 +102,7 @@ export default class HomeScreen extends Component {
     let addPage = this.state.currentPage;
 
     
-    this.setState({refreshing:true});
+    this.setState({refreshing:true,showFooter:true});
     const supplier_id = await AsyncStorage.getItem("supplier_id");
     NetInfo.fetch().then((response) => {
       if (response.isConnected && response.isInternetReachable) {
@@ -122,13 +123,13 @@ export default class HomeScreen extends Component {
             }
 
                    
-            this.setState({refreshing:false,total_vouchers:response.data['total_vouchers']});
+            this.setState({refreshing:false,total_vouchers:response.data['total_vouchers'],showFooter:false});
            
           })
           .catch((error) => {
             
             console.warn(error.response.data);
-            this.setState({refreshing:false});
+            this.setState({refreshing:false,showFooter:false});
           });
       } else {
         Popup.show({
@@ -141,7 +142,7 @@ export default class HomeScreen extends Component {
           callback: () => {  
             Popup.hide();
                         
-            this.setState({show_spinner:false})
+            this.setState({show_spinner:false,showFooter:false})
            
           },
         });
@@ -303,7 +304,7 @@ export default class HomeScreen extends Component {
    rightComponent = (item) =>(  
               <Icon
                  name="eye"                  
-                 color={Colors.light_green} 
+                 color={Colors.green} 
                  size={30}  
                  style={{right:30}} 
                  onPress={()=>this.goToSummary(item)}
@@ -312,14 +313,14 @@ export default class HomeScreen extends Component {
   renderItem =  (item,index) =>  
   ( 
     <Card
-      elevation = {1}
+      elevation = {5}
       style     = {styles.card}
       onPress   = {()=>this.showImage(item.base64)}
     >
         <Card.Title        
         title    = {item.fullname}
-        titleStyle = {{ fontFamily:'Gotham_bold',fontSize:15 }}
-        subtitle = {(<View><Text>                 
+        titleStyle = {{ fontFamily:'Gotham_bold',fontSize:14 }}
+        subtitle = {(<View><Text style    = {{color:Colors.muted,fontSize:16}} adjustsFontSizeToFit>                 
           <Icon name="clock-o" family="fontawesome" color={Colors.base} size={15} />   
           {'\t'}{'\t'}  
 
@@ -327,7 +328,7 @@ export default class HomeScreen extends Component {
                 moment(item.transac_date).format('MMMM DD, YYYY, h:mm a')   : 
 
               (
-                <Moment element={Text}    style    = {{color:Colors.muted}}  fromNow>{item.transac_date}</Moment>
+                <Moment element={Text}    style    = {{color:Colors.muted,fontSize:16}} adjustsFontSizeToFit   fromNow>{item.transac_date}</Moment>
               )          
           }          
           </Text></View>)}        
@@ -368,14 +369,48 @@ export default class HomeScreen extends Component {
     <Button
       textStyle={{color:this.state.selected_filter == item ? Colors.light : Colors.fade,fontFamily:'Gotham_light',fontWeight:'bold'}}
       style= {[styles.filter_button_style,{
-            borderColor: this.state.selected_filter == item ? Colors.blue_green : Colors.fade,
-            backgroundColor:this.state.selected_filter == item ? Colors.blue_green : Colors.light}
+            borderColor: this.state.selected_filter == item ? Colors.green : Colors.fade,
+            backgroundColor:this.state.selected_filter == item ? Colors.green : Colors.light}
           ]}      
       onPress= {()=>this.filterButtonFunction(item)}
     >
       {item + ' (' + (item == 'Today' ? this.state.vouchers_list.filter((voucher_items)=> moment().format('YYYY-MM-DD') == moment(voucher_items.transac_date).format('YYYY-MM-DD') ).length :this.state.total_vouchers ) + ')' }
     </Button>
   )
+
+
+  renderFooter = ()=>(
+    <>
+    {this.state.showFooter ?   
+      <View style={{top:30,alignItems:'center'}}>
+            <Spinner
+                isVisible={true}
+                size={150}
+                type={'Circle'}
+                color={Colors.green}
+              />
+            <Text style={{fontSize:16,fontFamily:'Gotham_bold',top:20 }}>Getting more transacted vouchers...</Text>
+        </View>
+        :
+
+        <View style={{top:30,alignItems:'center'}}>          
+            <Text style={{fontSize:16,fontFamily:'Gotham_bold',top:20 }}>No more transacted vouchers...</Text>
+        </View>
+      }
+    
+    </>
+  );
+
+
+
+
+
+
+
+
+
+
+
   render() {
 
     const filteredVouchers = this.state.vouchers_list.filter(
@@ -390,45 +425,50 @@ export default class HomeScreen extends Component {
               isVisible={this.state.show_spinner}
               size={100}
               type={'Wave'}
-              color={Colors.light_green}
+              color={Colors.green}
             />
           </View>
         )}
-        <Animatable.Text style={styles.greetings} animation="fadeInDownBig" adjustsFontSizeToFit>Hello Merchant <Text style={[styles.greetings,{textTransform:'capitalize'}]}>{this.state.merchant_name}</Text></Animatable.Text>        
-        <Animatable.Text style={styles.question} animation="fadeInDownBig" adjustsFontSizeToFit>Find voucher information here.</Animatable.Text>        
-        <Fumi
-            label={'Search by reference number'}
-            labelStyle={styles.search_label}            
-            iconClass={FontAwesomeIcon}
-            iconName={'search'}
-            iconColor={Colors.green}
-            iconSize={20}
-            iconWidth={40}
-            inputPadding={16}
-                        
-            style={[
-              styles.search_text_input,
-              {
-                borderColor:
-                  this.state.isFocus == true
-                    ? Colors.green
-                    : '#ddd',
-              },
-            ]}
-            onBlur={() => this.setState({isFocus: false})}
-            onFocus={() => this.setState({isFocus: true})}
-            onChangeText={value => this.setState({search: value})}
-            keyboardType="email-address"
-          />
-          {/* filter buttons */}
-          <FlatList       
-            horizontal
-            data={this.state.filter_buttons}                             
-            renderItem={({item,index})=>this.renderFilterButtons(item)}
-            style={styles.flatlist_filter_buttons}
-          />
 
-        <Animatable.Text style={styles.recent_title}><FontAwesomeIcon name="info-circle" color={Colors.blue_green} size={16}/>  List of Transactions</Animatable.Text>
+        <View style={{ backgroundColor:Colors.light,height:(Layout.height / 100 ) * 23,elevation:1 }}>
+
+        
+          <Animatable.Text style={styles.greetings} animation="fadeInDownBig" adjustsFontSizeToFit>Hello Merchant <Text style={[styles.greetings,{textTransform:'capitalize'}]}>{this.state.merchant_name}</Text></Animatable.Text>        
+          <Animatable.Text style={styles.question} animation="fadeInDownBig" adjustsFontSizeToFit>What are you looking for?</Animatable.Text>        
+          <Fumi
+              label={'Search by reference number'}
+              labelStyle={styles.search_label}            
+              iconClass={FontAwesomeIcon}
+              iconName={'search'}
+              iconColor={Colors.green}
+              iconSize={20}
+              iconWidth={40}
+              inputPadding={16}
+                          
+              style={[
+                styles.search_text_input,
+                {
+                  borderColor:
+                    this.state.isFocus == true
+                      ? Colors.green
+                      : '#ddd',
+                },
+              ]}
+              onBlur={() => this.setState({isFocus: false})}
+              onFocus={() => this.setState({isFocus: true})}
+              onChangeText={value => this.setState({search: value})}
+              keyboardType="email-address"
+            />
+            {/* filter buttons */}
+            <FlatList       
+              horizontal
+              data={this.state.filter_buttons}                             
+              renderItem={({item,index})=>this.renderFilterButtons(item)}
+              style={styles.flatlist_filter_buttons}
+            />
+        </View>
+
+        <Animatable.Text style={styles.recent_title}><FontAwesomeIcon name="info-circle" color={Colors.green} size={16}/>  List of Transactions</Animatable.Text>
         <FlatList       
           showsHorizontalScrollIndicator={false}
           
@@ -438,10 +478,10 @@ export default class HomeScreen extends Component {
           extraData = {this.state.vouchers_list}
           ListEmptyComponent={this.emptyComponent}
           renderItem={({ item, index }) =>  this.renderItem(item,index)}               
-          contentContainerStyle={{flexGrow:0,paddingBottom:90}}
+          contentContainerStyle={{flexGrow:0,paddingBottom:(Layout.height / 100) * 20}}
           style={styles.voucher_flatlist}
           keyExtractor={(item,index)=>index}          
-          
+          ListFooterComponent={this.renderFooter}
           onEndReachedThreshold={0.1} // so when you are at 5 pixel from the bottom react run onEndReached function
           onEndReached={async ({distanceFromEnd}) => {     
                         
@@ -475,7 +515,7 @@ export default class HomeScreen extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.light,
+    backgroundColor: Colors.primary_bg_color,
   },
   // card:{
   //   top:(Layout.height/100) * 15,
@@ -492,10 +532,10 @@ const styles = StyleSheet.create({
     height: 100
   },
   voucher_flatlist:{
-    top:(Layout.height/100) * 8,
+    top:(Layout.height/100) * 4,
     width:(Layout.width/100) * 100,   
-    height:(Layout.height/100) * 70,    
-    backgroundColor:Colors.light,
+    height:(Layout.height/100) *70,    
+    backgroundColor:'transparent',
     flexGrow:0,    
   },
   card: {
@@ -519,9 +559,10 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   recent_title:{
-    top:(Layout.height/100) * 8,
+    top:(Layout.height/100) * 2,
     left:10,
     fontFamily:'Gotham_bold',
+    fontSize:14,
     color:Colors.header_text
   },
   other_transactions:{
@@ -533,7 +574,7 @@ const styles = StyleSheet.create({
   greetings:{
     fontFamily:'Gotham_bold',
     top:(Layout.height/100) * 2,
-    color:Colors.blue_green,    
+    color:Colors.green,    
     left:(Layout.width/100) * 8,
     fontSize:18,      
   },
