@@ -38,6 +38,7 @@ export default class PayoutScreen extends Component {
       current_page   :0,      
       payout_list    :[],
       total_paid_payout:0.00,
+      total_pending_payout:0.00,
       payout_list_for_filter:[],
       refreshing     :false,
       show_spinner:false
@@ -119,7 +120,7 @@ export default class PayoutScreen extends Component {
       
       // filter by today's date transactions
       let get_pending_payout = this.state.payout_list_for_filter ? this.state.payout_list.filter((payout_items)=>
-            payout_items.application_number != undefined  && payout_items.issubmitted == 1 && payout_items.approved_by_approver == undefined
+            payout_items.application_number == undefined  && payout_items.issubmitted == 1 && payout_items.approved_by_approver == undefined
           ): [];
 
       this.setState({selected_filter:item,payout_list_for_filter:get_pending_payout})
@@ -225,6 +226,9 @@ export default class PayoutScreen extends Component {
                                   <Text style = {
                                                 {
                                                   backgroundColor:
+
+                                                  item.iscomplete == '1' ?
+                                                  Colors.light_green:
                                                        item.approved_by_approver != undefined ?
                                                           Colors.light_green
                                                           :     item.issubmitted == 1 &&  item.application_number !=  undefined ?
@@ -347,26 +351,53 @@ export default class PayoutScreen extends Component {
         <View style={{ backgroundColor:Colors.light,height:(Layout.height / 100 ) * 38,elevation:2 }}>
             {/* TOTAL PAID PAYOUT CARD START */}
             <LinearGradient colors={['#A9F99E', Colors.green, Colors.blue_green]} style={styles.card_balance}>
-                <FontAwesomeIcon icon={faWallet} size={100} color={Colors.muted} style={styles.wallet} transform="fa-fade"  />       
-                <Text style={styles.payout_title} adjustsFontSizeToFit numberOfLines={2}>
-                    Total Paid Payout
-                </Text>
-                <View style={{width:(Layout.width / 100) * 70,bottom:(Layout.width / 100) * 25}}>
-                <NumberFormat
-                      value={this.state.total_paid_payout}
-                      displayType={"text"}
-                      decimalScale={2}
-                      thousandSeparator={true}   
-                      fixedDecimalScale={true}    
-                      prefix={'₱'}         
-                      renderText={(values) => (
-                        <Text style={styles.payout_amount} adjustsFontSizeToFit allowFontScaling={false}>
-                          {values}
-                          
+                <FontAwesomeIcon icon={faWallet} size={100} color={Colors.muted} style={styles.wallet} transform="fa-fade"  /> 
+                <View style={{ flexDirection:'column' }}>
+                  <View style={{ }}>                   
+                    <View style={{width:(Layout.width / 100) * 70,bottom:(Layout.width / 100) * 25}}>
+                    <Text style={styles.payout_title} adjustsFontSizeToFit numberOfLines={2}>
+                        Total Paid Payout
+                    </Text>
+                    <NumberFormat
+                          value={this.state.total_paid_payout}
+                          displayType={"text"}
+                          decimalScale={2}
+                          thousandSeparator={true}   
+                          fixedDecimalScale={true}    
+                          prefix={'₱'}         
+                          renderText={(values) => (
+                            <Text style={styles.payout_amount} adjustsFontSizeToFit allowFontScaling={false}>
+                              {values}
+                              
+                          </Text>
+                          )}
+                      />
+                  </View>
+                </View>   
+
+                <View >                  
+                    <View style={{width:(Layout.width / 100) * 70,bottom:(Layout.width / 100) * 10}}>
+                      <Text style={styles.pending_payout_title} adjustsFontSizeToFit numberOfLines={2}>
+                        Total Pending Payout
                       </Text>
-                      )}
-                  />
-              </View>
+                      <NumberFormat
+                            value={this.state.total_pending_payout}
+                            displayType={"text"}
+                            decimalScale={2}
+                            thousandSeparator={true}   
+                            fixedDecimalScale={true}    
+                            prefix={'₱'}         
+                            renderText={(values) => (
+                              <Text style={styles.pending_amount} adjustsFontSizeToFit allowFontScaling={false}>
+                                {values}
+                                
+                            </Text>
+                            )}
+                        />
+                    </View>
+                </View>   
+                </View>
+               
                 
             </LinearGradient>
 
@@ -483,7 +514,24 @@ const styles = StyleSheet.create({
     fontFamily:'Gotham_bold',
     color:Colors.light,
     fontSize:normalize(20),
-    top:(Layout.height/100) * 10,
+    top:(Layout.height/100) * 8,
+    left:(Layout.width/100) * 5
+  },
+
+  pending_payout_title:{
+    position:'absolute',
+    fontFamily:'Gotham_bold',
+    color:Colors.dark_blue,
+    fontSize:16,
+    top:(Layout.height/100) * 6,
+    left:(Layout.width/100) * 5
+  },
+  pending_amount:{
+    position:'absolute',
+    fontFamily:'Gotham_bold',
+    color:Colors.danger,
+    fontSize:normalize(20),
+    top:(Layout.height/100) * 8,
     left:(Layout.width/100) * 5
   },
   wallet:

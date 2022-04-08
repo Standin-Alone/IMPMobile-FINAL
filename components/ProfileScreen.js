@@ -77,9 +77,12 @@ export default class ProfileScreen extends Component {
     
       <View style={{flex: 1}}>
         <View style={{position: 'absolute', left: 0, right: 0, bottom: 0}}>
+        <LinearGradient colors={['#80ff72','#7ee8fa']}    start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.next_btn}>
+        
           <Button
             textStyle={styles.next_txt}
-            style={styles.next_btn}
+            // style={styles.next_btn}
+            style={{ borderWidth:0 }}
             activityIndicatorColor={Colors.muted}
             activeOpacity={100}
             isLoading={this.state.isLoading}
@@ -110,6 +113,7 @@ export default class ProfileScreen extends Component {
             <FontAwesomeIcon  icon={faSignOut} size={30} color={Colors.light} style={{left:(Layout.width / 100) * 30}}/>
               Logout
           </Button>
+          </LinearGradient>
         </View>
       </View>
                     
@@ -147,8 +151,11 @@ const styles = StyleSheet.create({
     elevation:2,
     width: (Layout.width / 100) * 90,
     left: (Layout.width / 100) * 5,
-    borderColor: Colors.light_green,
-    backgroundColor: Colors.light_green,    
+    borderWidth:0,
+    bottom:20,
+    height:(Layout.height / 100) * 5,
+    // borderColor: Colors.light_green,
+    // backgroundColor: Colors.light_green,    
   },
   profile_info:{
     elevation:5,

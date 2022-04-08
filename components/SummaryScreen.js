@@ -79,8 +79,17 @@ export default class SummaryScreen extends Component {
                     </View>
                 </View>
         </View>
-        <View style={styles.info_card}>
-            
+{/*                         
+        <View style={{ flexDirection:'column' }}>
+            <View>
+              <Text>Attachments</Text>
+            </View>
+
+            <View>
+
+            </View>
+        </View> */}
+        <View style={styles.info_card}>            
                 <View style={{flexDirection:"row",top:20}}>
                 <ScrollView style={styles.farmer_details} showsVerticalScrollIndicator={false}>
                   <View style={{flex:1}}>
@@ -150,8 +159,17 @@ export default class SummaryScreen extends Component {
             return  this.convertedDate(value.transac_date)  ==  this.convertedDate(item.transac_date)  &&  item.transac_by_fullname == value.transac_by_fullname  ? (
                 <View>
                   <List.Item
-                    title={(value.item_category != '' ? value.item_category : value.item_name)  + " (" + value.quantity + " " + value.unit_measure  +")"}
-                    titleStyle={{ fontFamily: "calibri-light" }}
+                    title={
+
+                      <View>
+                        <Text style={{ fontFamily:"Gotham_bold"}}  
+                        numberOfLines={5}
+                        >
+                          {(value.item_category != '' ? value.item_category : value.item_name)  + " (" + value.quantity + " " + value.unit_measure  +")"} 
+                        </Text>                    
+                      </View>
+                    }
+                    
                     // description={ 
                     //   "₱" + value.total_amount 
                     // }

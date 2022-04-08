@@ -500,8 +500,8 @@ rightContent = (delete_index ,item ) => (
 
   // go to next screen Review Transaction
   handleGoToReview = ()=>{
+    this.setState({show_spinner:true});
     
-    console.warn(this.state.params.time);
     Geolocation.getCurrentPosition(async (geo_response)=>{
      
 
@@ -538,8 +538,11 @@ rightContent = (delete_index ,item ) => (
     });
     
     if(check_null == 0){
+      this.setState({show_spinner:false});
+      
       this.props.navigation.navigate('ReviewTransactionScreen',parameters);
     }else{
+      this.setState({show_spinner:false});
       Popup.show({
         type: 'warning',              
         title: 'Message',
@@ -563,6 +566,7 @@ rightContent = (delete_index ,item ) => (
       okButtonStyle:styles.confirmButton,
       okButtonTextStyle: styles.confirmButtonText,
       callback: () => {                  
+        this.setState({show_spinner:false});
         Popup.hide()                                    
         
       },              

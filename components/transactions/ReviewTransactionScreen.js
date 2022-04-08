@@ -42,6 +42,7 @@ export default class ReviewTransactionScreen extends Component {
   }
 
   handleGoBack = () => {
+ 
     this.props.navigation.goBack();
   }
 
@@ -227,8 +228,7 @@ export default class ReviewTransactionScreen extends Component {
       Popup.show({
         type: 'confirm',
         title: 'Warning',
-        textBody: 'Do you want submit your transaction?',
-        
+        textBody: 'Do you want submit your transaction?',        
         buttonText: 'CONFIRM',
         confirmText:'Cancel',                                 
         callback: () => {
@@ -435,15 +435,18 @@ export default class ReviewTransactionScreen extends Component {
               value={this.state.params.total_amount}
               displayType={"text"}
               decimalScale={2}
-              thousandSeparator={true}            
+              thousandSeparator={true}     
+              
               renderText={(result, props) => this.renderTotalAmountText(result)}
             />
         
         {/* view attachments modal */}
-      
+        <LinearGradient colors={['#80ff72','#7ee8fa']}    start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.next_btn}>
+
+          
           <Button
             textStyle={styles.next_txt}
-            style={styles.next_btn}
+            style={{ borderWidth:0 }}
             activityIndicatorColor={Colors.light}
             activeOpacity={100}
             isLoading={this.state.isLoading}
@@ -452,6 +455,7 @@ export default class ReviewTransactionScreen extends Component {
             >
               Submit
           </Button>
+          </LinearGradient>
         </View>
       </View>
       <Modal
@@ -549,6 +553,7 @@ const styles = StyleSheet.create({
   },
   cover:{
     height:(Layout.height / 100 ) * 16,    
+    
     borderBottomLeftRadius:35,
     borderBottomRightRadius:35
   },
@@ -596,21 +601,26 @@ const styles = StyleSheet.create({
   next_btn:{        
     width: (Layout.width / 100) * 40,
     left: (Layout.width / 100) * 55,
-    borderColor: Colors.green,
-    backgroundColor: Colors.green,    
+    height: (Layout.width / 100) * 9,
+    bottom:(Layout.height / 100) * 1,
+    borderRadius:10,
+    
+    backgroundColor:'red',
+    borderWidth:0,
   },
   next_txt:{
+    
     color:Colors.light,    
     fontFamily:'Gotham_bold',
   },
   total_amount_title:{
-    top:(Layout.height / 100) * 4,
+    top:(Layout.height / 100) * 2,
     left:5,
     fontFamily:'Gotham_bold',
     fontSize:12,    
   },
   total_amount:{
-    top:(Layout.height / 100) * 4,
+    top:(Layout.height / 100) * 2,
     left:5,
     fontFamily:'Gotham_bold',
     color:Colors.blue_green,

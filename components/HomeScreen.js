@@ -381,7 +381,7 @@ export default class HomeScreen extends Component {
 
   renderFooter = ()=>(
     <>
-    {this.state.showFooter ?   
+    {this.state.showFooter &&    this.state.search == ''?   
       <View style={{top:30,alignItems:'center'}}>
             <Spinner
                 isVisible={true}
@@ -392,10 +392,12 @@ export default class HomeScreen extends Component {
             <Text style={{fontSize:16,fontFamily:'Gotham_bold',top:20 }}>Getting more transacted vouchers...</Text>
         </View>
         :
-
+        this.state.search == '' ?
         <View style={{top:30,alignItems:'center'}}>          
             <Text style={{fontSize:16,fontFamily:'Gotham_bold',top:20 }}>No more transacted vouchers...</Text>
         </View>
+        
+        : null
       }
     
     </>
