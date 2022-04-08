@@ -29,8 +29,8 @@ export default class SummaryScreen extends Component {
     
   }
 
-  componentDidUpdate() {
-      
+  componentDidMount(){
+    console.warn(this.state.transactions[0]);
   }
 
    convertedDate = (raw_date) => {
@@ -161,11 +161,13 @@ export default class SummaryScreen extends Component {
                   <List.Item
                     title={
 
-                      <View>
+                      <View style={{ width:(Layout.width / 100)* 50 }}>
+
+                        
                         <Text style={{ fontFamily:"Gotham_bold"}}  
                         numberOfLines={5}
                         >
-                          {(value.item_category != '' ? value.item_category : value.item_name)  + " (" + value.quantity + " " + value.unit_measure  +")"} 
+                          {(value.item_category != '' ? value.item_category : value.item_name)  + '\n' +" (" + value.quantity + " " + value.unit_measure  +")"} 
                         </Text>                    
                       </View>
                     }
@@ -184,7 +186,7 @@ export default class SummaryScreen extends Component {
                         thousandSeparator={true}               
                         renderText={(values) => (
                           <Text style={{ top: 10 }}>
-                            {"₱" + values}
+                            {"₱" + values }
                           </Text>
                         )}
                       />
