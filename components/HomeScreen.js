@@ -394,7 +394,7 @@ export default class HomeScreen extends Component {
         :
         this.state.search == '' ?
         <View style={{top:30,alignItems:'center'}}>          
-            <Text style={{fontSize:16,fontFamily:'Gotham_bold',top:20 }}>No more transacted vouchers...</Text>
+            <Text style={{fontSize:16,fontFamily:'Gotham_bold',top:20 }}>No  transacted vouchers...</Text>
         </View>
         
         : null

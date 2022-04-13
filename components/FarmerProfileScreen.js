@@ -26,7 +26,6 @@ import {RNHoleView,RNHole} from 'react-native-hole-view';
 import DashedLine from 'react-native-dashed-line';
 
 
-const firstHole: RNHole = {x: 150, y: 390, width: 120, height: 120, borderRadius: 60};
 
 export default class FarmerProfileScreen extends Component {
   constructor(props) {
@@ -357,8 +356,8 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primary_bg_color,
   },
   program:{
-
-    top:(Layout.height / 100) * 50,
+    
+    top:(Layout.height / 100) * 45,
     elevation:100,
     fontFamily:'Cash',
     fontSize:Layout.scale * 25,    
@@ -400,7 +399,7 @@ const styles = StyleSheet.create({
   },
   current_balance:{
     
-    top:(Layout.height / 100) * 55,
+    top:(Layout.height / 100) * 50,
     elevation:100,
     fontFamily:'Cash',
     fontSize:Layout.scale * 30,

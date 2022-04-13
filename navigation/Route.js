@@ -27,6 +27,7 @@ import {firebase} from '@react-native-firebase/firestore';
 
 import Firebase from '../constants/Firebase';
 import Colors from '../constants/Colors';
+import PayoutTracking from '../components/PayoutTracking';
 
 // LogBox.ignoreAllLogs();
 const Stack  = createSharedElementStackNavigator();
@@ -185,6 +186,7 @@ function MyStack(){
                 <Stack.Screen component={ProfileScreen} name='ProfileScreen' options={{headerTransparent:true,headerTitle:"Profile",headerTitleStyle:{fontFamily:'Gotham_bold',color:Colors.light},  headerTintColor:Colors.light,cardStyleInterpolator:CardStyleInterpolators.forRevealFromBottomAndroid}} />
                 <Stack.Screen component={ReviewTransactionScreen} name='ReviewTransactionScreen' options={{headerShown:false,headerTransparent:true,cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS}}/>    
                 <Stack.Screen component={PayoutSummaryScreen} name='PayoutSummaryScreen' options={{headerTransparent:true,headerTitle:"Payout Summary",headerTitleStyle:{fontFamily:'Gotham_bold',color:'white'}, headerTintColor: 'white'}}/>                
+                <Stack.Screen component={PayoutTracking} name='PayoutTracking' options={{headerTransparent:true,headerTitle:"Payout Tracking",headerTitleStyle:{fontFamily:'Gotham_bold',color:Colors.green}, headerTintColor:Colors.green}}/>                
                 <Stack.Screen component={BottomTabNavigator} name='Root' options={{headerShown:false,headerTransparent:true}}/>
             </Stack.Navigator>
         </Root>

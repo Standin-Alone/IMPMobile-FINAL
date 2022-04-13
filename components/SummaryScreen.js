@@ -290,7 +290,7 @@ const styles = StyleSheet.create({
  
     // flexGrow:0,
     // paddingBottom:200,
-    flex:0.3,
+    flex:0.4,
     top:(Layout.height / 100) * 18,
     width:(Layout.width / 100) *95,
     left:10,

@@ -63,6 +63,7 @@ export default class ReviewTransactionScreen extends Component {
             <Image
               source={{ uri: "data:Image/jpeg;base64," + item.image }}
               style={styles.commodity_image}
+              resizeMode="contain"
             />
           )}
           subtitle={

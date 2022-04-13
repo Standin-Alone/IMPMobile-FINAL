@@ -71,7 +71,9 @@ export default class PayoutScreen extends Component {
                   payout_list:result.data.get_batch_payout,
                   refreshing:false,
                   payout_list_for_filter:result.data,
-                  total_paid_payout:result.data.total_paid_payout})                    
+                  total_paid_payout:result.data.total_paid_payout,
+                  total_pending_payout:result.data.total_pending_payout
+                })                    
           
         }
 
@@ -117,10 +119,10 @@ export default class PayoutScreen extends Component {
       this.fetch_data();
       
     }else if (item == 'Pending'){
-      
+      console.warn('pending',this.state.payout_list_for_filter);
       // filter by today's date transactions
       let get_pending_payout = this.state.payout_list_for_filter ? this.state.payout_list.filter((payout_items)=>
-            payout_items.application_number == undefined  && payout_items.issubmitted == 1 && payout_items.approved_by_approver == undefined
+             payout_items.issubmitted == 1 && payout_items.approved_by_approver == undefined && payout_items.iscomplete == '0'
           ): [];
 
       this.setState({selected_filter:item,payout_list_for_filter:get_pending_payout})
@@ -166,14 +168,18 @@ export default class PayoutScreen extends Component {
     <Animated.View style={{ left:(Layout.width / 100) * 7,zIndex:1}}>
       <Pressable
           onPress  = {() => {   
-            
+
+
+            this.props.navigation.navigate('PayoutTracking',{batch_info:batch_info})
+
+
               
-            this.props.navigation.navigate('PayoutSummaryScreen',{batch_info:batch_info,status:batch_info.dbp_batch_id == '' ?
-            'Pending'
-            : batch_info.payout_endorse_approve == '1' ?
-            'Approve'
-            :
-            'Pending', })
+            // this.props.navigation.navigate('PayoutSummaryScreen',{batch_info:batch_info,status:batch_info.dbp_batch_id == '' ?
+            // 'Pending'
+            // : batch_info.payout_endorse_approve == '1' ?
+            // 'Approve'
+            // :
+            // 'Pending', })
           }}
           style={styles.eye}
           >
