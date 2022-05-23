@@ -12,8 +12,8 @@ const ipAddress =  'http://172.17.150.188/evoucher/api';
 const ipAddress_socket = 'http://172.17.150.188';
 
 // dev server
-// const ipAddress = 'https://devsysadd.da.gov.ph/evoucher/api';
-// const ipAddress_socket = 'wss://devsysadd.da.gov.ph';
+//  const ipAddress = 'https://devsysadd.da.gov.ph/evoucher/api';
+//  const ipAddress_socket = 'wss://devsysadd.da.gov.ph';
 
 
 // prod server

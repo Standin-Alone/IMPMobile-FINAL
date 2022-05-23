@@ -247,7 +247,7 @@ export default class ViewCartScreen extends Component {
     <Swipeable renderRightActions={() => this.rightContent(index,item)}>             
       <Card elevation={20} style={styles.card}>
         <Card.Title
-          title={(item.item_category != '' ? item.item_category : item.name) + " (" + item.unit_type + ")"}          
+          title={(item.item_category != '' ? item.item_category + (item.item_category == 'Organic Fertilizers' ? `: ${item.item_sub_category}` : '') : item.name) + " (" + item.unit_type + ")"}          
           left={() => (
             <Image
               source={{ uri: "data:Image/jpeg;base64," + item.image }}

@@ -140,6 +140,7 @@ export default class FarmerProfileScreen extends Component {
                     price: item_cart.amount,
                     reference_no: this.state.params.data[0].reference_no,
                     item_category: item_cart.item_category,
+                    item_sub_category: item_cart.item_sub_category,
                     cash_added: item_cart.cash_added,
                     unit_type: item_cart.unit_type,
                     supplier_id: data.supplier_id
@@ -256,10 +257,25 @@ export default class FarmerProfileScreen extends Component {
           <Text  style={{ fontFamily:'Gotham_bold' }} >                       
             <Moment element={Text} format={'MMMM DD, YYYY'}>{this.state.params.data[0].birthday}</Moment>            
           </Text>
-        </View>            
+        </View>                    
       </View>
 
-
+      <View style={{ flexDirection:'row',top:(Layout.height /100) * 17 }}>            
+          <View style={{  left:20 }}>
+            <Text style={{ fontFamily:'Gotham_bold' }}>
+              Voucher Amount:              
+            </Text>
+          </View>
+          
+        <View style={{flex:1, alignItems:'flex-end',right:20 }}>
+           <NumberFormat value={this.state.params.data[0].Available_Balance} displayType={'text'} thousandSeparator={true} prefix={'P'}             
+              renderText={(value)=>(
+                <Animatable.Text numberOfLines={2} style={styles.current_balance}>{value}
+                </Animatable.Text>
+              )}
+              />
+        </View>                    
+      </View>
 
 
       
@@ -278,7 +294,7 @@ export default class FarmerProfileScreen extends Component {
             
       />     */}
 
-      <View>
+      {/* <View>
           <View style={{
             borderStyle:'dashed',
             borderColor:Colors.muted,
@@ -289,43 +305,43 @@ export default class FarmerProfileScreen extends Component {
             left:(Layout.width / 100) *70,
             elevation:100,            
             position:'absolute'}}/>
-      </View>
+      </View> */}
 
-      <NumberFormat value={this.state.params.data[0].Available_Balance} displayType={'text'} thousandSeparator={true} prefix={'P'}             
+      {/* <NumberFormat value={this.state.params.data[0].Available_Balance} displayType={'text'} thousandSeparator={true} prefix={'P'}             
       renderText={(value)=>(
         <Animatable.Text numberOfLines={2} style={styles.current_balance}>{value}
         </Animatable.Text>
       )}
-      />
+      /> */}
     
 
-    <Text style={styles.program}>
+    {/* <Text style={styles.program}>
       {this.state.params.data[0].shortname}
-    </Text>
-      
-    <RNHoleView
-          style={{ 
-            borderWidth:1,
-            width:(Layout.width / 100) * 90, 
-            height:(Layout.height / 100) * 20,
-            top:(Layout.height / 100) * 20,
-            backgroundColor:Colors.light,
-            left:20,
-            elevation:  this.state.show_spinner ? 0: 30,
-            borderRadius:1000,                
-          }}
-          
-          holes={[      
-            {
-              x: 85* (Layout.width / 100 ),
-              y: 6 * (Layout.height / 100 ),
-              width: 16 * (Layout.width / 100 ) ,
-              height: 8 * (Layout.height / 100 ) ,
-              borderWidth:2,          
-              borderRadius: 100, 
-            }
-          ]}>
-    </RNHoleView>
+    </Text> */}
+{/*         
+      <RNHoleView
+            style={{ 
+              borderWidth:1,
+              width:(Layout.width / 100) * 90, 
+              height:(Layout.height / 100) * 20,
+              top:(Layout.height / 100) * 20,
+              backgroundColor:Colors.light,
+              left:20,
+              elevation:  this.state.show_spinner ? 0: 30,
+              borderRadius:1000,                
+            }}
+            
+            holes={[      
+              {
+                x: 85* (Layout.width / 100 ),
+                y: 6 * (Layout.height / 100 ),
+                width: 16 * (Layout.width / 100 ) ,
+                height: 8 * (Layout.height / 100 ) ,
+                borderWidth:2,          
+                borderRadius: 100, 
+              }
+            ]}>
+      </RNHoleView> */}
     
           
       <View style={{flex: 1}}>
@@ -357,7 +373,7 @@ const styles = StyleSheet.create({
   },
   program:{
     
-    top:(Layout.height / 100) * 45,
+    top:(Layout.height / 100) * 50,
     elevation:100,
     fontFamily:'Cash',
     fontSize:Layout.scale * 25,    
@@ -398,15 +414,19 @@ const styles = StyleSheet.create({
     top:(Layout.height / 100) * 12,
   },
   current_balance:{
-    
-    top:(Layout.height / 100) * 50,
-    elevation:100,
-    fontFamily:'Cash',
-    fontSize:Layout.scale * 30,
-    color:Colors.warning,    
-    position:'absolute',
-    left: (Layout.width / 100) * 10
+        
+    fontFamily:'Gotham_bold',    
   },
+  // current_balance:{
+    
+  //   top:(Layout.height / 100) * 50,
+  //   elevation:100,
+  //   fontFamily:'Cash',
+  //   fontSize:Layout.scale * 30,
+  //   color:Colors.warning,    
+  //   position:'absolute',
+  //   left: (Layout.width / 100) * 10
+  // },
   history_title:{    
     fontFamily:'Gotham_bold',
     fontSize:16,    

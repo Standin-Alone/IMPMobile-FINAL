@@ -36,7 +36,7 @@ export default class CommodityScreen extends Component {
 
 
   componentDidMount() {
-    
+    console.warn(this.state.params.fertilizer_categories)
     if(this.state.params.hasOwnProperty('cart')){
       this.setState({cart:this.state.params.cart,
       });    
@@ -103,6 +103,8 @@ export default class CommodityScreen extends Component {
       unit_types:this.state.params.unit_types,      
       my_cart : this.myCart.bind(this),
       categories: cart_categories,
+      fertilizer_categories: this.state.params.fertilizer_categories,
+      fertilizer_sub_categories:this.state.params.fertilizer_sub_categories,
       time:this.state.params.time,
       total_amount:this.state.cart.reduce((prev, current) => prev + parseFloat(current.total_amount), 0)
       
@@ -404,7 +406,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 2,
     marginBottom: 20,
     borderRadius: 15,
-    borderWidth:1,
+    borderWidth:1    
   },
   card_title:{
     fontFamily:'Gotham_bold'

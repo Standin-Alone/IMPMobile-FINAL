@@ -275,7 +275,7 @@ const styles = StyleSheet.create({
   remaining_balance_card:{
     left:10,
     top:(Layout.height / 100) * 12,
-    height:(Layout.height / 100) *  10,
+    height:(Layout.height / 100) *  12,
     width:(Layout.width / 100) *95,
     backgroundColor:'white',
     borderWidth:1,
@@ -323,7 +323,8 @@ const styles = StyleSheet.create({
     top:30,
     right:40,
     color:Colors.blue_green,
-    fontSize:25,
+    fontFamily:'Gotham_bold',
+    fontSize:22,
     
   }
 });

@@ -182,7 +182,7 @@ function MyStack(){
                 />
                 <Stack.Screen component={ViewCartScreen} name='ViewCartScreen' options={{cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS}}/>
                 <Stack.Screen component={AttachmentScreen} name='AttachmentScreen' options={{headerTransparent:true,headerTitle:"Attachments",headerTitleStyle:{fontFamily:'Gotham_bold'},cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS}} />
-                <Stack.Screen component={SummaryScreen} name='SummaryScreen' options={{headerTransparent:true,headerTitle:"More Info",headerTitleStyle:{fontFamily:'Gotham_bold'},cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS}} />
+                <Stack.Screen component={SummaryScreen} name='SummaryScreen' options={{headerTransparent:true,headerTitle:"Transaction Details",headerTitleStyle:{fontFamily:'Gotham_bold'},headerTintColor:Colors.green,cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS}} />
                 <Stack.Screen component={ProfileScreen} name='ProfileScreen' options={{headerTransparent:true,headerTitle:"Profile",headerTitleStyle:{fontFamily:'Gotham_bold',color:Colors.light},  headerTintColor:Colors.light,cardStyleInterpolator:CardStyleInterpolators.forRevealFromBottomAndroid}} />
                 <Stack.Screen component={ReviewTransactionScreen} name='ReviewTransactionScreen' options={{headerShown:false,headerTransparent:true,cardStyleInterpolator:CardStyleInterpolators.forHorizontalIOS}}/>    
                 <Stack.Screen component={PayoutSummaryScreen} name='PayoutSummaryScreen' options={{headerTransparent:true,headerTitle:"Payout Summary",headerTitleStyle:{fontFamily:'Gotham_bold',color:'white'}, headerTintColor: 'white'}}/>                

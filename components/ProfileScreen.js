@@ -70,9 +70,9 @@ export default class ProfileScreen extends Component {
         
     
     <View style={styles.profile_info}>
-        <List.Item title="Email"  left={()=><FontAwesomeIcon  icon={faMailBulk} size={30}/>} titleStyle={styles.list_title_style} description={this.state.email}  descriptionStyle={styles.list_desc_style}/>
+        <List.Item title="Email"  left={()=><FontAwesomeIcon  icon={faMailBulk} size={30}/>} titleStyle={styles.list_title_style} description={this.state.email} color={Colors.green}  descriptionStyle={styles.list_desc_style}/>
         <Divider/>
-        <List.Item title="Company"  left={()=><FontAwesomeIcon  icon={faBuilding} size={30}/>}  titleStyle={styles.list_title_style}  description={this.state.company_name} descriptionStyle={styles.list_desc_style}/>
+        <List.Item title="Company"  left={()=><FontAwesomeIcon  icon={faBuilding} size={30}/>}  titleStyle={styles.list_title_style}  color={Colors.green} description={this.state.company_name} descriptionStyle={styles.list_desc_style}/>
     </View>          
     
       <View style={{flex: 1}}>

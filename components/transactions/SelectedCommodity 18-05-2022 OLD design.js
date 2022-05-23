@@ -17,7 +17,7 @@ import {Popup} from 'react-native-popup-confirm-toast';
 import {SharedElement} from 'react-navigation-shared-element';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import FakeCurrencyInput from 'react-native-currency-input';
-
+import {Picker} from '@react-native-picker/picker';
 import NetInfo from "@react-native-community/netinfo";
 import axios from 'axios';
 import * as ipConfig from '../../ipconfig';
@@ -38,9 +38,7 @@ export default class SelectedCommodityScreen extends Component {
       message: '',      
       selected_commodity: [],
       fertilizer_category:'',
-      fertilizer_sub_category:'',
       categories:[],
-      fertilizer_sub_categories:[],
       unit_types:this.props.route.params.unit_types,
       unit_type:'',
       is_amount_exceed:false,
@@ -90,7 +88,6 @@ export default class SelectedCommodityScreen extends Component {
         price: this.state.amount,
         reference_no: this.state.params.voucher_info.reference_no,
         item_category: this.state.fertilizer_category,
-        item_sub_category: this.state.fertilizer_sub_category,
         unit_type: this.state.unit_type,
         cash_added: (this.state.params.voucher_info.amount_val - this.state.params.total_amount) - this.state.total_amount < 0 ? this.state.total_amount - (this.state.params.voucher_info.amount_val - this.state.params.total_amount) : 0 ,
         supplier_id: await AsyncStorage.getItem('supplier_id')
@@ -503,32 +500,13 @@ export default class SelectedCommodityScreen extends Component {
           </Animatable.Text>
           
           <RNPickerSelect
-                  onValueChange={value =>{        
-                    
-                    if(value == 2){
-                      let clean_sub_fertilizer_category = [];
-
-                      this.state.params.fertilizer_sub_categories.map((item)=>{
-
-                        if(item.fertilizer_category_id == value){
-                          clean_sub_fertilizer_category.push({
-                            label:item.sub_category,  
-                            value:item.sub_category,  
-                          })
-                        }                        
-                      })
-
-                      this.setState({fertilizer_sub_categories:clean_sub_fertilizer_category})                
-                    }
-
-                    let getFertilizerCategory = this.state.params.fertilizer_categories.filter((item)=>item.value == value)[0]?.label;
-                  
-                    this.setState({fertilizer_category:getFertilizerCategory,fertilizer_category_id:value})              
+                  onValueChange={value =>{                                                   
+                    this.setState({fertilizer_category:value})              
                   }} 
                   useNativeAndroidPickerStyle={false}                                      
                   onFocus = {()=>this.setState({focus_unit:true})}
                   onBlur = {()=>this.setState({focus_unit:false})}              
-                  value={this.state.fertilizer_category_id}
+                  value={this.state.fertilizer_category}
                   style = {{ inputAndroid: {
                     width: (Layout.width / 100) * 90,        
                     left: (Layout.width / 100) * 5,                
@@ -554,116 +532,318 @@ export default class SelectedCommodityScreen extends Component {
                     label: 'Select Category',
                     value: '',                
                   }}
-                  items={this.state.params.fertilizer_categories}
+                  items={this.state.categories}
                 />
-
-        {/* SHOW IF FERTILIZER CATEGORY IS 2 */}
-        {this.state.fertilizer_category == 'Organic Fertilizers' &&
-
-
-
-   
-        <View style={{ marginVertical:(Layout.height / 100 ) * 2 }}>
-              <Animatable.Text style={styles.category_label} adjustsFontSizeToFit>          
-                Fertilizer Sub  Category:
-              </Animatable.Text>
+          </View>
             
-              <RNPickerSelect
-                      onValueChange={value =>{                                                   
-                        this.setState({fertilizer_sub_category:value})              
-                      }} 
-                      useNativeAndroidPickerStyle={false}                                      
-                      onFocus = {()=>this.setState({focus_unit:true})}
-                      onBlur = {()=>this.setState({focus_unit:false})}              
-                      value={this.state.fertilizer_sub_category}
-                      style = {{ inputAndroid: {
-                        width: (Layout.width / 100) * 90,        
-                        left: (Layout.width / 100) * 5,                
-                        fontFamily: 'Gotham_bold',
-                        borderWidth: 1,   
-                        paddingLeft:20,         
-                        color:'#a3a3a3',
-                        borderColor: this.state.focus_unit == true || this.state.fertilizer_sub_category != '' ? Colors.light_green : Colors.fade,
-                        backgroundColor: this.state.focus_unit == true || this.state.fertilizer_sub_category != '' ? Colors.light_green_tint:'transparent',
-                        fontSize: 16,
-                      },
-                      placeholder:{
-                        color:'#a3a3a3',                
-                        zIndex:1,
-                        paddingLeft:10,
-                        borderRadius: 5,
-                        borderWidth:1,
-                        borderColor: this.state.focus_unit == true || this.state.fertilizer_sub_category  != '' ? Colors.light_green : Colors.fade,
-                        }
-                      
-                      }}                        
-                      placeholder={{
-                        label: 'Select Sub Category',
-                        value: '',                
-                      }}
-                      items={this.state.fertilizer_sub_categories}
-                    />
-            </View>
-          }
-        </View>
           : null}
 
-        {/* display total amount */}
-        <View style={{ top: (Layout.height / 100) * 30 }}>    
-        <NumberFormat
-              value={(this.state.params.voucher_info.amount_val - this.state.params.total_amount) - this.state.total_amount < 0 ? 0 : (this.state.params.voucher_info.amount_val - this.state.params.total_amount) - this.state.total_amount  }
-              displayType={'text'}
-              decimalScale={2}
-              fixedDecimalScale={true}
-              thousandSeparator={true}
-              renderText={(result, props) => (
+    {/* display total amount */}
+    <View style={{ top: (Layout.height / 100) * 30 }}>    
+    <NumberFormat
+          value={(this.state.params.voucher_info.amount_val - this.state.params.total_amount) - this.state.total_amount < 0 ? 0 : (this.state.params.voucher_info.amount_val - this.state.params.total_amount) - this.state.total_amount  }
+          displayType={'text'}
+          decimalScale={2}
+          fixedDecimalScale={true}
+          thousandSeparator={true}
+          renderText={(result, props) => (
 
-                <View style={{ flexDirection:'row'}}>              
+            <View style={{ flexDirection:'row'}}>              
+            <Animatable.Text
+              adjustsFontSizeToFit
+              style={[styles.total_amount, {fontSize: 15}]}>
+              {'Remaining Balance: '}      
+            </Animatable.Text>
+            <View style={{flex:1, alignItems:'flex-end',right:50 }}>
+              <Animatable.Text
+                adjustsFontSizeToFit
+                style={[styles.total_amount, {color: Colors.blue_green}]}>
+                ₱ {result}
+              </Animatable.Text>
+              </View>
+            </View>
+          )}
+        />
+      
+      <NumberFormat
+            value={(this.state.params.voucher_info.amount_val - this.state.params.total_amount) - this.state.total_amount < 0 ? this.state.total_amount - (this.state.params.voucher_info.amount_val - this.state.params.total_amount) : 0 }
+            displayType={'text'}
+            decimalScale={2}
+            fixedDecimalScale={true}
+            thousandSeparator={true}
+            renderText={(result, props) => (
+
+              <View style={{ flexDirection:'row'}}>              
+              <Animatable.Text
+                adjustsFontSizeToFit
+                style={[styles.total_amount, {fontSize: 15}]}>
+                {'Cash Added: '}                
+              </Animatable.Text>
+              <View style={{flex:1, alignItems:'flex-end',right:50 }}>
                 <Animatable.Text
                   adjustsFontSizeToFit
-                  style={[styles.total_amount, {fontSize: 15}]}>
-                  {'Remaining Balance: '}      
+                  style={[styles.total_amount, {color: Colors.danger}]}>
+                  ₱ {result}
                 </Animatable.Text>
-                <View style={{flex:1, alignItems:'flex-end',right:50 }}>
-                  <Animatable.Text
-                    adjustsFontSizeToFit
-                    style={[styles.total_amount, {color: Colors.blue_green}]}>
-                    ₱ {result}
-                  </Animatable.Text>
-                  </View>
                 </View>
-              )}
-            />
+              </View>
+            )}
+          />
+   
+      </View>
+
+
+            {/* 
+       {this.state.is_amount_exceed ?
+        <>
+            <Animatable.Text style={styles.added_cash_amount_label} adjustsFontSizeToFit>          
+                  Additional Cash:
+              </Animatable.Text>
+              <FakeCurrencyInput
+                  value={this.state.added_cash_amount}
+                  onChangeValue={(value)=>{
+                    this.setState({added_cash_amount:value})                        
+                  }}
+
+                  onFocus={()=>this.setState({focus_added_cash_amount:true})}
+                  onBlur={()=>this.setState({focus_added_cash_amount:false})}
+                  prefix="₱"
+                  delimiter=","
+                  separator="."
+                  minValue={0}
+                  precision={2}          
+                  style={[
+                    styles.added_cash_amount,
+                    {
+                      borderColor:
+                        this.state.focus_added_cash_amount == true
+                          ? Colors.light_green
+                          : this.state.error == true 
+                          ? Colors.danger
+                          : Colors.light,
+                    },
+                  ]}     
+                        
+                />
+                </>
+                : null
+        }
+         */}
+
+         
+              
+
+            <View style={{ flexDirection:'row' ,top: (Layout.height / 100) * 20,}}>            
+            {/* <RNPickerSelect
+              onValueChange={value =>{                               
+                console.warn(value);
+                this.setState({fertilizer_category:value})              
+              }} 
+              useNativeAndroidPickerStyle={false}                                      
+              onFocus = {()=>this.setState({focus_unit:true})}
+              onBlur = {()=>this.setState({focus_unit:false})}              
+              value={this.state.fertilizer_category}
+              style = {{ inputAndroid: {
+                width: (Layout.width / 100) * 70,        
+                left: (Layout.width / 100) * 5,                
+                fontFamily: 'Gotham_bold',
+                borderWidth: 1,   
+                paddingLeft:20,         
+                color:'#a3a3a3',
+                borderColor: this.state.focus_unit == true || this.state.fertilizer_category != '' ? Colors.light_green : Colors.fade,
+                backgroundColor: this.state.focus_unit == true || this.state.fertilizer_category != '' ? Colors.light_green_tint:'transparent',
+                fontSize: 16,
+              },
+              placeholder:{
+                color:'#a3a3a3',                
+                zIndex:1,
+                paddingLeft:20,
+                borderRadius: 5,
+                borderWidth:1,
+                borderColor: this.state.focus_unit == true || this.state.fertilizer_category != '' ? Colors.light_green : Colors.fade,
+                }
+              
+              }}                        
+              placeholder={{
+                label: 'Select Unit Measurement',
+                value: '',                
+              }}
+              items={this.state.categories}
+            /> */}
+
+            </View> 
+        </View>
+         {/* Quantity Input */}
+         {/* <NumericInput          
+         separatorWidth={0}         
+          value={this.state.quantity}
+          onChange={value => this.handleQuantity(value)}
+          minValue={1}
+          maxValue={99999}
+          totalWidth={(Layout.width / 100) * 40}
+          totalHeight={(Layout.height / 100) * 5}
+          iconSize={25}
+          initValue={this.state.quantity}
+          step={0.1}
+          valueType="real"
+          rounded
+          iconStyle={{color: 'white'}}
+          inputStyle={styles.quantity_input}
+          containerStyle={styles.quantity}
+          rightButtonBackgroundColor={Colors.light_green}
+          leftButtonBackgroundColor={Colors.light_green}
+          upDownButtonsBackgroundColor={Colors.light_green}
+        /> */}
+
+
+        {/* Enter Amount Start  */}
+        {/* <NumberFormat
+                value={this.state.total_amount}
+                displayType={'text'}
+                decimalScale={2}                                
+                
+                thousandSeparator={true}                
+                thousandsGroupStyle={'thousand'}
+                onValueChange={values => console.warn(values)}
+                renderText={(result, props) =>
+                  this.renderAmountText(result)
+                }
+              /> */}
+
+        {/* <Animatable.Text style={styles.total_amount_label} adjustsFontSizeToFit>          
+            Total Amount:
+        </Animatable.Text> */}
+      
+      {/* <FakeCurrencyInput
+            value={this.state.total_amount}
+            onChangeValue={(value)=>{
+            
+              this.setState({total_amount:value}) 
+
+
+              if((value + this.state.total_amount) <= this.state.params.voucher_info.amount_val || value == 0){                
+      
+                this.setState({total_amount: value,is_amount_exceed:false});
+              }else{
+      
+                this.setState({is_amount_exceed:true});
+              }
+              
+            }}
+
+            onFocus={()=>this.setState({focus_amount:true})}
+            onBlur={()=>this.setState({focus_amount:false})}
+            prefix="₱"
+            delimiter=","
+            separator="."
+            minValue={0}
+            precision={2}          
+            style={[
+              styles.amount,
+              {
+                borderColor:
+                  this.state.focus_amount == true
+                    ? Colors.light_green
+                    : this.state.error == true 
+                    ? Colors.danger
+                    : Colors.light,
+              },
+            ]}           
+          /> */}
+{/* 
+          <RNPickerSelect
+              onValueChange={value =>{                               
+                this.setState({fertilizer_category:value})              
+              }}
+                              
+         
+              value={this.state.fertilizer_category}
+              style = {pickerStyle}                        
+              placeholder={{
+                label: 'Select fertilizer category...',
+                value: '',                
+              }}
+              items={this.state.categories}
+            /> */}
+
+
+        {/* Select category if the commodity has category*/}                
+
+        {/* select fertilize category */}
+        {/* {this.state.params.item.has_category == '1'?
+        <View>
+          <Animatable.Text style={styles.category_label} adjustsFontSizeToFit>          
+              Fertilizer Category:
+          </Animatable.Text>
           
-          <NumberFormat
-                value={(this.state.params.voucher_info.amount_val - this.state.params.total_amount) - this.state.total_amount < 0 ? this.state.total_amount - (this.state.params.voucher_info.amount_val - this.state.params.total_amount) : 0 }
+          <RNPickerSelect
+              onValueChange={value =>{                               
+                this.setState({fertilizer_category:value})              
+              }}
+                              
+         
+              value={this.state.fertilizer_category}
+              style = {pickerStyle}                        
+              placeholder={{
+                label: 'Select fertilizer category...',
+                value: '',                
+              }}
+              items={this.state.categories}
+            />
+          </View>
+            
+          : null} */}
+
+        {/* display total amount */}
+{/* 
+             <NumberFormat
+                value={(this.state.params.voucher_info.amount_val - this.state.total_amount)} 
                 displayType={'text'}
                 decimalScale={2}
                 fixedDecimalScale={true}
                 thousandSeparator={true}
                 renderText={(result, props) => (
-
-                  <View style={{ flexDirection:'row'}}>              
                   <Animatable.Text
                     adjustsFontSizeToFit
                     style={[styles.total_amount, {fontSize: 15}]}>
-                    {'Cash Added: '}                
-                  </Animatable.Text>
-                  <View style={{flex:1, alignItems:'flex-end',right:50 }}>
+                    {'Remaining Balance: '}
+
                     <Animatable.Text
                       adjustsFontSizeToFit
-                      style={[styles.total_amount, {color: Colors.danger}]}>
+                      style={[styles.total_amount, {color: Colors.blue_green}]}>
                       ₱ {result}
                     </Animatable.Text>
-                    </View>
-                  </View>
+                  </Animatable.Text>
                 )}
-              />
-      
-          </View>
-   
+              />  */}
 
-        </View>
+   
+         
+
+        {/* <View style={{flex: 1}}>
+          <View
+            style={{
+              position: 'absolute',
+              left: 0,
+              right: 0,
+              bottom: 0,
+              
+            }}>
+            <Button
+              textStyle={styles.add_to_cart_txt}
+              style={styles.add_to_cart_btn}
+              activityIndicatorColor={Colors.light}
+              activeOpacity={100}
+              disabledStyle={{opacity: 1}}
+              onPress = { ()=> this.addToCart(
+                this.state.total_amount              
+              )}
+              >
+              Add to Cart
+            </Button>
+          </View>
+        </View> */}
+
       </View>
     );
   }

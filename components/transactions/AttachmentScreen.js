@@ -741,7 +741,7 @@ const styles = StyleSheet.create({
     width: (Layout.width / 100) * 90,
   },
   card_none: {
-    backgroundColor: Colors.light_green,
+    backgroundColor: Colors.light,
     opacity:0.5,
     marginTop: 10,
     marginHorizontal: 2,

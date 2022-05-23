@@ -302,13 +302,17 @@ export default class HomeScreen extends Component {
   
    leftComponent = () =>(  <Fontisto name="ticket-alt" color={Colors.base} size={30} />)
    rightComponent = (item) =>(  
-              <Icon
-                 name="eye"                  
-                 color={Colors.green} 
-                 size={30}  
-                 style={{right:30}} 
-                 onPress={()=>this.goToSummary(item)}
-                 />
+              // <Icon
+              //    name="eye"                  
+              //    color={Colors.green} 
+              //    size={30}  
+              //    style={{right:30}} 
+              //    onPress={()=>this.goToSummary(item)}
+              //    />
+
+              <Text style={{ color:Colors.green,right:10 }} onPress={()=>this.goToSummary(item)}>
+                View Transaction
+              </Text>
                  )
   renderItem =  (item,index) =>  
   ( 
@@ -319,7 +323,7 @@ export default class HomeScreen extends Component {
     >
         <Card.Title        
         title    = {item.fullname}
-        titleStyle = {{ fontFamily:'Gotham_bold',fontSize:14 }}
+        titleStyle = {{ fontFamily:'Gotham_bold',fontSize:18,textTransform:'capitalize'}}
         subtitle = {(<View><Text style    = {{color:Colors.muted,fontSize:16}} adjustsFontSizeToFit>                 
           <Icon name="clock-o" family="fontawesome" color={Colors.base} size={15} />   
           {'\t'}{'\t'}  
@@ -432,7 +436,7 @@ export default class HomeScreen extends Component {
           </View>
         )}
 
-        <View style={{ backgroundColor:Colors.light,height:(Layout.height / 100 ) * 23,elevation:1 }}>
+        <View style={{ backgroundColor:Colors.light,height:(Layout.height / 100 ) * 25,elevation:1 }}>
 
         
           <Animatable.Text style={styles.greetings} animation="fadeInDownBig" adjustsFontSizeToFit>Hello Merchant <Text style={[styles.greetings,{textTransform:'capitalize'}]}>{this.state.merchant_name}</Text></Animatable.Text>        
@@ -470,7 +474,7 @@ export default class HomeScreen extends Component {
             />
         </View>
 
-        <Animatable.Text style={styles.recent_title}><FontAwesomeIcon name="info-circle" color={Colors.green} size={16}/>  List of Transactions</Animatable.Text>
+        <Animatable.Text style={styles.recent_title} adjustsFontSizeToFit><FontAwesomeIcon name="info-circle" color={Colors.green} size={16}/>  List of Transactions</Animatable.Text>
         <FlatList       
           showsHorizontalScrollIndicator={false}
           
@@ -564,7 +568,7 @@ const styles = StyleSheet.create({
     top:(Layout.height/100) * 2,
     left:10,
     fontFamily:'Gotham_bold',
-    fontSize:14,
+    fontSize:18,
     color:Colors.header_text
   },
   other_transactions:{

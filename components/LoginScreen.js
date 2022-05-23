@@ -36,10 +36,6 @@ export default class LoginScreen extends Component {
     };
 
 
-
-
-
-
   }
 
   handleLogin = (values,navigation,resetForm)=>{
@@ -157,8 +153,8 @@ export default class LoginScreen extends Component {
         <Animatable.View style={styles.login_container} animation={"slideInUp"}>        
         
             <Animatable.View style={styles.title_container} animation="fadeIn" delay={1000} >
-                <Text style={styles.title} numberOfLines={2}> Welcome To </Text>
-                <Text style={styles.title} numberOfLines={2}> Interventions Management Platform</Text>
+                <Text style={[styles.title,{color:Colors.header_text}]} numberOfLines={2}> Welcome To </Text>
+                <Text style={[styles.title,{fontSize:20}]} numberOfLines={2}> Interventions Management Platform</Text>
             </Animatable.View>              
 
         
@@ -241,17 +237,23 @@ export default class LoginScreen extends Component {
                   }
           </Animatable.View>
           
-          <Button
-            textStyle={styles.login_txt}
-            style={styles.login_btn}
-            activityIndicatorColor={'white'}
-            isLoading={this.state.isLoading}
-            disabledStyle={{opacity: 1}} 
-            onPress = {handleSubmit}         
-          >
-            Login
-          </Button>  
-          <Animatable.Text style={styles.forgot_password_txt} animation="slideInLeft" onPress={()=>this.props.navigation.navigate('ForgotPasswordScreen')} >Forgot your password?</Animatable.Text>            
+            <View style={{ flexDirection:'row',top: (Layout.height / 100) * 5,justifyContent:'flex-end',right:(Layout.width / 100) * 5}}>              
+                <Animatable.Text style={styles.forgot_password_txt} animation="slideInLeft" onPress={()=>this.props.navigation.navigate('ForgotPasswordScreen')} >Forgot your password?</Animatable.Text>                          
+            </View>
+                  
+              
+            <Button
+                textStyle={styles.login_txt}
+                style={styles.login_btn}
+                activityIndicatorColor={'white'}
+                isLoading={this.state.isLoading}
+                disabledStyle={{opacity: 1}} 
+                onPress = {handleSubmit}         
+              >
+                Log In
+            </Button>  
+          
+          
         </View>
         )}
         </Formik>   
@@ -331,12 +333,14 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   login_txt:{
-    color:Colors.light,    
+    color:Colors.light,   
+    fontSize:20, 
     fontFamily:'Gotham_bold',
   },  
   login_btn:{    
     top: (Layout.height / 100) * 5,
     width: (Layout.width / 100) * 90,
+    height: (Layout.width / 100) * 15,
     left: (Layout.width / 100) * 5,
     borderColor: Colors.green,
     backgroundColor: Colors.green,    
@@ -369,9 +373,10 @@ const styles = StyleSheet.create({
     fontFamily:"Gotham_light",
     fontSize:16,
     fontWeight:'bold',
-    color:Colors.blue_green,
-    top:(Layout.height/100) * 10,
-    left:(Layout.width / 100) * 5,
+    color:Colors.blue_green,        
+    marginVertical:20,
+    
+    justifyContent:'flex-end'
   },
   confirmButton:{
     backgroundColor:'white',
